@@ -1,4 +1,4 @@
-import { Add } from "@mui/icons-material";
+import { Add, Info } from "@mui/icons-material";
 import {
     Box,
   Container,
@@ -13,17 +13,39 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Search from '@components/search/Search';
 import { Member } from '@domain/user';
 import { findAllMembers } from "@service/MemberService";
+import MemberDataModal from "./member-data-modal/MemberDataModa";
+import SnackBarMessage from "@components/snackBarMessage/SnackBarMessage";
+import { ManagerContext } from "@context/ManagerContext";
+import { findGroupSummaryToById } from "@service/GroupService";
+import { GroupSummary } from "@domain/group";
 
 export default function MemberData() {
     const [data, setData] = useState<Member[]>([]);
     const [filtered, setFiltered] = useState<Member[]>([]);
+    const { openSnackbar, setOpenSnackbar } = useContext(ManagerContext);
+    const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+    const [openData, setOpenData] = useState(false);
+    const [groupData, setGroupData] = useState<GroupSummary | null>(null); 
+
     const { userId } = useParams();
     const navigate = useNavigate();
+
+    function handleOpenDetails(member: Member) {
+        if (member.groupId) {
+        findGroupSummaryToById(member.groupId)
+            .then((group) => {
+                setGroupData(group);
+                setSelectedMember(member); 
+                setOpenData(true);
+            })
+            .catch(console.error);
+        }
+    }
 
     useEffect(() => {
         findAllMembers()
@@ -42,13 +64,13 @@ export default function MemberData() {
         <Container className='data-container'>
             <Box mb={3}>
                 <Typography variant="h4" component="h1" className='title'>
-                    Colaboradores
+                    Membros
                 </Typography>
             </Box>
             <Search<Member> 
                 data={data} 
                 onFilter={setFiltered} 
-                label={'Buscar Colaborador'}
+                label={'Buscar Membro'}
                 searchBy={(item, term) =>
                     item.name.toLowerCase().includes(term.toLowerCase()) ||
                     item.phone.includes(term)
@@ -62,13 +84,18 @@ export default function MemberData() {
                         <TableRow>
                             <TableCell className='title-secondary'>Nome</TableCell>
                             <TableCell className='title-secondary'>Telefone</TableCell>
+                            <TableCell className='title-secondary'>Status</TableCell>
                         </TableRow>
                         </TableHead>
                         <TableBody>
                         {filtered.map((it) => (
                             <TableRow key={it.id}>
-                            <TableCell className='data-text'>{it.name}</TableCell>
-                            <TableCell className='data-text'>{it.phone}</TableCell>
+                                <TableCell className='data-text'>{it.name}</TableCell>
+                                <TableCell className='data-text'>{it.phone}</TableCell>
+                                <TableCell className='data-text'>{it.role}</TableCell>
+                                <IconButton onClick={() => handleOpenDetails(it)}>
+                                    <Info/>
+                                </IconButton>
                             </TableRow>
                         ))}
                         </TableBody>
@@ -85,6 +112,17 @@ export default function MemberData() {
                     <Add/>
                 </IconButton>
             </Tooltip>
+            <MemberDataModal
+                groupData={groupData}
+                open={openData}
+                onClose={() => setOpenData(false)}
+                member={selectedMember}
+            />
+            <SnackBarMessage 
+                message={"Membro criado com sucesso!"} 
+                openSnackbar={openSnackbar} 
+                setOpenSnackbar={setOpenSnackbar}
+            />
         </Container>
     );
 }

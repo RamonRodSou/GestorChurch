@@ -12,7 +12,7 @@
     --secondary-title: rgb(0, 58, 120);
     --secondary-active: #006c1d;
 
-
+    --whatsapp-color: #2f8e03;
 
     --cancel-color: rgb(199, 94, 18);
 
@@ -37,10 +37,14 @@
     }
 
     .textInfo {
-        color: var(--secondary-title);
+        color: var( --primary-title);
         font-size: 1rem;
         font-weight: 500;
         margin-left: 1rem; 
+    }
+
+    .subTextInfo {
+        color: var(--secondary-title);
     }
 
     .title-secondary {

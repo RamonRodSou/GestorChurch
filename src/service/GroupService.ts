@@ -40,7 +40,7 @@ export async function groupAdd(group: Group) {
         );
 
     } catch (error) {
-        alert('Erro ao adicionar membro do grupo familiar: ' + error);
+        alert('Erro ao adicionar membro do Gcs: ' + error);
         throw error;
     }
 }
@@ -53,7 +53,7 @@ export async function findAllGroups(): Promise<Group[]> {
         const snapshot = await getDocs(collection(db, 'groups'));
         return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Group));
     } catch (error) {
-        alert('Erro ao listar membros do grupo familiar: ' + error);
+        alert('Erro ao listar membros do Gcs: ' + error);
         throw error;
     }
 }
@@ -63,24 +63,38 @@ export async function findAllGroupsSummary(): Promise<GroupSummary[]> {
         const user = auth.currentUser;
         if (!user) throw new Error("Usuário não autenticado.");
 
-        const snapshot = await getDocs(collection(db, 'members'));
+        const snapshot = await getDocs(collection(db, 'groups'));
         return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as GroupSummary));
     } catch (error) {
-        alert('Erro ao listar colaboradores: ' + error);
+        alert('Erro ao listar Gcs: ' + error);
         throw error;
     }
 }
 
 export async function findGroupToById (groupId: string): Promise<Group | null> {
     try {
-        const ref = doc(db, 'clients', groupId);
+        const ref = doc(db, 'groups', groupId);
         const snapshot = await getDoc(ref);
 
         if (!snapshot.exists()) return null;
 
         return { id: snapshot.id, ...snapshot.data() } as Group;
     } catch (error) {
-        alert('Erro ao Grupo Familiar: ' + error);
+        alert('Erro ao GC: ' + error);
         throw error;
     }
 };
+
+export async function findGroupSummaryToById(groupId: string): Promise<GroupSummary | null> {
+    try {
+        const ref = doc(db, 'groups', groupId);
+        const snapshot = await getDoc(ref);
+
+        if (!snapshot.exists()) return null;
+
+        return { id: snapshot.id, ...snapshot.data() } as GroupSummary;
+    } catch (error) {
+        alert('Erro ao GC: ' + error);
+        throw error;
+    }
+}
