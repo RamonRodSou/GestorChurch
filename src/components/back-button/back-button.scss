@@ -1,0 +1,18 @@
+:root {
+    .back-button {
+        position: relative;
+        top: 0;
+        right: 0;
+        padding: .3rem;
+        margin-bottom: .5rem;
+        background-color: var(--primary-background);
+        color: var(--primary-color);
+    
+        &:hover {
+            background-color: var(--primary-hover);
+        }
+        &:active {
+            background-color: var(--primary-active);
+        }
+    }
+}

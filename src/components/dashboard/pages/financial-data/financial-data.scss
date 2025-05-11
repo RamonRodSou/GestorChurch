@@ -1,0 +1,34 @@
+:root {
+    .finacial-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    
+        .currrent-cash {
+            padding: 1.5rem;
+        }
+        
+        .service-order {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+
+            .order-card {
+                padding: 1rem;
+                width: 100%;
+                max-width: 360px;
+                background-color: #fefefe;
+                box-shadow: 3px 3px 2px #00000032;
+            }
+        }
+
+ 
+        @media (min-width: 800px) {
+            Button {
+                width: 40%;
+            }
+        }
+    }
+}

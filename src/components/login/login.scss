@@ -1,0 +1,48 @@
+.box {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90vw;
+    height: 100vh;
+    color: black;
+    
+    .form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        width: 100%;
+        padding: 2rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+        .title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4c54af;
+            text-align: center;
+        }
+
+        .text-error {
+            color: red;
+        }
+
+        .button {
+            background-color: #4c54af;
+            color: #fff;
+            border: none;
+            
+            &:hover {
+                background-color: #171e69;
+            }
+            &:active {
+                background-color: rgb(11, 21, 65);
+            }
+        }
+    }
+
+    @media screen and (min-width: 800px) {
+        width: 40vw;
+    }
+}

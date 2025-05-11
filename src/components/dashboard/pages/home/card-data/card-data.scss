@@ -1,0 +1,18 @@
+:root {
+    .home-statistics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    
+        .home-card {
+            border-radius: 12px;
+            background-color: #f4f6f8;
+            transition: transform 0.2s ease-in-out;
+            &:hover {
+                transform: scale(1.02);
+            }
+        }
+    }
+}
