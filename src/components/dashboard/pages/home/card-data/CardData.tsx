@@ -3,7 +3,6 @@ import './card-data.scss'
 import { Box, Paper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { MemberSummary } from '@domain/user';
-import { findAllVisitors } from '@service/VisitorService';
 import { findAllMembersSummary } from '@service/MemberService';
 
 export default function CardData() {
@@ -17,7 +16,7 @@ export default function CardData() {
             .then((it) => {
                 setData(it)
             });
-    }, []);
+    }, []); 
 
     return (
         <Box className="home-statistics">
