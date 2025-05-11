@@ -2,17 +2,18 @@ import { useFinancial } from '@context/FinancialContext';
 import './card-data.scss'
 import { Box, Paper, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Visitor } from '@domain/user';
+import { MemberSummary } from '@domain/user';
 import { findAllVisitors } from '@service/VisitorService';
+import { findAllMembersSummary } from '@service/MemberService';
 
 export default function CardData() {
-    const [data, setData] = useState<Visitor[]>([]);
+    const [data, setData] = useState<MemberSummary[]>([]);
     const { currentCash, monthInflow, monthOutflow } = useFinancial();
 
-    const totalClients = data.length;
+    const members = data.length;
 
     useEffect(() => {
-        findAllVisitors()
+        findAllMembersSummary()
             .then((it) => {
                 setData(it)
             });
@@ -21,8 +22,8 @@ export default function CardData() {
     return (
         <Box className="home-statistics">
             <Paper className="home-card" elevation={3} sx={{ flex: '1 1 220px', p: 2, textAlign: 'center' }}>
-                <Typography className='title-secondary' variant="h6">Total de clientes</Typography>
-                <Typography variant="h4">{totalClients}</Typography>
+                <Typography className='title-secondary' variant="h6">Total de Membros</Typography>
+                <Typography variant="h4">{members}</Typography>
             </Paper>
             <Paper className="home-card" elevation={3} sx={{ flex: '1 1 220px', p: 2, textAlign: 'center' }}>
                 <Typography className='title-secondary' variant="h6">Saldo Atual</Typography>
