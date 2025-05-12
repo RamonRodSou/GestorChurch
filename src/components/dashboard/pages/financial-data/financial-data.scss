@@ -21,10 +21,16 @@
                 max-width: 360px;
                 background-color: #fefefe;
                 box-shadow: 3px 3px 2px #00000032;
+                @media (min-width: 500px) {
+                    max-width: 200px;
+                }
+                @media (min-width: 600px) {
+                    max-width: 300px;
+                 }
+
             }
         }
 
- 
         @media (min-width: 800px) {
             Button {
                 width: 40%;

@@ -1,5 +1,5 @@
-import { IncomeType } from '@domain/enums/IncomeType';
 import './financial-modal.scss';
+import { IncomeType } from '@domain/enums/IncomeType';
 import { Dialog, DialogContent, DialogActions, TextField, Button, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { EMPTY } from '@domain/utils/string-utils';
