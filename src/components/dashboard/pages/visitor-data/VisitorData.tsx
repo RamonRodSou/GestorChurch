@@ -21,7 +21,7 @@ import Search from '@components/search/Search';
 import SnackBarMessage from '@components/snackBarMessage/SnackBarMessage';
 import { Visitor } from '@domain/user/visitor/Visitor';
 import { findAllVisitors } from '@service/VisitorService';
-import VisitorDataModal from './visitor-data-modal/visitorDataModa';
+import VisitorDataModal from './visitor-data-modal/VisitorDataModa';
 
 export default function VisitorData() {
     const [data, setData] = useState<Visitor[]>([]);

@@ -1,33 +1,4 @@
 :root {
-    .title-and-editBtn {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        .editBtn {
-            background-color: var(--secondary-background);
-            color: var(--primary-color);
-
-            &:hover {
-                background-color: var(--secondary-background-hover);
-            }
-            &:active {
-                background-color: var(--secondary-background-active);
-            }
-        }
-    }
-
-    .whatzapp {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-
-        .whatzappBtn {
-            background-color: var(--whatsapp-color);
-            color: var(--primary-color);
-        }
-    }
-
     .visit-list {
         margin: 0 1rem;
         .visit-item {

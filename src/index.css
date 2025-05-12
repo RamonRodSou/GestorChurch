@@ -13,6 +13,7 @@
     --secondary-active: #006c1d;
 
     --whatsapp-color: #2f8e03;
+    --delete-color: rgb(199, 21, 18);
 
     --cancel-color: rgb(199, 94, 18);
 
@@ -54,6 +55,54 @@
 
     .data-text {
         color: var(--secondary-title);
+    }
+
+    .modalBtns {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-direction: column;
+        gap: .5rem;
+        position: absolute;
+        top: 1;
+        right: 0;
+        margin: 0 1rem;
+
+        .title-and-editBtn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .editBtn {
+                background-color: var(--secondary-background);
+                color: var(--primary-color);
+
+                &:hover {
+                    background-color: var(--secondary-background-hover);
+                }
+                &:active {
+                    background-color: var(--secondary-background-active);
+                }
+            }
+        }
+
+        .whatzapp {
+            .whatzappBtn {
+                background-color: var(--whatsapp-color);
+                color: var(--primary-color);
+            }
+        }
+
+        .delete {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            .deleteBtn {
+                background-color: var( --delete-color);
+                color: var(--primary-color);
+            }
+        }
     }
 
     @media (min-width: 600px) {

@@ -10,6 +10,8 @@ export class Member extends User implements ILocation{
   constructor(
         public readonly id: string = uuidv4(),
         public name: string = EMPTY,
+        public birthdate: Date = new Date(),
+        public cpf: string = EMPTY,
         public email: string = EMPTY,
         public phone: string = EMPTY,
         public groupId: string | null = null,
@@ -24,7 +26,8 @@ export class Member extends User implements ILocation{
         public spouse: MemberSummary | null = null,
         public children: MemberSummary[] = [],
         public role: Role = Role.MEMBER,
-        password: string = EMPTY,
+        password: string = 'IgrejaIAF',
+        public isActive: boolean = true,
 		public createdAt: string = new Date().toISOString()
     ) {
 		super(id, name, phone, password, createdAt);
@@ -34,6 +37,8 @@ export class Member extends User implements ILocation{
         return new Member(
             json.id,
             json.name,
+            new Date(json.birthdate),
+            json.cpf,
             json.email,
             json.phone,
             json.groupId,
@@ -41,7 +46,7 @@ export class Member extends User implements ILocation{
             json.houseNumber,
             json.city,
             json.state,
-            json.zipCode,
+            json.zipCode, 
             json.neighborhood,
             json.batism,
             json.civilStatus,
@@ -49,14 +54,17 @@ export class Member extends User implements ILocation{
             json.children || [],
             json.role,
             json.password ?? EMPTY,
+            json.isActive,
             json.createdAt
         );
     }
-
+ 
     toJSON(): object {
         return {
             id: this.id,
             name: this.name,
+            birthdate: this.birthdate.toISOString(),
+            cpf: this.cpf,
             email: this.email,
             phone: this.phone,
             groupId: this.groupId,
@@ -70,7 +78,8 @@ export class Member extends User implements ILocation{
             civilStatus: this.civilStatus,
             spouse: this.spouse,
             children: this.children,
-            json: this.role,
+            role: this.role,
+            isActive: this.isActive,
             createdAt: this.createdAt,
         };
     }

@@ -16,37 +16,14 @@ export default function VisitorDetails() {
 
     const isEditOrNew = isEditing ? `Editar visitante: ${data.name}` : 'Novo Visitante'
 
-    const handleChange = (field: keyof Visitor, value: string | number) => {
+    function handleChange(field: keyof Visitor, value: string | number) {
         setData(prev => {
             const updated = { ...prev, [field]: value };
             return Visitor.fromJson(updated);
         });
-    };
+    }; 
 
-    const handleAddVisit = () => {
-    const today = new Date();
-    const options: Intl.DateTimeFormatOptions = {
-        weekday: 'long',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    };
-    const formatted = today.toLocaleDateString('pt-BR', options);
-    const capitalized = formatted.charAt(0).toUpperCase() + formatted.slice(1);
-
-    setData(prev => {
-        const updatedHistory = [...prev.visitHistory, capitalized];
-        return Visitor.fromJson({ ...prev, visitHistory: updatedHistory });
-    });
-};
-
-
-    const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (isEditing) {
-        await updateVisitor(data.id, data.toJSON());
-    } else {
+    function handleAddVisit() {
         const today = new Date();
         const options: Intl.DateTimeFormatOptions = {
             weekday: 'long',
@@ -54,32 +31,54 @@ export default function VisitorDetails() {
             month: '2-digit',
             year: 'numeric'
         };
-        const formatted = today.toLocaleDateString('pt-BR', options); // "domingo, 11/05/2025"
+        const formatted = today.toLocaleDateString('pt-BR', options);
+        const capitalized = formatted.charAt(0).toUpperCase() + formatted.slice(1);
 
-        const firstVisit = formatted.charAt(0).toUpperCase() + formatted.slice(1); // capitaliza
+        setData(prev => {
+            const updatedHistory = [...prev.visitHistory, capitalized];
+            return Visitor.fromJson({ ...prev, visitHistory: updatedHistory });
+        });
+    };
 
-        const newVisitor = new Visitor();
-        newVisitor.name = data.name;
-        newVisitor.phone = data.phone;
-        newVisitor.visitHistory = [firstVisit];
-        
-        await visitorAdd(newVisitor);
-        setData(new Visitor());
-    }
+    async function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
 
-    navigate(`/dashboard/${userId}/visitor`);
+        if (isEditing) {
+            await updateVisitor(data.id, data.toJSON());
+        } else {
+            const today = new Date();
+            const options: Intl.DateTimeFormatOptions = {
+                weekday: 'long',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            };
+            const formatted = today.toLocaleDateString('pt-BR', options);
+
+            const firstVisit = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+
+            const newVisitor = new Visitor();
+            newVisitor.name = data.name;
+            newVisitor.phone = data.phone;
+            newVisitor.visitHistory = [firstVisit];
+            
+            await visitorAdd(newVisitor);
+            setData(new Visitor());
+        }
+
+        navigate(`/dashboard/${userId}/visitor`);
         setOpenSnackbar(true);
     };
 
     useEffect(() => {
-        async function loadClient() {
+        async function load() {
             if (visitorId) {
-                const clientData = await findByVisitorId(visitorId);
-                setData(Visitor.fromJson(clientData));
+                const data = await findByVisitorId(visitorId);
+                setData(Visitor.fromJson(data));
                 setIsEditing(true);
             }
         }
-        loadClient();
+        load();
     }, [visitorId]);
 
     return (

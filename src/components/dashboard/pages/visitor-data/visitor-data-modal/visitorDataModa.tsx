@@ -1,8 +1,9 @@
 import './visitor-data-modal.scss';
-import { Box, Dialog, DialogContent, IconButton, Typography } from '@mui/material';
-import { Edit } from '@mui/icons-material';
+import { Dialog, DialogContent, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Visitor } from '@domain/user/visitor/Visitor';
+import { whatzapp } from '@domain/utils/whatszappAPI';
+import ModalBtns from '@components/modalBtns/ModalBtns';
 
 interface VisitorDataModalProps {
     open: boolean;
@@ -19,22 +20,26 @@ export default function VisitorDataModal({ open, onClose, visitor }: VisitorData
     function visitorUpdate(visitorId: String) {
         return navigate(`/dashboard/${userId}/edit-visitor/${visitorId}`);
     }
+
+    function remove () {
+        console.log('removido')
+    }
          
     return (
         <Dialog open={open} onClose={onClose} fullWidth>
             <DialogContent dividers>
-                <Box className='title-and-editBtn'>
-                    <Typography className='title'>{visitor.name}</Typography>
-                    <IconButton onClick={() => visitorUpdate(visitor.id)} className='editBtn'>
-                        <Edit/>
-                    </IconButton>
-                </Box>
-                <Typography>Telefone: {visitor.phone}</Typography>
+                <Typography className='title'>{visitor.name}</Typography>
+                <ModalBtns
+                    edit={() => visitorUpdate(visitor.id)} 
+                    whatsApp={() => whatzapp(visitor.name, visitor.phone)}
+                    remove={() => remove()}
+                />
+                <Typography className='textInfo'> <span className='subTextInfo'>TELEFONE: </span>{visitor.phone}</Typography>
                 
                 <h3>Histórico de visitas:</h3>
                 <ul className="visit-list">
                     {visitor.visitHistory.map((it, index) => (
-                        <li key={index} className="visit-item">{it}</li>
+                        <li className='textInfo' key={index}>{it}</li>
                     ))}
                 </ul>
             </DialogContent>

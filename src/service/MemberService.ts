@@ -1,6 +1,6 @@
 import { Member, MemberSummary } from "@domain/user";
 import { auth, db } from "./firebase";
-import { addDoc, arrayUnion, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, arrayUnion, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { Batism } from "@domain/batism";
 import { ensureMemberSummary } from "@domain/utils/EnsuredMemberSummary";
 import { EMPTY } from "@domain/utils/string-utils";
@@ -14,6 +14,8 @@ export async function memberAdd(member: Member) {
         const memberRef = await addDoc(collection(db, 'members'), {
             userId: user.uid,
             name: member.name,
+            birthdate: member.birthdate ? member.birthdate.toJSON() : null,
+            cpf: member.cpf,
             email: member.email,
             phone: member.phone,
             passwordHash: passwordHash,
@@ -39,6 +41,7 @@ export async function memberAdd(member: Member) {
                 : child?.toJSON?.() ?? null
             ),
             role: member.role,
+            isActive: member.isActive,
             createdAt: member.createdAt,
         });
 
@@ -107,8 +110,65 @@ export async function findAllMembersSummary(): Promise<MemberSummary[]> {
         const snapshot = await getDocs(collection(db, 'members'));
         return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as MemberSummary));
     } catch (error) {
-        alert('Erro ao listar colaboradores: ' + error);
+        alert('Erro ao listar membro: ' + error);
         throw error;
     }
 }
+
+export async function findMemberToById(id: string): Promise<Member | null> {
+    try {
+        const ref = doc(db, 'members', id);
+        const snapshot = await getDoc(ref);
+
+        if (!snapshot.exists()) return null;
+
+        return { id: snapshot.id, ...snapshot.data() } as Member;
+    } catch (error) {
+        alert('Erro ao buscar membro: ' + error);
+        throw error;
+    }
+}
+
+export async function memberUpdate(id: string, data: Partial<Member>): Promise<void> {
+    try {
+        const ref = doc(db, 'members', id);
+        await updateDoc(ref, data);
+    } catch (error) {
+        alert('Erro ao atualizar membro: ' + error);
+        throw error;
+    }
+}
+
+
+
+// export async function deactivateMemberToById(id: string): Promise<Member | null> {
+//     try {
+//         const user = auth.currentUser;
+//         if (!user) throw new Error("Usuário não autenticado.");
+
+//         const ref = doc(db, 'members', id);
+//         const snapshot = await getDoc(ref);
+
+//         if (!snapshot.exists()) return null;
+
+//         const memberData = snapshot.data() as Member;
+
+//         if (memberData.groupId) {
+//             const groupRef = doc(db, 'groups', memberData.groupId);
+//             await updateDoc(groupRef, {
+//                 memberIds: arrayRemove(id),
+//             });
+//         }
+
+//         await updateDoc(ref, {
+//             isActive: false,
+//         });
+
+//         return { id: snapshot.id, ...memberData }; 
+
+//     } catch (error) {
+//         alert('Erro ao desativar membro: ' + error);
+//         throw error;
+//     }
+// }
 

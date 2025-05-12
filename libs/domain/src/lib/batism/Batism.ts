@@ -13,7 +13,7 @@ export class Batism {
             json.churchName,
             json.ourChurch,
             json.leaderName,
-            json.baptismDate
+            new Date(json.baptismDate)     
         );
     }
 
@@ -25,4 +25,4 @@ export class Batism {
             baptismDate: this.baptismDate.toISOString()
         };
     }
-}
+} 

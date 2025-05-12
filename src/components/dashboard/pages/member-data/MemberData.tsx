@@ -27,24 +27,29 @@ import { GroupSummary } from "@domain/group";
 export default function MemberData() {
     const [data, setData] = useState<Member[]>([]);
     const [filtered, setFiltered] = useState<Member[]>([]);
-    const { openSnackbar, setOpenSnackbar } = useContext(ManagerContext);
     const [selectedMember, setSelectedMember] = useState<Member | null>(null);
     const [openData, setOpenData] = useState(false);
     const [groupData, setGroupData] = useState<GroupSummary | null>(null); 
-
+    const { openSnackbar, setOpenSnackbar } = useContext(ManagerContext);
     const { userId } = useParams();
     const navigate = useNavigate();
-
+    
     function handleOpenDetails(member: Member) {
         if (member.groupId) {
         findGroupSummaryToById(member.groupId)
             .then((group) => {
                 setGroupData(group);
-                setSelectedMember(member); 
-                setOpenData(true);
             })
             .catch(console.error);
+        } else {
+            setGroupData(null)
         }
+        setSelectedMember(member); 
+        setOpenData(true);
+    }
+
+    function newMember() {
+        return navigate(`/dashboard/${userId}/new-member`);
     }
 
     useEffect(() => {
@@ -55,10 +60,6 @@ export default function MemberData() {
             })
             .catch(console.error);
     }, []);
-
-    function newMember() {
-        return navigate(`/dashboard/${userId}/new-member`);
-    }
 
     return (
         <Container className='data-container'>
@@ -88,16 +89,18 @@ export default function MemberData() {
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {filtered.map((it) => (
-                            <TableRow key={it.id}>
-                                <TableCell className='data-text'>{it.name}</TableCell>
-                                <TableCell className='data-text'>{it.phone}</TableCell>
-                                <TableCell className='data-text'>{it.role}</TableCell>
-                                <IconButton onClick={() => handleOpenDetails(it)}>
-                                    <Info/>
-                                </IconButton>
-                            </TableRow>
-                        ))}
+                        {filtered
+                        .filter((it) => it.isActive)
+                            .map((it) => (
+                                <TableRow key={it.id}>
+                                    <TableCell className='data-text'>{it.name}</TableCell>
+                                    <TableCell className='data-text'>{it.phone}</TableCell>
+                                    <TableCell className='data-text'>{it.role}</TableCell>
+                                    <IconButton onClick={() => handleOpenDetails(it)}>
+                                        <Info/>
+                                    </IconButton>
+                                </TableRow>
+                            ))}
                         </TableBody>
                     </Table>
                     </TableContainer>

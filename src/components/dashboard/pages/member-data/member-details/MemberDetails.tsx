@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { Autocomplete, Box, Button, Container, TextField } from "@mui/material";
 import BackButton from '@components/back-button/BackButton';
 import { Member, MemberSummary } from '@domain/user';
-import { findAllMembersSummary, memberAdd } from '@service/MemberService';
+import { findAllMembersSummary, findMemberToById, memberAdd, memberUpdate } from '@service/MemberService';
 import { EMPTY } from "@domain/utils/string-utils";
 import SnackBarMessage from "@components/snackBarMessage/SnackBarMessage";
 import { CivilStatus, Role } from "@domain/enums";
@@ -16,6 +16,7 @@ import { validateMemberForm } from '@domain/utils/validateMemberForm';
 import { findAllGroups } from '@service/GroupService';
 import validateCEP from '@domain/utils/validateCEP';
 import { checkCEP } from '@domain/utils/checkCEP';
+import { useParams } from 'react-router-dom';
 
 export default function MemberDetails() {
     const [member, setMember] = useState<Member>(new Member());
@@ -27,8 +28,12 @@ export default function MemberDetails() {
     const [cepData, setCepData] = useState<ICepData | null>(null);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
-    
-    const handleChange = (field: keyof Member, value: string | number | MemberSummary) => {
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const isEditOrNew = isEditing ? `Editar membro: ${member.name}` : 'Novo Membro'
+    const { memberId } = useParams();
+    const selectedGroup = groups.find(group => group.id === member.groupId) ?? null;
+
+    function handleChange(field: keyof Member, value: any) {
         const parsedValue =
             field === "spouse"
                 ? ensureMemberSummary(value)
@@ -40,7 +45,7 @@ export default function MemberDetails() {
         });
     };
 
-    const handleBatismChange = (field: keyof Batism, value: string | Date | boolean) => {
+    function handleBatismChange(field: keyof Batism, value: any) {
         setMember((prev) => {
             const updatedBatism = { ...prev.batism, [field]: value };
             const updated = { ...prev, batism: updatedBatism };
@@ -48,11 +53,11 @@ export default function MemberDetails() {
         });
     };
 
-    const handleAddChildField = () => {
+    function handleAddChildField() {
         setChildrenInputs([...childrenInputs, EMPTY]);
     };
 
-    const handleChildrenChange = (index: number, value: MemberSummary | string) => {
+    function handleChildrenChange(index: number, value: MemberSummary | string) {
         const updated = [...childrenInputs];
         updated[index] = ensureMemberSummary(value);
         setChildrenInputs(updated);
@@ -62,43 +67,71 @@ export default function MemberDetails() {
         });
     };
 
-    const fetchMembers = async () => {
+    function editOrNewMessage() {
+        return isEditing 
+            ? 'Membro atualizado com sucesso!'
+            : 'Membro criado com sucesso!'
+    }
+
+    async function  fetchMembers(): Promise<void> {
         const response = await findAllMembersSummary();
         setAllMembers(response);
     };
 
-    const fetchGroups = async () => {
+    async function fetchGroups(): Promise<void>  {
         const response = await findAllGroups(); 
         setGroups(response)
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();    
+    async function handleSubmit(e: React.FormEvent): Promise<void> {
+        e.preventDefault(); 
         if (!validateMemberForm({ member, setErrors })) return;
-        const updatedMember = Member.fromJson({
-            ...member,
-        });
 
-        await memberAdd(updatedMember);
-        setOpenSnackbar(true);
-        setMember(new Member());
-        setCepData(null);
-        setCivilStatus(CivilStatus.SINGLE);
-        setChildrenInputs([]);
+        if (isEditing) {
+            await memberUpdate(member.id, member.toJSON());
+            setOpenSnackbar(true);
+        } else {
+            const updatedMember = Member.fromJson({
+                ...member,
+                role,
+                civilStatus,
+            });
+            await memberAdd(updatedMember);
+            setOpenSnackbar(true);
+            setMember(new Member());
+            setCepData(null);
+            setCivilStatus(member.civilStatus);
+            setRole(member.role);
+            setChildrenInputs([]);
+        }
     };
 
     useEffect(() => {
-        fetchGroups();
-        fetchMembers();
-        validateCEP({cepData: cepData, setData: setMember})
-    }, [cepData]);
+        async function load() {
+            fetchGroups();
+            fetchMembers();
+            validateCEP({ cepData: cepData, setData: setMember });
+            setCivilStatus(member.civilStatus);
+            setRole(member.role);
+            if (memberId) {
+                const data = await findMemberToById(memberId);
+                const loadedMember = Member.fromJson(data);
+                setMember(Member.fromJson(data));
+                setIsEditing(true);
+                if (loadedMember.zipCode) {
+                    checkCEP({ it: loadedMember.zipCode, setCepData });
+                }
+            }
+        }
+        load();
+    }, [memberId]);
 
     return (
         <>
             <BackButton path={'member'}/>
             <Container className='details-container'>
                 <form onSubmit={handleSubmit} className="details-form">
-                    <h2>Novo Membro</h2>
+                    <h2>{isEditOrNew}</h2>
                     <Box mb={2}> 
                         <TextField
                             label="Nome"
@@ -107,18 +140,52 @@ export default function MemberDetails() {
                                 handleChange("name", e.target.value.toUpperCase())
                             }
                             error={!!errors.name}
+                            helperText={errors.name}
+                            fullWidth
+                            required
+                        />
+                    </Box>
+                    <Box mb={2}> 
+                        <TextField
+                            label="CPF"
+                            type='number'
+                            value={member.cpf}
+                            onChange={(e) => 
+                                handleChange("cpf", e.target.value)
+                            }
+                            error={!!errors.cpf}
+                            helperText={errors.cpf}
                             fullWidth
                             required
                         />
                     </Box>
                     <Box mb={2}>
+                        <DatePicker
+                            label="Data de nascimento"
+                              value={member.birthdate ? dayjs(member.birthdate) : null}
+                                onChange={(date) => {
+                                    handleChange("birthdate", date?.toDate() ?? null);
+                                }}
+                            format="DD/MM/YYYY"
+                            slotProps={{
+                                textField: {
+                                    fullWidth: true,
+                                    error: !!errors.birthDate,
+                                    helperText: errors.birthDate,
+                                },
+                            }}                        
+                        />
+                    </Box>
+                    <Box mb={2}>
                         <TextField
                             label="Telefone"
+                            type='number'
                             value={member.phone}
                             onChange={(e) => 
                                 handleChange("phone", e.target.value)
                             }
                             error={!!errors.phone}
+                            helperText={errors.phone}      
                             fullWidth
                             required
                         />
@@ -129,6 +196,7 @@ export default function MemberDetails() {
                             type="email"
                             value={member.email}
                             error={!!errors.email}
+                            helperText={errors.email}                       
                             onChange={(e) => 
                                 handleChange("email", e.target.value.toUpperCase())
                             }
@@ -138,9 +206,11 @@ export default function MemberDetails() {
                     <Box mb={2}>
                         <TextField
                             label="CEP"
-                            onBlur={(it) => checkCEP({ it, setCepData })}
+                            type='number'
+                            onBlur={(e) => checkCEP({ it: e.target.value, setCepData })}
                             value={member.zipCode}
                             error={!!errors.zipCode}
+                            helperText={errors.zipCode}  
                             onChange={(e) => 
                                 handleChange("zipCode", e.target.value.toUpperCase())
                             }
@@ -153,7 +223,6 @@ export default function MemberDetails() {
                             label="Rua"
                             value={cepData?.logradouro.toUpperCase()}
                             InputLabelProps={{ shrink: true }}
-                            error={!!errors.zipCode}
                             onChange={(e) => 
                                 handleChange("street", e.target.value.toUpperCase())
                             }
@@ -167,6 +236,7 @@ export default function MemberDetails() {
                             type="number"
                             value={member.houseNumber ?? EMPTY}
                             error={!!errors.houseNumber}
+                            helperText={errors.houseNumber}
                             onChange={(e) => 
                                 handleChange("houseNumber", Number(e.target.value))
                             }
@@ -178,7 +248,6 @@ export default function MemberDetails() {
                         <TextField
                             label="Bairro"
                             value={cepData?.bairro.toUpperCase()}
-                            error={!!errors.neighborhood}
                             InputLabelProps={{ shrink: true }}
                             onChange={(e) => 
                                 handleChange("neighborhood", e.target.value.toUpperCase())
@@ -194,7 +263,6 @@ export default function MemberDetails() {
                             onChange={(e) => 
                                 handleChange("city", e.target.value.toUpperCase())
                             }
-                            error={!!errors.city}
                             InputLabelProps={{ shrink: true }}
                             fullWidth
                             required
@@ -214,7 +282,7 @@ export default function MemberDetails() {
                     </Box>
                     <Box mb={2}>
                         <Autocomplete
-                            value={groups.find(group => group.id === member.groupId) ?? null} 
+                            value={selectedGroup} 
                             onChange={(_, newValue) => {
                                 setMember(prev => {
                                     const updatedMember = { ...prev, groupId: newValue?.id ?? null };
@@ -278,7 +346,7 @@ export default function MemberDetails() {
                                 label="Data do Batismo"
                                 value={dayjs(member.batism.baptismDate)}
                                 onChange={(date) =>
-                                handleBatismChange("baptismDate", date?.toDate() ?? new Date())
+                                    handleBatismChange("baptismDate", date?.toDate() ?? new Date())
                                 }
                                 format="DD/MM/YYYY"
                                 slotProps={{ textField: { fullWidth: true } }}
@@ -292,7 +360,7 @@ export default function MemberDetails() {
                             <TextField
                                 select
                                 label="Estado Civil"
-                                value={civilStatus}
+                                value={civilStatus ?? member.civilStatus}
                                 onChange={(e) => setCivilStatus(e.target.value as CivilStatus)}
                                 fullWidth
                                 SelectProps={{ native: true }}
@@ -374,7 +442,7 @@ export default function MemberDetails() {
                     </Button>
                 </form>
                 <SnackBarMessage 
-                    message={"Cliente criado com sucesso!"} 
+                    message={editOrNewMessage()} 
                     openSnackbar={openSnackbar} 
                     setOpenSnackbar={setOpenSnackbar}
                 />

@@ -26,6 +26,7 @@ function AppRouter() {
                     <Route path="/dashboard/:userId/edit-visitor/:visitorId" element={<VisitorDetails/>}/>
                     <Route path="member" element={<MemberData/>}/>
                     <Route path="new-member" element={<MemberDetails/>}/>
+                    <Route path="/dashboard/:userId/edit-member/:memberId" element={<MemberDetails/>}/>
                     <Route path="group" element={<GroupData/>}/>
                     <Route path="new-group" element={<GroupDetails/>}/>
                     <Route path="financial" element={<FinancialData/>}/>

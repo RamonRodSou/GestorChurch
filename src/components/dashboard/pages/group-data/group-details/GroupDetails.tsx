@@ -22,15 +22,15 @@ export default function GroupDetails() {
     const [cepData, setCepData] = useState<CepData | null>(null);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-    const handleChange = (field: keyof Group, value: any) => {
+    function handleChange(field: keyof Group, value: any) {
         setGroup(prev => Group.fromJson({ ...prev, [field]: value }));
     };
 
-    const handleAddMemberField = () => {
+    function handleAddMemberField() {
         setMembersInputs([...membersInputs, EMPTY]);
     };
 
-    const handleMemberChange = (index: number, value: MemberSummary | string) => {
+    function handleMemberChange(index: number, value: MemberSummary | string) {
         const updated = [...membersInputs];
         updated[index] = ensureMemberSummary(value);
         setMembersInputs(updated);
@@ -40,12 +40,12 @@ export default function GroupDetails() {
         });
     };
 
-    const fetchMembers = async () => {
+    async function fetchMembers() {
         const response = await findAllMembersSummary();
         setAllMembers(response);
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         if (!validateGroupForm({ group, setErrors })) return;
         const updatedGroup = Group.fromJson({ ...group });
@@ -107,7 +107,7 @@ export default function GroupDetails() {
                     <Box mb={2}>
                         <TextField
                             label="CEP"
-                            onBlur={(it) => checkCEP({ it, setCepData })}
+                            onBlur={(e) => checkCEP({ it: e.target.value, setCepData })}
                             helperText={errors.zipCode}
                             error={!!errors.zipCode}
                             onChange={(e) => 
