@@ -12,6 +12,7 @@ import { Financial, FinancialSummary } from '@domain/financial';
 import { financialSummaryAdd, findAllFinancials } from '@service/FinancialService';
 import FinancialModal from './financial-modal/FinancialModal';
 import Search from '@components/search/Search';
+import SnackBarMessage from '@components/snackBarMessage/SnackBarMessage';
 
 export default function FinancialData() {
     const [records, setRecords] = useState<Financial[]>([]);
@@ -19,7 +20,7 @@ export default function FinancialData() {
     const [expense, setExpense] = useState<number>(0);
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [filtered, setFiltered] = useState<Financial[]>([]);
-    
+    const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
 
     const isColorRed = balance >= 0 ? '#e8f5e9' : '#ffebee';
     
@@ -27,16 +28,11 @@ export default function FinancialData() {
         return setOpenModal(true);
     }
 
-    async function handleConfirmFinancial(income: number, expense: number) {
-        const newFinancial = new FinancialSummary(
-            undefined,
-            income,
-            expense
-        );
-    
-        await financialSummaryAdd(newFinancial);
+    async function handleConfirmFinancial(financialSummary: FinancialSummary) {
+        await financialSummaryAdd(financialSummary);
         await load();
         setOpenModal(false);
+        setOpenSnackbar(true)
     }
 
     async function load() {
@@ -79,8 +75,8 @@ export default function FinancialData() {
                 onFilter={setFiltered}
                 label={'Buscar uma movimentação'}
                 searchBy={(item, term) => 
-                    item?.member?.name.toLowerCase().includes(term.toLowerCase()) ||
-                    item.serviceOrder?.orderNumber.toString().includes(term)}                 
+                    item?.member?.name.toLowerCase().includes(term.toLowerCase())
+                }                 
             />
             <Button 
                 variant="contained" 
@@ -97,7 +93,7 @@ export default function FinancialData() {
                         className='order-card'
                     >
                         <Typography variant="subtitle2" className='title-secondary'>
-                            Faturamento OS - {item.serviceOrder?.orderNumber ?? 'Movimentação Manual'}
+                            {/* Faturamento OS - {item.serviceOrder?.orderNumber ?? 'Movimentação Manual'} */}
                         </Typography>
 
                         <Divider sx={{ my: 1 }} />
@@ -121,6 +117,11 @@ export default function FinancialData() {
                 onConfirm={handleConfirmFinancial}
                 incomeDefault={0}
             />
+            <SnackBarMessage 
+                message={"Movimentação cadastrada com sucesso!"} 
+                openSnackbar={openSnackbar} 
+                setOpenSnackbar={setOpenSnackbar}
+            />   
       </Container>
       
     );

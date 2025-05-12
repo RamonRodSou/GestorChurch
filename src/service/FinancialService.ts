@@ -26,7 +26,9 @@ export async function financialSummaryAdd(financial: FinancialSummary) {
         await addDoc(collection(db, 'financials'), {
             userId: user.uid,
             income: financial.income,
+            IncomeType: financial.incomeType,
             expense: financial.expense,
+            expenseType: financial.expenseType,
             createdAt: financial.createdAt,
         });
     } catch (error) {

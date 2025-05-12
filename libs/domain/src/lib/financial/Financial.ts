@@ -1,4 +1,6 @@
+import { IncomeType } from '@domain/enums';
 import { MemberSummary } from '@domain/user/member/Member';
+import { EMPTY } from '@domain/utils/string-utils';
 import { v4 as uuidv4 } from 'uuid';
 
 export class Financial {
@@ -39,7 +41,9 @@ export class FinancialSummary {
     constructor(
         public readonly id: string = uuidv4(),
         public income: number = 0,
+        public incomeType: IncomeType | null,
         public expense: number = 0,
+        public expenseType: string = EMPTY,
         public createdAt: string = new Date().toISOString()
     ) { }
 
@@ -51,7 +55,9 @@ export class FinancialSummary {
         return new FinancialSummary(
             json.id,
             json.income,
+            json.incomeType,
             json.expense,
+            json.expenseType,
             json.createdAt
         );
     }
@@ -60,7 +66,9 @@ export class FinancialSummary {
         return {
             id: this.id,
             income: this.income,
+            incomeType: this.incomeType,
             expense: this.expense,
+            expenseType: this.expenseType,
             createdAt: this.createdAt,
         };
     }
