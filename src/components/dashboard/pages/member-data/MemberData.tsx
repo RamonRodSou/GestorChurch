@@ -1,4 +1,4 @@
-import { Add, Info } from "@mui/icons-material";
+import { Add, Info, WhatsApp } from "@mui/icons-material";
 import {
     Box,
   Container,
@@ -23,6 +23,7 @@ import SnackBarMessage from "@components/snackBarMessage/SnackBarMessage";
 import { ManagerContext } from "@context/ManagerContext";
 import { findGroupSummaryToById } from "@service/GroupService";
 import { GroupSummary } from "@domain/group";
+import { whatzapp } from "@domain/utils";
 
 export default function MemberData() {
     const [data, setData] = useState<Member[]>([]);
@@ -86,6 +87,8 @@ export default function MemberData() {
                             <TableCell className='title-secondary'>Nome</TableCell>
                             <TableCell className='title-secondary'>Telefone</TableCell>
                             <TableCell className='title-secondary'>Status</TableCell>
+                            <TableCell className='title-secondary'>Util</TableCell>
+
                         </TableRow>
                         </TableHead>
                         <TableBody>
@@ -96,9 +99,14 @@ export default function MemberData() {
                                     <TableCell className='data-text'>{it.name}</TableCell>
                                     <TableCell className='data-text'>{it.phone}</TableCell>
                                     <TableCell className='data-text'>{it.role}</TableCell>
-                                    <IconButton onClick={() => handleOpenDetails(it)}>
-                                        <Info/>
-                                    </IconButton>
+                                    <Box className='whatzapp'>
+                                        <IconButton onClick={() => whatzapp(it.name, it.phone)} className='whatzappBtn'>
+                                            <WhatsApp/>
+                                        </IconButton>  
+                                        <IconButton onClick={() => handleOpenDetails(it)}>
+                                            <Info/>
+                                        </IconButton>   
+                                    </Box>
                                 </TableRow>
                             ))}
                         </TableBody>

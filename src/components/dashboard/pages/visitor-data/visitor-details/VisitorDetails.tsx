@@ -91,7 +91,7 @@ export default function VisitorDetails() {
                         <TextField
                             label="Nome"
                             value={data.name}
-                            onChange={(e) => handleChange("name", e.target.value)}
+                            onChange={(e) => handleChange("name", e.target.value.toUpperCase())}
                             fullWidth
                             required
                         />

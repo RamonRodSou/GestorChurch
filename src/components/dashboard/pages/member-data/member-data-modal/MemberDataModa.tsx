@@ -73,3 +73,4 @@ export default function MemberDataModal({ open, onClose, member, groupData }: Me
         </Dialog>
     );
 }
+ 

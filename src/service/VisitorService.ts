@@ -3,16 +3,17 @@ import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "firebase/fi
 import { auth, db } from "./firebase";
 import { Visitor } from "@domain/user/visitor/Visitor";
 
-export async function visitorAdd(client: Visitor) {
+export async function visitorAdd(vistor: Visitor) {
     try {
         const user = auth.currentUser;
         if (!user) throw new Error("Usuário não autenticado.");
         await addDoc(collection(db, 'visitors'), {
             userId: user.uid,
-            name: client.name,
-            phone: client.phone,
-            visitHistory: client.visitHistory,
-            createdAt: client.createdAt,
+            name: vistor.name,
+            phone: vistor.phone,
+            visitHistory: vistor.visitHistory,
+            isActive: vistor.isActive,
+            createdAt: vistor.createdAt,
         });
     } catch (error) {
         alert('Erro ao registrar um novo visitante: ' + error);
@@ -63,4 +64,4 @@ export async function visitorDelete(id: string) {
     } catch (error) {
         alert('Erro ao deletar visitante: ' + error)
     }
-}
+} 

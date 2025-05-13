@@ -54,45 +54,6 @@ export async function memberUpdate(id: string, data: Partial<Member>): Promise<v
     }
 }
 
-// export async function memberAdd(member: Member, currentEmail: string, currentPassword: string) {
-//   try {
-//         const passwordHash = await member.getPasswordHash();
-//         let createdUserId = EMPTY;
-//         if (member.role === Role.LEADER) {
-//             createdUserId = await createUserWithoutAffectingSession(member.email, passwordHash);
-
-//             await createMemberDocument(createdUserId, member);
-//             await signInWithEmailAndPassword(auth, currentEmail, currentPassword);
-//         } else {
-//         const currentUser = auth.currentUser;
-//         if (!currentUser) throw new Error('Usuário não autenticado.');
-
-//         createdUserId = currentUser.uid;
-//         await createMemberDocument(createdUserId, member);
-//         }
-
-//         if (member.groupId) {
-//         await addMemberToGroup(createdUserId, member.groupId);
-//         }
-
-//         await updateSpouseLinks(createdUserId, member);
-
-//     } catch (error) {
-//         alert('Erro ao adicionar membro: ' + error);
-//         throw error;
-//     }
-// }
-
-// async function createUserWithoutAffectingSession(email: string, password: string): Promise<string> {
-//     const secondaryApp = initializeApp(firebaseConfig, 'Secondary');
-//     const secondaryAuth = getAuth(secondaryApp);
-
-//     const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
-//     await deleteApp(secondaryApp); 
-//     return userCredential.user.uid;
-// }
-
-
 export async function memberAdd(member: Member) {
   try {
         let createdUserId = EMPTY;

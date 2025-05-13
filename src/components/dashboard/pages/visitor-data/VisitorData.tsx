@@ -1,5 +1,5 @@
 import './visitor-data.scss';
-import { Add, Info } from "@mui/icons-material";
+import { Add, Info, WhatsApp } from "@mui/icons-material";
 import {
     Container,
     IconButton,
@@ -22,6 +22,7 @@ import SnackBarMessage from '@components/snackBarMessage/SnackBarMessage';
 import { Visitor } from '@domain/user/visitor/Visitor';
 import { findAllVisitors } from '@service/VisitorService';
 import VisitorDataModal from './visitor-data-modal/VisitorDataModal';
+import { whatzapp } from '@domain/utils';
 
 export default function VisitorData() {
     const [data, setData] = useState<Visitor[]>([]);
@@ -29,7 +30,7 @@ export default function VisitorData() {
     const [openData, setOpenData] = useState(false);
     const [selectedVisitor, setSelectedVisitor] = useState<Visitor | null>(null);
     const { userId } = useParams();
-    const { openSnackbar, setOpenSnackbar } = useContext(ManagerContext);
+    const { openSnackbar, setOpenSnackbar, isMobile } = useContext(ManagerContext);
     const navigate = useNavigate();
     
     function handleOpenDetails(visitor: Visitor) {
@@ -72,19 +73,37 @@ export default function VisitorData() {
                     <TableHead>
                     <TableRow>
                         <TableCell className='title-secondary'>Nome</TableCell>
-                        <TableCell className='title-secondary'>Telefone</TableCell>
-                        <TableCell className='title-secondary'>Visitas</TableCell>
+
+                        {!isMobile && (
+                            <>
+                                <TableCell className='title-secondary'>Telefone</TableCell>
+                                <TableCell className='title-secondary'>Visitas</TableCell>
+                            </>
+                        )}
+
+                        <TableCell className='title-secondary'>Util</TableCell>
+
                     </TableRow>
                     </TableHead>
                     <TableBody>
                     {filtered.map((it) => (
                         <TableRow key={it.id}>
                         <TableCell className='data-text'>{it.name}</TableCell>
-                        <TableCell className='data-text'>{it.phone}</TableCell>
-                        <TableCell className='data-text'>{it.visitHistory.at(0)}</TableCell>
-                        <IconButton onClick={() => handleOpenDetails(it)}>
-                            <Info/>
-                        </IconButton>
+
+                        {!isMobile && (
+                            <>
+                                <TableCell className='data-text'>{it.phone}</TableCell>
+                                <TableCell className='data-text'>{it.visitHistory.at(0)}</TableCell>
+                            </>
+                        )}
+                        <Box className='whatzapp'>
+                            <IconButton onClick={() => whatzapp(it.name, it.phone)} className='whatzappBtn'>
+                                <WhatsApp/>
+                            </IconButton>  
+                            <IconButton onClick={() => handleOpenDetails(it)}>
+                                <Info/>
+                            </IconButton>   
+                        </Box>
                         </TableRow>
                     ))}
                     </TableBody>

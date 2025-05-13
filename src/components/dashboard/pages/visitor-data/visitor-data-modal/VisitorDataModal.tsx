@@ -4,6 +4,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Visitor } from '@domain/user/visitor/Visitor';
 import { whatzapp } from '@domain/utils/whatszappAPI';
 import ModalBtns from '@components/modalBtns/ModalBtns';
+import { useState } from 'react';
+import { updateVisitor } from '@service/VisitorService';
+import ConfirmModal from '@components/confirm-modal/ConfirmModal';
 
 interface VisitorDataModalProps {
     open: boolean;
@@ -12,6 +15,8 @@ interface VisitorDataModalProps {
 }
 
 export default function VisitorDataModal({ open, onClose, visitor }: VisitorDataModalProps) {
+    const [openData, setOpenData] = useState(false);
+    
     const navigate = useNavigate();
     const { userId } = useParams();
 
@@ -21,8 +26,11 @@ export default function VisitorDataModal({ open, onClose, visitor }: VisitorData
         return navigate(`/dashboard/${userId}/edit-visitor/${visitorId}`);
     }
 
-    function remove () {
-        console.log('removido')
+    async function remove (visitor: Visitor) {
+        visitor.isActive = false;
+        await updateVisitor(visitor.id, visitor);
+        setOpenData(false);
+        onClose();
     }
 
     return ( 
@@ -32,7 +40,7 @@ export default function VisitorDataModal({ open, onClose, visitor }: VisitorData
                 <ModalBtns
                     edit={() => visitorUpdate(visitor.id)} 
                     whatsApp={() => whatzapp(visitor.name, visitor.phone)}
-                    remove={() => remove()}
+                    remove={() => setOpenData(true)}
                 />
                 <Typography className='textInfo'> <span className='subTextInfo'>TELEFONE: </span>{visitor.phone}</Typography>
                 
@@ -43,6 +51,12 @@ export default function VisitorDataModal({ open, onClose, visitor }: VisitorData
                     ))}
                 </ul>
             </DialogContent>
+            <ConfirmModal
+                message={`Tem certeza que deseja remover o visitante ${visitor.name}`}
+                open={openData}
+                onConfirm={() => remove(visitor)}
+                onClose={() => setOpenData(false)}
+            />
         </Dialog>
     );
 }

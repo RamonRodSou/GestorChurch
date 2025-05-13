@@ -7,6 +7,7 @@ export class Visitor {
 		public name: string = EMPTY,
         public phone: string = EMPTY,
         public visitHistory: string[] = [],
+        public isActive: boolean = true,
 		public createdAt: string = new Date().toISOString()
 	) {	}
 
@@ -16,6 +17,7 @@ export class Visitor {
             json.name,
             json.phone, 
             json.visitHistory || [],
+            json.isActive,
             json.createdAt
         );
     }
@@ -26,6 +28,7 @@ export class Visitor {
             name: this.name,
             phone: this.phone,
             visitHistory: this.visitHistory,
+            isActive: this.isActive,
             createdAt: this.createdAt,
         };
     }
