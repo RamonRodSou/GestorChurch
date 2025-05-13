@@ -41,9 +41,9 @@ export default function FinancialCard() {
                         R$ {(isIncome ? item.income : item.expense).toFixed(2)}
                         </Typography>
 
-                        {/* <Typography variant="body2" mt={1}>
+                        <Typography variant="body2" mt={1}>
                         Membro: {item.member?.name ?? 'Gerente'}
-                        </Typography> */}
+                        </Typography>
 
                         <Typography variant="caption" display="block" mt={1}>
                         Criado em: {new Date(item.createdAt).toLocaleDateString()}

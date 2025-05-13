@@ -35,7 +35,7 @@ export const getMenuItems  = (permission: number | null): IMenu[] => {
         },
         {
             path: 'group',
-            label: 'Grupo Familiar',
+            label: 'GC',
             icon: <Diversity3Outlined/>,
         }
     ];

@@ -3,6 +3,7 @@ import { Logout, Menu as MenuIcon } from "@mui/icons-material";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
     AppBar,
+    Box,
     Drawer,
     IconButton,
     List,
@@ -20,19 +21,22 @@ import { AuthContext } from "@context/AuthContext";
 import { ManagerContext } from "@context/ManagerContext";
 import { Admin } from "@domain/user";
 import { PermissionContext } from "@context/PermissionContext";
+import  logo from  "@assets/logo-iaf.webp";
 
 export default function Dashboard() {
     const navigate = useNavigate();
     const location = useLocation();
     const currentUser = useContext(AuthContext);
+
+    const [mobileOpen, setMobileOpen] = useState(false);
+
     const { userId } = useParams();
     const { isMobile } = useContext(ManagerContext);
     const { permission } = useContext(PermissionContext) ?? { permission: null };
-    const menuItems = getMenuItems (permission);
 
+    const menuItems = getMenuItems (permission);        
     const admin = location.state?.admin as Admin;
-    
-    const [mobileOpen, setMobileOpen] = useState(false);
+
     const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
     function handleListItemClick(path: string): void {
@@ -49,6 +53,10 @@ export default function Dashboard() {
     
     const drawerContent = (
         <div className="dashboard-menu-content">
+            <Box className="logo">
+                <img alt="Logo Igreja IAF" src={logo} width={50}/>
+                <Typography className="titleLogo">IGREJA IAF</Typography>
+            </Box>
             <List> 
                 {menuItems.map((item) => (
                     <ListItem key={item.path} disablePadding>

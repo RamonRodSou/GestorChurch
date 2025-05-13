@@ -30,6 +30,7 @@ function AppRouter() {
                     <Route path="/dashboard/:userId/edit-member/:memberId" element={<MemberDetails/>}/>
                     <Route path="group" element={<GroupData/>}/>
                     <Route path="new-group" element={<GroupDetails/>}/>
+                    <Route path="/dashboard/:userId/edit-group/:groupId" element={<GroupDetails/>}/>
                     <Route path="financial" element={<FinancialData/>}/>
                     <Route path="preferences" element={<Preferences/>}/>
                     <Route path="report" element={<ReportData/>}/>

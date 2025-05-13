@@ -1,4 +1,6 @@
+
 export enum IncomeType {
+    EMPTY = '',
     OFFERING = "OFERTA",
     TITHE = "DÍZIMO",
     CAMPAIGN = "CAMPANHA",

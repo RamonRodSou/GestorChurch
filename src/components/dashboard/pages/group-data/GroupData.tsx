@@ -53,7 +53,7 @@ export default function GroupData() {
         <Container className='data-container'>
             <Box mb={3}>
                 <Typography variant="h4" component="h1" className='title'>
-                    Grupos Familiares
+                    GC
                 </Typography>
             </Box>
             <Search<Group> 
@@ -91,7 +91,7 @@ export default function GroupData() {
                     </TableContainer>
             ) : (
                 <Typography variant="body1" sx={{ color: 'var(--primary-title)' }}>
-                    Nenhum grupo familiar encontrado.
+                    Nenhum gc encontrado.
                 </Typography>
             )}
 
