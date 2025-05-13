@@ -24,7 +24,7 @@ export default function VisitorDataModal({ open, onClose, visitor }: VisitorData
     function remove () {
         console.log('removido')
     }
-         
+
     return ( 
         <Dialog open={open} onClose={onClose}  fullWidth>
             <DialogContent dividers className='dialog'>

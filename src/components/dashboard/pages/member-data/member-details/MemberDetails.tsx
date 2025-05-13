@@ -32,7 +32,7 @@ export default function MemberDetails() {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const isEditOrNew = isEditing ? `Editar membro: ${member.name}` : 'Novo Membro'
     const { memberId } = useParams();
-    const { email, password, clearCredentials } = useCredentials();
+    const { clearCredentials } = useCredentials();
 
     const selectedGroup = groups.find(group => group.id === member.groupId) ?? null;
 
@@ -101,7 +101,7 @@ export default function MemberDetails() {
                 civilStatus,
             });
 
-            await memberAdd(updatedMember, email, password);
+            await memberAdd(updatedMember);
             clearCredentials();
 
             setOpenSnackbar(true);
