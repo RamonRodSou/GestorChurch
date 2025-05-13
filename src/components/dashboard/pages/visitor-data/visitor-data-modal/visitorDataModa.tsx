@@ -25,9 +25,9 @@ export default function VisitorDataModal({ open, onClose, visitor }: VisitorData
         console.log('removido')
     }
          
-    return (
-        <Dialog open={open} onClose={onClose} fullWidth>
-            <DialogContent dividers>
+    return ( 
+        <Dialog open={open} onClose={onClose}  fullWidth>
+            <DialogContent dividers className='dialog'>
                 <Typography className='title'>{visitor.name}</Typography>
                 <ModalBtns
                     edit={() => visitorUpdate(visitor.id)} 

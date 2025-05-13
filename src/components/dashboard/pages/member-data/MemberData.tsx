@@ -44,7 +44,7 @@ export default function MemberData() {
         } else {
             setGroupData(null)
         }
-        setSelectedMember(member); 
+        setSelectedMember(member);  
         setOpenData(true);
     }
 

@@ -17,7 +17,8 @@ export default function Login() {
 
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const userId = userCredential.user.uid;        
+            const userId = userCredential.user.uid;  
+                
             if(userId) navigate(`/dashboard/${userId}/home`);    
 
         } catch (err: any) {

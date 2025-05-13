@@ -9,6 +9,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/pt-br';
 import dayjs from 'dayjs';
+import { CredentialsProvider } from '@context/CredentialsContext';
+import { PermissionProvider } from '@context/PermissionContext';
 dayjs.locale('pt-br');
 
 createRoot(document.getElementById('root')!).render(
@@ -16,11 +18,15 @@ createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <AuthProvider>
-                <ManagerProvider>
-                    <StrictMode>
-                        <AppRouter/>
-                    </StrictMode>
-                </ManagerProvider>
+                <PermissionProvider>
+                    <CredentialsProvider>
+                            <ManagerProvider>
+                                <StrictMode>
+                                    <AppRouter/>
+                                </StrictMode>
+                            </ManagerProvider>
+                    </CredentialsProvider>
+                </PermissionProvider>
             </AuthProvider>
         </LocalizationProvider>
     </React.StrictMode>

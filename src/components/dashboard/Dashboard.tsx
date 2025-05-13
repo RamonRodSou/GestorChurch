@@ -15,10 +15,11 @@ import {
     Typography
 } from "@mui/material";
 import { useContext, useState } from "react";
-import { menuItems } from "./Menu";
+import { getMenuItems  } from "./Menu";
 import { AuthContext } from "@context/AuthContext";
 import { ManagerContext } from "@context/ManagerContext";
 import { Admin } from "@domain/user";
+import { PermissionContext } from "@context/PermissionContext";
 
 export default function Dashboard() {
     const navigate = useNavigate();
@@ -26,6 +27,8 @@ export default function Dashboard() {
     const currentUser = useContext(AuthContext);
     const { userId } = useParams();
     const { isMobile } = useContext(ManagerContext);
+    const { permission } = useContext(PermissionContext) ?? { permission: null };
+    const menuItems = getMenuItems (permission);
 
     const admin = location.state?.admin as Admin;
     

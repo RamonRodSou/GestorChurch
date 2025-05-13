@@ -3,7 +3,7 @@ import { Container, Typography } from '@mui/material';
 import CardData from './card-data/CardData';
 import FinancialGraph from './financial-graph/FinancialGraph';
 import { FinancialProvider } from '@context/FinancialContext';
-import VisitorGraph from './visitor-graph/visitorGraph';
+import VisitorGraph from './visitor-graph/visitorGraph'
 
 export default function Home() {
 

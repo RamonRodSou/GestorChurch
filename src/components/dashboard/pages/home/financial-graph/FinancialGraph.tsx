@@ -2,10 +2,11 @@ import './financial-graph.scss';
 import { Financial } from '@domain/financial';
 import { Typography } from '@mui/material';
 import { findAllFinancials } from '@service/FinancialService';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { allMonth } from '../all-month';
 import { useFinancial } from '@context/FinancialContext';
+import { PermissionContext } from '@context/PermissionContext';
 
 interface FinancialSummary {
     month: string;
@@ -16,6 +17,8 @@ interface FinancialSummary {
 export default function FinancialGraph() {
     const [chartData, setChartData] = useState<FinancialSummary[]>([]);
     const { setFinancialData } = useFinancial();
+    const context = useContext(PermissionContext);
+    const { permission  }: any = context;
 
     useEffect(() => {
         async function load() {
@@ -58,18 +61,23 @@ export default function FinancialGraph() {
 
     return (
         <>
-            <Typography variant="h5" gutterBottom className='title-secondary'>📈 Finanças do Ano</Typography>
-            <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={chartData}>
-                    <Line type="monotone" dataKey="income" stroke="#4caf50" strokeWidth={3} name="Entradas" />
-                    <Line type="monotone" dataKey="expense" stroke="#f44336" strokeWidth={3} name="Saídas" />
-                    <CartesianGrid stroke="#ccc" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                </LineChart>
-            </ResponsiveContainer>
+            {permission >= 10 && (
+                <>
+                    <Typography variant="h5" gutterBottom className='title-secondary'>📈 Finanças do Ano</Typography>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={chartData}>
+                            <Line type="monotone" dataKey="income" stroke="#4caf50" strokeWidth={3} name="Entradas" />
+                            <Line type="monotone" dataKey="expense" stroke="#f44336" strokeWidth={3} name="Saídas" />
+                            <CartesianGrid stroke="#ccc" />
+                            <XAxis dataKey="month" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </>
+
+            )}
         </>
     )
 }

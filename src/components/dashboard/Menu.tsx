@@ -6,48 +6,48 @@ import {
     Group,
     Person2Outlined,
     Diversity3Outlined,
+    StickyNote2Outlined,
   } from '@mui/icons-material';
 
-interface IMenu {
+export interface IMenu {
     path: string;
     label: string;
     icon: JSX.Element;
 }
 
-export const menuItems: IMenu[] = [
-    {
-        path: 'home',
-        label: 'Início',
-        icon: <AccountCircle/>
-    },
-    {
-        path: 'visitor',
-        label: 'Visitantes',
-        icon: <Person2Outlined/>,
-    },
-    {
-        path: 'member',
-        label: 'Membros',
-        icon: <Group/>,
-    },
-    {
-        path: 'group',
-        label: 'Grupo Familiar',
-        icon: <Diversity3Outlined/>,
-    },
-    {
-        path: 'financial',
-        label: 'Finanças',
-        icon: <Assessment/>
-    },
-    // {
-    //     path: 'service-order',
-    //     label: 'Ordens de Serviço',
-    //     icon: <Assignment/>
-    // },
-    {
-        path: 'preferences',
-        label: 'Configurações',
-        icon: <Settings/>
+
+export const getMenuItems  = (permission: number | null): IMenu[] => {
+    const items: IMenu[] = [
+        {
+            path: 'home',
+            label: 'Início',
+            icon: <AccountCircle/>
+        },
+        {
+            path: 'visitor',
+            label: 'Visitantes',
+            icon: <Person2Outlined/>,
+        },
+        {
+            path: 'member',
+            label: 'Membros',
+            icon: <Group/>,
+        },
+        {
+            path: 'group',
+            label: 'Grupo Familiar',
+            icon: <Diversity3Outlined/>,
+        }
+    ];
+    
+    if (permission !== null && permission >= 8) {
+        items.push({ path: 'financial', label: 'Finanças', icon: <Assessment /> });
     }
-];
+
+    items.push(
+        { path: 'report', label: 'Relatório', icon: <StickyNote2Outlined /> },
+        { path: 'preferences', label: 'Configurações', icon: <Settings /> }
+    );
+
+    return items;
+}

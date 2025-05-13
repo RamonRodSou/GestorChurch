@@ -12,6 +12,7 @@ import VisitorData from '@components/dashboard/pages/visitor-data/VisitorData';
 import VisitorDetails from '@components/dashboard/pages/visitor-data/visitor-details/VisitorDetails';
 import GroupData from '@components/dashboard/pages/group-data/GroupData';
 import GroupDetails from '@components/dashboard/pages/group-data/group-details/GroupDetails';
+import ReportData from '@components/dashboard/pages/report-data/ReportData';
 
 function AppRouter() {
     return (
@@ -31,6 +32,7 @@ function AppRouter() {
                     <Route path="new-group" element={<GroupDetails/>}/>
                     <Route path="financial" element={<FinancialData/>}/>
                     <Route path="preferences" element={<Preferences/>}/>
+                    <Route path="report" element={<ReportData/>}/>
                 </Route>
                 <Route path="*" element={<Navigate to="/login"/>}/>
             </Routes>

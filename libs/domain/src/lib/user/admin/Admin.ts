@@ -1,8 +1,7 @@
-import { User } from "@domain/user";
 import { EMPTY } from "@domain/utils/string-utils";
 import { v4 as uuidv4 } from 'uuid';
 
-export class Admin extends User {
+export class Admin {
     constructor(
         public readonly id: string = uuidv4(),
         public name: string = EMPTY,
@@ -10,9 +9,7 @@ export class Admin extends User {
         public email: string = EMPTY,
         public password: string = EMPTY,
         public readonly permissions: string[] = []
-    ) {
-        super(id, name, phone, email);
-    }
+    ) { }
 
     static fromJson(json: any): Admin {
         return new Admin(
@@ -41,20 +38,20 @@ export class Admin extends User {
     }
 }
 
-export class AdminSummary extends User {
+export class AdminSummary {
     constructor(
         public readonly id: string = uuidv4(),
         public email: string = EMPTY,
-        public password: string = EMPTY
-    ) {
-        super(id, email);
-    }
+        public password: string = EMPTY,
+        public permission?: number | null
+    ) { }
 
     static fromJson(json: any): AdminSummary {
         return new AdminSummary(
             json.id,
             json.email,
-            json.password
+            json.password,
+            json.permission ?? null
         );
     }
 
@@ -62,7 +59,8 @@ export class AdminSummary extends User {
         return {
             id: this.id,
             email: this.email,
-            password: this.password
+            password: this.password,
+            permission: this.permission ?? null
         };
     }
 }

@@ -39,7 +39,7 @@ export default function MemberDataModal({ open, onClose, member, groupData }: Me
 
     return (
         <Dialog open={open} onClose={onClose} fullWidth>
-            <DialogContent dividers>
+            <DialogContent dividers className='dialog'>
                 <Typography className='title'>{member.name}</Typography>
                 <ModalBtns
                     edit={() => editMember(member.id)} 

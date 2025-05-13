@@ -22,7 +22,7 @@ export default function GroupDataModal({ open, onClose, group }: GroupDataModalP
          
     return (
         <Dialog open={open} onClose={onClose} fullWidth>
-            <DialogContent dividers>
+            <DialogContent dividers className='dialog'>
                 <Box className='title-and-editBtn'>
                     <Typography className='title'>{group.name}</Typography>
                     <IconButton onClick={() => groupUpdate(group.id)} className='editBtn'>

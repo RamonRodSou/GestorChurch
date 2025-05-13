@@ -57,6 +57,11 @@
         color: var(--secondary-title);
     }
 
+    .dialog {
+        background-color: #ffffff;
+        min-height: 300px;
+    }
+
     .modalBtns {
         display: flex;
         justify-content: space-between;

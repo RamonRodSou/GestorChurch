@@ -17,6 +17,7 @@ import { findAllGroups } from '@service/GroupService';
 import validateCEP from '@domain/utils/validateCEP';
 import { checkCEP } from '@domain/utils/checkCEP';
 import { useParams } from 'react-router-dom';
+import { useCredentials } from '@context/CredentialsContext';
 
 export default function MemberDetails() {
     const [member, setMember] = useState<Member>(new Member());
@@ -31,6 +32,8 @@ export default function MemberDetails() {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const isEditOrNew = isEditing ? `Editar membro: ${member.name}` : 'Novo Membro'
     const { memberId } = useParams();
+    const { email, password, clearCredentials } = useCredentials();
+
     const selectedGroup = groups.find(group => group.id === member.groupId) ?? null;
 
     function handleChange(field: keyof Member, value: any) {
@@ -93,10 +96,14 @@ export default function MemberDetails() {
         } else {
             const updatedMember = Member.fromJson({
                 ...member,
+                cepData,
                 role,
                 civilStatus,
             });
-            await memberAdd(updatedMember);
+
+            await memberAdd(updatedMember, email, password);
+            clearCredentials();
+
             setOpenSnackbar(true);
             setMember(new Member());
             setCepData(null);
@@ -113,18 +120,20 @@ export default function MemberDetails() {
             validateCEP({ cepData: cepData, setData: setMember });
             setCivilStatus(member.civilStatus);
             setRole(member.role);
+
             if (memberId) {
                 const data = await findMemberToById(memberId);
                 const loadedMember = Member.fromJson(data);
                 setMember(Member.fromJson(data));
                 setIsEditing(true);
+
                 if (loadedMember.zipCode) {
                     checkCEP({ it: loadedMember.zipCode, setCepData });
                 }
             }
         }
         load();
-    }, [memberId]);
+    }, [memberId, cepData]);
 
     return (
         <>
