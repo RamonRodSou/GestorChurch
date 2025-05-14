@@ -1,5 +1,5 @@
 import './visitor-data.scss';
-import { Add, Info, WhatsApp } from "@mui/icons-material";
+import { Add, Info } from "@mui/icons-material";
 import {
     Container,
     IconButton,
@@ -81,30 +81,34 @@ export default function VisitorData() {
                             </>
                         )}
 
-                        <TableCell className='title-secondary'>Util</TableCell>
+                        <TableCell className='title-secondary'>Info</TableCell>
 
                     </TableRow>
                     </TableHead>
                     <TableBody>
-                    {filtered.map((it) => (
-                        <TableRow key={it.id}>
-                        <TableCell className='data-text'>{it.name}</TableCell>
+                    {filtered
+                        .filter((it) => it.isActive)
+                        .map((it) => (
+                            <TableRow key={it.id}>
+                                <TableCell className='data-text'>{it.name}</TableCell>
 
-                        {!isMobile && (
-                            <>
-                                <TableCell className='data-text'>{it.phone}</TableCell>
-                                <TableCell className='data-text'>{it.visitHistory.at(0)}</TableCell>
-                            </>
-                        )}
-                        <Box className='whatzapp'>
-                            <IconButton onClick={() => whatzapp(it.name, it.phone)} className='whatzappBtn'>
-                                <WhatsApp/>
-                            </IconButton>  
-                            <IconButton onClick={() => handleOpenDetails(it)}>
-                                <Info/>
-                            </IconButton>   
-                        </Box>
-                        </TableRow>
+                                {!isMobile && (
+                                    <>
+                                        <TableCell 
+                                            className='data-text onClick' 
+                                            onClick={() => whatzapp(it.name, it.phone)}
+                                        >
+                                            {it.phone}
+                                        </TableCell>
+                                        <TableCell className='data-text'>{it.visitHistory.at(0)}</TableCell>
+                                    </>
+                                )}
+                                <TableCell className='data-text'>                                   
+                                    <IconButton onClick={() => handleOpenDetails(it)}>
+                                        <Info/>
+                                    </IconButton> 
+                                </TableCell>
+                            </TableRow>
                     ))}
                     </TableBody>
                 </Table>

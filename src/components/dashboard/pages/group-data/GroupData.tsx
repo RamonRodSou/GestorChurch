@@ -72,6 +72,8 @@ export default function GroupData() {
                         <TableRow>
                             <TableCell className='title-secondary'>Nome</TableCell>
                             <TableCell className='title-secondary'>Lideres</TableCell>
+                            <TableCell className='title-secondary'>Info</TableCell>
+
                         </TableRow>
                         </TableHead>
                         <TableBody>
@@ -81,9 +83,11 @@ export default function GroupData() {
                             <TableCell className='data-text'>
                                 {it.leaders.map(it => it.name.split(" ")[0]).join(" / ")}
                             </TableCell>
-                            <IconButton onClick={() => handleOpenDetails(it)}>
-                                <Info/>
-                            </IconButton>
+                            <TableCell className='data-text'>
+                                <IconButton onClick={() => handleOpenDetails(it)}>
+                                    <Info/>
+                                </IconButton>
+                            </TableCell>
                             </TableRow> 
                         ))}
                         </TableBody>

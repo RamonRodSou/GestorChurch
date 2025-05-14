@@ -9,6 +9,10 @@
     --secondary-background-hover: rgb(114, 74, 44);
     --secondary-background-active: rgb(179, 125, 25);
 
+    --secondary-hover: #dd8c0a;
+    --secondary-active: #6c3a00;
+
+
     --secondary-title: rgb(0, 58, 120);
     --secondary-active: #006c1d;
 
@@ -111,6 +115,16 @@
                 color: var(--primary-color);
             }
         }
+    }
+
+    .onClick {
+        cursor: pointer;
+            &:hover {
+                color: var(--secondary-hover);
+            }
+            &:active {
+                color: var(--secondary-active);
+            }
     }
 
     @media (min-width: 600px) {

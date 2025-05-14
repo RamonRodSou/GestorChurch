@@ -1,4 +1,4 @@
-import { Add, Info, WhatsApp } from "@mui/icons-material";
+import { Add, Info } from "@mui/icons-material";
 import {
     Box,
   Container,
@@ -87,7 +87,7 @@ export default function MemberData() {
                             <TableCell className='title-secondary'>Nome</TableCell>
                             <TableCell className='title-secondary'>Telefone</TableCell>
                             <TableCell className='title-secondary'>Status</TableCell>
-                            <TableCell className='title-secondary'>Util</TableCell>
+                            <TableCell className='title-secondary'>Info</TableCell>
 
                         </TableRow>
                         </TableHead>
@@ -96,17 +96,19 @@ export default function MemberData() {
                         .filter((it) => it.isActive)
                             .map((it) => (
                                 <TableRow key={it.id}>
-                                    <TableCell className='data-text'>{it.name}</TableCell>
-                                    <TableCell className='data-text'>{it.phone}</TableCell>
+                                    <TableCell className='data-text'>{it.name.split(" ").at(0)}</TableCell>
+                                    <TableCell 
+                                        className='data-text onClick' 
+                                        onClick={() => whatzapp(it.name, it.phone)}
+                                    >
+                                    {it.phone}
+                                </TableCell>
                                     <TableCell className='data-text'>{it.role}</TableCell>
-                                    <Box className='whatzapp'>
-                                        <IconButton onClick={() => whatzapp(it.name, it.phone)} className='whatzappBtn'>
-                                            <WhatsApp/>
-                                        </IconButton>  
+                                    <TableCell className='data-text'>                                   
                                         <IconButton onClick={() => handleOpenDetails(it)}>
                                             <Info/>
-                                        </IconButton>   
-                                    </Box>
+                                        </IconButton> 
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
