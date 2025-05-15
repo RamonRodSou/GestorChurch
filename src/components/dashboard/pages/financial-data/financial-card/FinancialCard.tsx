@@ -1,14 +1,21 @@
 import './financial-card.scss'
 import { Financial } from "@domain/financial";
-import { Box, Paper, Typography, Button, ButtonGroup } from "@mui/material";
+import { Box, Paper, Typography, Button } from "@mui/material";
 import { findAllFinancials } from "@service/FinancialService";
 import { useEffect, useState } from "react";
 import { MoneyMovement } from '@domain/enums';
 import { DateUtil } from "@domain/utils";
 
+enum Period {
+    ALL = 'TODOS',
+    CURRENT_MONTH = 'ESTE MÊS',
+    LAST_MONTH = 'ÚLTIMO MÊS',
+    CURRENT_WEEK = 'ESTA SEMANA'
+}
+
 export default function FinancialCard() {
     const [financials, setFinancials] = useState<Financial[]>([]);
-    const [filter, setFilter] = useState<'all' | 'month' | 'week'>('all');
+    const [filter, setFilter] = useState<Period>(Period.ALL);
 
     useEffect(() => {
         findAllFinancials()
@@ -17,11 +24,14 @@ export default function FinancialCard() {
     }, []);
 
     const filtered = financials.filter(item => {
-        if (filter === 'month') 
-            return DateUtil.isDateInCurrentMonth(item.createdAt);
-        
-        if (filter === 'week')
+        if (filter === Period.ALL)
             return DateUtil.isDateInCurrentWeek(item.createdAt);
+
+        if (filter === Period.CURRENT_MONTH) 
+            return DateUtil.isDateInCurrentMonth(item.createdAt);
+
+        if (filter ===  Period.LAST_MONTH)
+            return DateUtil.isDateInLastMonth(item.createdAt);
         
         return true;
     });
@@ -29,15 +39,19 @@ export default function FinancialCard() {
     return (
         <Box>
             <Box className='boxFilter'>
-                <Button variant={filter === 'all' ? 'contained' : 'outlined'} onClick={() => setFilter('all')}>
-                    Todos
+                <Button variant={filter === Period.ALL ? 'contained' : 'outlined'} onClick={() => setFilter(Period.ALL)}>
+                    {Period.ALL}
                 </Button>
-                <Button variant={filter === 'month' ? 'contained' : 'outlined'} onClick={() => setFilter('month')}>
-                    Este Mês
+                <Button variant={filter === Period.CURRENT_WEEK ? 'contained' : 'outlined'} onClick={() => setFilter(Period.CURRENT_WEEK)}>
+                    {Period.CURRENT_WEEK}
                 </Button>
-                <Button variant={filter === 'week' ? 'contained' : 'outlined'} onClick={() => setFilter('week')}>
-                    Esta Semana
+                <Button variant={filter === Period.CURRENT_MONTH ? 'contained' : 'outlined'} onClick={() => setFilter(Period.CURRENT_MONTH)}>
+                   {Period.CURRENT_MONTH}
                 </Button>
+                <Button variant={filter === Period.LAST_MONTH ? 'contained' : 'outlined'} onClick={() => setFilter(Period.LAST_MONTH)}>
+                    {Period.LAST_MONTH}
+                </Button>
+
             </Box>
 
             <Box className="service-order">

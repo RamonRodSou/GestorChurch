@@ -22,4 +22,12 @@ export class DateUtil {
 
         return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
     }
+
+    
+    static isDateInLastMonth(dateStr: string) {
+        const date = new Date(dateStr);
+        const now = new Date();
+
+        return date.getMonth() === now.getMonth() - 1 && date.getFullYear() === now.getFullYear();
+    }
 }
