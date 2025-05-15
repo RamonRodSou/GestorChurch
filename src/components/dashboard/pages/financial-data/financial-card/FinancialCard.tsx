@@ -1,3 +1,4 @@
+import './financial-card.scss'
 import { Financial } from "@domain/financial";
 import { Box, Paper, Typography, Button, ButtonGroup } from "@mui/material";
 import { findAllFinancials } from "@service/FinancialService";
@@ -27,7 +28,7 @@ export default function FinancialCard() {
 
     return (
         <Box>
-            <ButtonGroup sx={{ mb: 1 }}>
+            <Box className='boxFilter'>
                 <Button variant={filter === 'all' ? 'contained' : 'outlined'} onClick={() => setFilter('all')}>
                     Todos
                 </Button>
@@ -37,7 +38,7 @@ export default function FinancialCard() {
                 <Button variant={filter === 'week' ? 'contained' : 'outlined'} onClick={() => setFilter('week')}>
                     Esta Semana
                 </Button>
-            </ButtonGroup>
+            </Box>
 
             <Box className="service-order">
                 {filtered.map((item) => {

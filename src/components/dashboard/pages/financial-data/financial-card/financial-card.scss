@@ -1,0 +1,14 @@
+:root {
+    .boxFilter {
+        display: flex;
+        margin-bottom: 2rem;
+        justify-content: center;
+        flex-wrap: wrap;  
+
+        @media (min-width: 1000px) {
+            button {
+                max-width: 20%;
+            }
+        }
+    }
+}

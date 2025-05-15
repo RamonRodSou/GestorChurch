@@ -38,8 +38,10 @@
 
     .logo {
         display: flex;
-        justify-content: space-around;
+        justify-content: flex-start;
         align-items: center;
+        gap: 1rem;
+        margin: 0 1rem;
         
         .titleLogo {
             font-size: 1.3rem;

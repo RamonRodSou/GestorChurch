@@ -1,6 +1,8 @@
 import { Add, Info } from "@mui/icons-material";
 import {
     Box,
+  Button,
+  ButtonGroup,
   Container,
   IconButton,
   Paper,
@@ -24,24 +26,28 @@ import { ManagerContext } from "@context/ManagerContext";
 import { findGroupSummaryToById } from "@service/GroupService";
 import { GroupSummary } from "@domain/group";
 import { whatzapp } from "@domain/utils";
+import { Role } from "@domain/enums";
 
 export default function MemberData() {
     const [data, setData] = useState<Member[]>([]);
     const [filtered, setFiltered] = useState<Member[]>([]);
+    const [filter, setFilter] = useState<Role | string>('all');
     const [selectedMember, setSelectedMember] = useState<Member | null>(null);
     const [openData, setOpenData] = useState(false);
     const [groupData, setGroupData] = useState<GroupSummary | null>(null); 
     const { openSnackbar, setOpenSnackbar } = useContext(ManagerContext);
     const { userId } = useParams();
     const navigate = useNavigate();
+
+    const roleEntries = Object.entries(Role)
     
     function handleOpenDetails(member: Member) {
         if (member.groupId) {
-        findGroupSummaryToById(member.groupId)
-            .then((group) => {
-                setGroupData(group);
-            })
-            .catch(console.error);
+            findGroupSummaryToById(member.groupId)
+                .then((group) => {
+                    setGroupData(group);
+                })
+                .catch(console.error);
         } else {
             setGroupData(null)
         }
@@ -52,6 +58,11 @@ export default function MemberData() {
     function newMember() {
         return navigate(`/dashboard/${userId}/new-member`);
     }
+
+    const filteredMembers = filtered.filter(item => {
+        if (filter === 'all') return true;
+        return item.role === Role[filter.toUpperCase() as keyof typeof Role];
+    });
 
     useEffect(() => {
         findAllMembers()
@@ -78,8 +89,29 @@ export default function MemberData() {
                     item.phone.includes(term)
                 }
             />
+            
+            <Box className="boxFilter">
+                <Button
+                    variant={filter === 'all' ? 'contained' : 'outlined'}
+                    onClick={() => setFilter('all')}
 
-            {filtered?.length > 0 ? (
+                >
+                    Todos
+                </Button>
+
+                {roleEntries.map(([key, value]) => (
+                    <Button
+                        key={key}
+                        variant={filter === key.toLowerCase() ? 'contained' : 'outlined'}
+                        onClick={() => setFilter(key.toLowerCase())}
+                    >
+                        {value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()}
+                    </Button>
+                ))}
+            </Box>
+
+
+            {filteredMembers?.length > 0 ? (
                     <TableContainer component={Paper}>
                     <Table size="small">
                         <TableHead>
@@ -92,7 +124,7 @@ export default function MemberData() {
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {filtered
+                        {filteredMembers
                         .filter((it) => it.isActive)
                             .map((it) => (
                                 <TableRow key={it.id}>

@@ -25,7 +25,7 @@ export default function Search<T>({ data, onFilter, label, searchBy }: SearchPro
             label={label}
             color='primary'
             fullWidth
-            value={searchTerm}
+            value={searchTerm.toUpperCase()}
             onChange={(e) => setSearchTerm(e.target.value)}
             sx={{ marginBottom: '1rem' }}
         />
