@@ -3,46 +3,38 @@ import { IncomeType } from '@domain/enums/IncomeType';
 import { Dialog, DialogContent, DialogActions, TextField, Button, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { EMPTY } from '@domain/utils/string-utils';
-import { FinancialSummary } from '@domain/financial';
+import { Financial } from '@domain/financial';
+import { MoneyMovement } from '@domain/enums';
 
 interface FinancialType {
     open: boolean;
     onClose: () => void;
-    onConfirm: (financial: FinancialSummary) => void;
-    incomeDefault: number;
+    onConfirm: (financial: Financial) => void;
     title?: string;
 }
 
-enum MoneyMovement {
-    INCOME = "ENTRADA",
-    EXPENSE = "SAÍDA"
-}
-
-export default function FinancialModal({ open, onClose, onConfirm, incomeDefault, title }: FinancialType) {
-    const [income, setIncome] = useState(incomeDefault);
+export default function FinancialModal({ open, onClose, onConfirm, title }: FinancialType) {
+    const [value, setValue] = useState(0);
     const [type, setType] = useState<MoneyMovement>(MoneyMovement.INCOME);
-    const [incomeType, setIncomeType] = useState<IncomeType | null>(null);
-    const [expense, setExpense] = useState(0);
-    const [expenseType, setExpenseType] = useState<string>(EMPTY);
+    const [description, setDescription] = useState<string>(EMPTY);
 
     const message = title ?? 'Finalizar Ordem de Serviço';
 
-    const handleConfirm = () => {
-        const financial = new FinancialSummary(
+    function handleConfirm() {
+        const financial = new Financial(
             undefined,
-            income,
-            incomeType,
-            expense,
-            expenseType.toUpperCase()
+            type,
+            value,
+            type === MoneyMovement.INCOME ? description as IncomeType : description.toUpperCase()
         );
         onConfirm(financial);
         onClose();
     };
-    
+
     useEffect(() => {
-        setIncome(incomeDefault);
-        setExpense(0);
-    }, [incomeDefault, open]);
+        setValue(0);
+        setDescription(EMPTY);
+    }, [type, open]);
 
     return (
         <Dialog className='dialog-box' open={open} onClose={onClose}>
@@ -58,6 +50,7 @@ export default function FinancialModal({ open, onClose, onConfirm, incomeDefault
                     onChange={(e) => setType(e.target.value as MoneyMovement)}
                     fullWidth
                     SelectProps={{ native: true }}
+
                 >
                     {Object.values(MoneyMovement).map((status) => (
                         <option key={status} value={status}>
@@ -65,56 +58,37 @@ export default function FinancialModal({ open, onClose, onConfirm, incomeDefault
                         </option>
                     ))}
                 </TextField>
+                <TextField
+                    label="Valor (R$)"
+                    type="number"
+                    value={value}
+                    onChange={(e) => setValue(parseFloat(e.target.value))}
+                />
 
-                {type == MoneyMovement.INCOME && (
-                    <>
-                        <TextField
-                            className="input-field"
-                            fullWidth
-                            label="Valor recebido (R$)"
-                            type="number"
-                            value={income}
-                            onChange={(e) => setIncome(parseFloat(e.target.value))}
-                            margin="dense"
-                        />
-                        <TextField
-                            select
-                            label="Tipo de Entrada"
-                            value={incomeType ?? null}
-                            onChange={(e) => setIncomeType(e.target.value as IncomeType ?? null)}
-                            fullWidth
-                            SelectProps={{ native: true }}
-                        >
-                            {Object.values(IncomeType).map((status) => (
-                                <option key={status} value={status}>
-                                    {status}
-                                </option>
-                            ))}
-                        </TextField>
-                    </>
+                {type === MoneyMovement.INCOME ? (
+                    <TextField
+                        select
+                        label="Tipo de Entrada"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        fullWidth
+                        SelectProps={{ native: true }}
+                    >
+                        {Object.values(IncomeType).map((status) => (
+                            <option key={status} value={status}>
+                                {status}
+                            </option>
+                        ))}
+                    </TextField>
+                ) : (
+                    <TextField
+                        label="Descrição da Saída"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        fullWidth
+                    />
                 )}
 
-                {type == MoneyMovement.EXPENSE && (
-                    <>
-                        <TextField
-                            className="input-field"
-                            fullWidth
-                            label="Despesas (R$)"
-                            type="number"
-                            value={expense}
-                            onChange={(e) => setExpense(parseFloat(e.target.value))}
-                            margin="dense"
-                        />
-                        <TextField
-                            className="input-field"
-                            fullWidth
-                            label="Tipo de saída"
-                            value={expenseType}
-                            onChange={(e) => setExpenseType(e.target.value)}
-                            margin="dense"
-                        />
-                    </>
-                )}
             </DialogContent>
             <DialogActions className="dialog-actions">
                 <Button className="btn-cancel" onClick={onClose}>Cancelar</Button>

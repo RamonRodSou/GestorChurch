@@ -7,6 +7,7 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Responsi
 import { allMonth } from '../all-month';
 import { useFinancial } from '@context/FinancialContext';
 import { PermissionContext } from '@context/PermissionContext';
+import { MoneyMovement } from '@domain/enums';
 
 interface FinancialSummary {
     month: string;
@@ -18,66 +19,80 @@ export default function FinancialGraph() {
     const [chartData, setChartData] = useState<FinancialSummary[]>([]);
     const { setFinancialData } = useFinancial();
     const context = useContext(PermissionContext);
-    const { permission  }: any = context;
+    const { permission }: any = context;
+
+    function getMonthlySummary(data: Financial[]) {
+        const summary: Record<string, { income: number; expense: number }> = {};
+
+        data.forEach(({ createdAt, type, value }) => {
+            const month = allMonth[new Date(createdAt).getMonth()];
+            if (!summary[month]) summary[month] = { income: 0, expense: 0 };
+
+            if (type === MoneyMovement.INCOME) {
+            summary[month].income += value;
+            } else if (type === MoneyMovement.EXPENSE) {
+            summary[month].expense += value;
+            }
+        });
+
+        return summary;
+    }
+
+    function formatChartData(summary: Record<string, { income: number; expense: number }>): FinancialSummary[] {
+        return allMonth.map(month => ({
+            month,
+            income: summary[month]?.income || 0,
+            expense: summary[month]?.expense || 0,
+        }));
+    }
+
+    function calculateTotalBalance(data: Financial[]) {
+        return data.reduce((sum, item) =>
+            item.type === MoneyMovement.INCOME ? sum + item.value : sum - item.value, 0);
+    }
+
+    function getCurrentMonthFlow(summary: Record<string, { income: number; expense: number }>) {
+        const currentMonth = allMonth[new Date().getMonth()];
+        return {
+            monthInflow: summary[currentMonth]?.income || 0,
+            monthOutflow: summary[currentMonth]?.expense || 0
+        };
+    }
 
     useEffect(() => {
-        async function load() {
-            const data: Financial[] = await findAllFinancials();
-    
-            const monthlyData: Record<string, { income: number; expense: number }> = {};
-    
-            data.forEach(item => {
-                const date = new Date(item.createdAt); 
-                const monthIndex = date.getMonth(); 
-                const month = allMonth[monthIndex];
-    
-                if (!monthlyData[month]) {
-                    monthlyData[month] = { income: 0, expense: 0 };
-                }
-    
-                monthlyData[month].income += item.income;
-                monthlyData[month].expense += item.expense;
-            });
-    
-            const formattedData: FinancialSummary[] = allMonth.map(month => ({
-                month,
-                income: monthlyData[month]?.income || 0,
-                expense: monthlyData[month]?.expense || 0
-            }));
-    
-            setChartData(formattedData);
-    
-            const total = data.reduce((sum, item) => sum + item.balance, 0);
-            const now = new Date();
-            const currentMonth = allMonth[now.getMonth()];
-            const inflow = monthlyData[currentMonth]?.income || 0;
-            const outflow = monthlyData[currentMonth]?.expense || 0;
-    
-            setFinancialData({ currentCash: total, monthInflow: inflow, monthOutflow: outflow });
+        async function loadFinancials() {
+            const data = await findAllFinancials();
+
+            const summary = getMonthlySummary(data);
+            setChartData(formatChartData(summary));
+
+            const currentCash = calculateTotalBalance(data);
+            const { monthInflow, monthOutflow } = getCurrentMonthFlow(summary);
+
+            setFinancialData({ currentCash, monthInflow, monthOutflow });
         }
-    
-        load();
+
+        loadFinancials();
     }, []);
 
-    return (
+  return (
+    <>
+      {permission >= 10 && (
         <>
-            {permission >= 10 && (
-                <>
-                    <Typography variant="h5" gutterBottom className='title-secondary'>📈 Finanças do Ano</Typography>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={chartData}>
-                            <Line type="monotone" dataKey="income" stroke="#4caf50" strokeWidth={3} name="Entradas" />
-                            <Line type="monotone" dataKey="expense" stroke="#f44336" strokeWidth={3} name="Saídas" />
-                            <CartesianGrid stroke="#ccc" />
-                            <XAxis dataKey="month" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </>
-
-            )}
+          <Typography variant="h5" gutterBottom className='title-secondary'>📈 Finanças do Ano</Typography>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={chartData}>
+              <Line type="monotone" dataKey="income" stroke="#4caf50" strokeWidth={3} name="Entradas" />
+              <Line type="monotone" dataKey="expense" stroke="#f44336" strokeWidth={3} name="Saídas" />
+              <CartesianGrid stroke="#ccc" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+            </LineChart>
+          </ResponsiveContainer>
         </>
-    )
+      )}
+    </>
+  );
 }

@@ -1,33 +1,17 @@
 import { addDoc, collection, getDocs } from "firebase/firestore";
-import { Financial, FinancialSummary } from "@domain/financial";
+import { Financial } from "@domain/financial";
 import { auth, db } from "./firebase";
 
-// export async function financialAdd(financial: Financial) {
-//     try {
-//         const user = auth.currentUser;
-//         if (!user) throw new Error("Usuário não autenticado.");
-//         await addDoc(collection(db, 'financials'), {
-//             userId: user.uid,
-//             member: financial.member,
-//             income: financial.income,
-//             expense: financial.expense,
-//             createdAt: financial.createdAt,
-//         });
-//     } catch (error) {
-//         throw error;
-//     }
-// }
 
-export async function financialSummaryAdd(financial: FinancialSummary) {
+export async function financialAdd(financial: Financial) {
     try {
         const user = auth.currentUser;
         if (!user) throw new Error("Usuário não autenticado.");
         await addDoc(collection(db, 'financials'), {
             userId: user.uid,
-            income: financial.income,
-            IncomeType: financial.incomeType,
-            expense: financial.expense,
-            expenseType: financial.expenseType,
+            type: financial.type,
+            value: financial.value,
+            description: financial.description,
             createdAt: financial.createdAt,
         });
     } catch (error) {

@@ -6,11 +6,12 @@ import {
   Paper,
   Container
 } from '@mui/material';
-import { Financial, FinancialSummary } from '@domain/financial';
-import { financialSummaryAdd, findAllFinancials } from '@service/FinancialService';
+import { Financial } from '@domain/financial';
+import { financialAdd, findAllFinancials } from '@service/FinancialService';
 import FinancialModal from './financial-modal/FinancialModal';
 import SnackBarMessage from '@components/snackBarMessage/SnackBarMessage';
 import FinancialCard from './financial-card/FinancialCard';
+import { MoneyMovement } from '@domain/enums';
 
 export default function FinancialData() {
     const [balance, setBalance] = useState<number>(0);
@@ -24,20 +25,31 @@ export default function FinancialData() {
         return setOpenModal(true);
     }
 
-    async function handleConfirmFinancial(financialSummary: FinancialSummary) {
-        await financialSummaryAdd(financialSummary);
+    async function handleConfirmFinancial(financial: Financial) {
+        await financialAdd(financial);
         await load();
         setOpenModal(false);
         setOpenSnackbar(true)
     }
 
-    async function load() {
-        const data: Financial[] = await findAllFinancials();
-        const currentProfit: number = data.reduce((sum, it) => sum + (it.income - it.expense), 0);
-        const spendingToDate = data.reduce((sum, item) => sum + item.expense, 0);
-        setBalance(currentProfit);
-        setExpense(spendingToDate);
-    }
+        async function load() {
+            const data: Financial[] = await findAllFinancials();
+
+            let totalBalance = 0;
+            let totalExpense = 0;
+
+            data.forEach((item) => {
+                if (item.type === MoneyMovement.INCOME) {
+                    totalBalance += item.value;
+                } else {
+                    totalBalance -= item.value;
+                    totalExpense += item.value;
+                }
+            });
+
+            setBalance(totalBalance);
+            setExpense(totalExpense);
+        }
  
     useEffect(() => {
         load();
@@ -77,7 +89,6 @@ export default function FinancialData() {
                 open={openModal}
                 onClose={() => setOpenModal(false)}
                 onConfirm={handleConfirmFinancial}
-                incomeDefault={0}
             />
             <SnackBarMessage 
                 message={"Movimentação cadastrada com sucesso!"} 

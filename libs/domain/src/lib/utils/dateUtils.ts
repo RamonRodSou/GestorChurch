@@ -1,3 +1,25 @@
-export function dateFormated(date: Date | string) {
-    return new Date(date).toLocaleDateString("pt-BR")
+export class DateUtil {
+    static dateFormated(date: Date | string) {
+        return new Date(date).toLocaleDateString("pt-BR")
+    }
+
+    static isDateInCurrentWeek(dateStr: string) {
+        const date = new Date(dateStr);
+        const now = new Date();
+
+        const firstDayOfWeek = new Date(now);
+        firstDayOfWeek.setDate(now.getDate() - now.getDay());
+
+        const lastDayOfWeek = new Date(firstDayOfWeek);
+        lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
+
+        return date >= firstDayOfWeek && date <= lastDayOfWeek;
+    }
+
+    static isDateInCurrentMonth(dateStr: string) {
+        const date = new Date(dateStr);
+        const now = new Date();
+
+        return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+    }
 }

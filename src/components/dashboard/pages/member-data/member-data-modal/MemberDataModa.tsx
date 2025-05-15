@@ -5,10 +5,10 @@ import { Member } from '@domain/user';
 import { whatzapp } from '@domain/utils/whatszappAPI';
 import { GroupSummary } from '@domain/group';
 import ModalBtns from '@components/modalBtns/ModalBtns';
-import { dateFormated } from '@domain/utils/dateUtils';
 import { memberUpdate } from '@service/MemberService';
 import ConfirmModal from '@components/confirm-modal/ConfirmModal';
 import { useState } from 'react';
+import { DateUtil } from '@domain/utils';
 
 interface MemberDataModalProps {
     open: boolean;
@@ -46,7 +46,7 @@ export default function MemberDataModal({ open, onClose, member, groupData }: Me
                     whatsApp={() => whatzapp(member.name, member.phone)}
                     remove={() => setOpenData(true)}
                 />                
-                <Typography className='textInfo'> <span className='subTextInfo'>Nascimento: </span>{dateFormated(member.birthdate)}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>Nascimento: </span>{DateUtil.dateFormated(member.birthdate)}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>TELEFONE: </span>{member.phone}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>GC: </span>{group}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>RUA: </span>{member.street}</Typography>
@@ -55,7 +55,7 @@ export default function MemberDataModal({ open, onClose, member, groupData }: Me
                 <Typography className='textInfo'> <span className='subTextInfo'>CIDADE: </span>{member.city}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>ESTADO: </span>{member.state}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>CEP: </span>{member.zipCode}</Typography>
-                <Typography className='textInfo'> <span className='subTextInfo'>BATISMO: </span>{dateFormated(member.batism.baptismDate)}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>BATISMO: </span>{DateUtil.dateFormated(member.batism.baptismDate)}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>ESTADO CIVIL: </span>{member.civilStatus}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>CÔNJUGUE: </span>{member.spouse?.name}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>
