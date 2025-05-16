@@ -4,4 +4,5 @@ export enum WorshipType {
     YOUTH = 'JOVEM',
     TEENS = 'POTÊNCIA TEENS',
     KIDS = 'KIDS',
+    EVENT = 'EVENTO',
 }

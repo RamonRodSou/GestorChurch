@@ -18,6 +18,7 @@ async function savereportToDatabase(report: ReportChurch, userId: string) {
         userId,
         worship: report.worship,
         totalPeople: report.totalPeople,
+        timePeriod: report.timePeriod,
         totalChildren: report.totalChildren,
         totalVolunteers: report.totalVolunteers,
         decisionsForJesus: report.decisionsForJesus,

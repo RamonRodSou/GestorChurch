@@ -1,10 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
-import { WorshipType } from '@domain/enums';
+import { TimePeriod, WorshipType } from '@domain/enums';
 
 export class ReportChurch {
     constructor(
         public readonly id: string = uuidv4(),
         public worship: WorshipType = WorshipType.SUNDAY_NIGHT,
+        public timePeriod: TimePeriod | null = null,
         public totalPeople: number = 0,
         public totalChildren: number = 0,
         public totalVolunteers: number = 0,
@@ -23,6 +24,7 @@ export class ReportChurch {
         return new ReportChurch(
             json.id,
             json.worship,
+            json.timePeriod,
             json.totalPeople,
             json.totalChildren,
             json.totalVolunteers,
@@ -42,6 +44,7 @@ export class ReportChurch {
         return {
             id: this.id,
             totalPeople: this.totalPeople,
+            timePeriod: this.timePeriod,
             totalChildren: this.totalChildren,
             totalVolunteers: this.totalVolunteers,
             decisionsForJesus: this.decisionsForJesus,

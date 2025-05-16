@@ -1,5 +1,5 @@
 import BackButton from "@components/back-button/BackButton";
-import { WorshipType } from "@domain/enums";
+import { TimePeriod, WorshipType } from "@domain/enums";
 import { ReportChurch } from "@domain/report";
 import { Box, Button, Container, TextField } from "@mui/material";
 import { reportChurchAdd } from "@service/ReportChurchService";
@@ -9,6 +9,8 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function ReportChurchDetails() {
     const [report, setReport] = useState<ReportChurch>(new ReportChurch());
     const [worship, setWorship ] = useState<WorshipType>(WorshipType.SUNDAY_NIGHT);
+    const [timePeriod, setTimePeriod ] = useState<TimePeriod>(TimePeriod.MORNING);
+
     const { userId } = useParams();
     const navigate = useNavigate();
 
@@ -25,6 +27,7 @@ export default function ReportChurchDetails() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         report.worship = worship;
+        report.timePeriod = timePeriod;
         await reportChurchAdd(report);
         setReport(new ReportChurch());
         navToReport();
@@ -52,6 +55,24 @@ export default function ReportChurchDetails() {
                             ))}
                         </TextField>
                     </Box>
+                    {worship === WorshipType.SUNDAY_NIGHT && (
+                    <Box mb={2}>
+                        <TextField
+                            select
+                            label="Horario do Culto"
+                            value={timePeriod}
+                            onChange={(e) => setTimePeriod(e.target.value as TimePeriod)}
+                            fullWidth
+                            SelectProps={{ native: true }}
+                        >
+                            {Object.values(TimePeriod).map((status) => (
+                                <option key={status} value={status}>
+                                    {status}
+                                </option>
+                            ))}
+                        </TextField>
+                    </Box>
+                    )}
                     <Box mb={2}>
                         <TextField
                             type="number"
@@ -130,7 +151,7 @@ export default function ReportChurchDetails() {
                             label="Qtd de pessoas que voltaram: "
                             value={report.returningPeople ?? 0}
                             onChange={(e) => 
-                                handleChange("totalPeople", Number(e.target.value))
+                                handleChange("returningPeople", Number(e.target.value))
                             }
                             fullWidth
                             required
