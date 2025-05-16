@@ -73,10 +73,10 @@ export default function VisitorData() {
                     <TableHead>
                     <TableRow>
                         <TableCell className='title-secondary'>Nome</TableCell>
+                        <TableCell className='title-secondary'>Telefone</TableCell>
 
                         {!isMobile && (
                             <>
-                                <TableCell className='title-secondary'>Telefone</TableCell>
                                 <TableCell className='title-secondary'>Visitas</TableCell>
                             </>
                         )}
@@ -91,15 +91,14 @@ export default function VisitorData() {
                         .map((it) => (
                             <TableRow key={it.id}>
                                 <TableCell className='data-text'>{it.name}</TableCell>
-
+                                <TableCell 
+                                    className='data-text onClick' 
+                                    onClick={() => whatzapp(it.name, it.phone)}
+                                >
+                                    {it.phone}
+                                </TableCell>
                                 {!isMobile && (
                                     <>
-                                        <TableCell 
-                                            className='data-text onClick' 
-                                            onClick={() => whatzapp(it.name, it.phone)}
-                                        >
-                                            {it.phone}
-                                        </TableCell>
                                         <TableCell className='data-text'>{it.visitHistory.at(0)}</TableCell>
                                     </>
                                 )}
