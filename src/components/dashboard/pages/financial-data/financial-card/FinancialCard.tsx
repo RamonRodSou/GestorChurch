@@ -25,6 +25,9 @@ export default function FinancialCard() {
 
     const filtered = financials.filter(item => {
         if (filter === Period.ALL)
+            return item.createdAt;
+
+        if (filter === Period.CURRENT_WEEK)
             return DateUtil.isDateInCurrentWeek(item.createdAt);
 
         if (filter === Period.CURRENT_MONTH) 
