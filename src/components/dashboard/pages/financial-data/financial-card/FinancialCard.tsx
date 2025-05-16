@@ -54,7 +54,6 @@ export default function FinancialCard() {
                 <Button variant={filter === Period.LAST_MONTH ? 'contained' : 'outlined'} onClick={() => setFilter(Period.LAST_MONTH)}>
                     {Period.LAST_MONTH}
                 </Button>
-
             </Box>
 
             <Box className="service-order">

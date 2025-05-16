@@ -15,7 +15,6 @@ export interface IMenu {
     icon: JSX.Element;
 }
 
-
 export const getMenuItems  = (permission: number | null): IMenu[] => {
     const items: IMenu[] = [
         {
