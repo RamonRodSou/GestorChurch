@@ -13,6 +13,7 @@ import VisitorDetails from '@components/dashboard/pages/visitor-data/visitor-det
 import GroupData from '@components/dashboard/pages/group-data/GroupData';
 import GroupDetails from '@components/dashboard/pages/group-data/group-details/GroupDetails';
 import ReportData from '@components/dashboard/pages/report-data/ReportData';
+import ReportChurchDetails from '@components/dashboard/pages/report-data/report-church-details/RepertChurchDetails';
 
 function AppRouter() {
     return (
@@ -34,6 +35,7 @@ function AppRouter() {
                     <Route path="financial" element={<FinancialData/>}/>
                     <Route path="preferences" element={<Preferences/>}/>
                     <Route path="report" element={<ReportData/>}/>
+                    <Route path="new-report-church" element={<ReportChurchDetails/>}/>
                 </Route>
                 <Route path="*" element={<Navigate to="/login"/>}/>
             </Routes>
