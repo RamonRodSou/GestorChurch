@@ -22,7 +22,7 @@ export default function VisitorDataModal({ open, onClose, visitor }: VisitorData
 
     if (!visitor) return null;
 
-    function visitorUpdate(visitorId: String) {
+    function navToVisitorUpdate(visitorId: String) {
         return navigate(`/dashboard/${userId}/edit-visitor/${visitorId}`);
     }
 
@@ -38,7 +38,7 @@ export default function VisitorDataModal({ open, onClose, visitor }: VisitorData
             <DialogContent dividers className='dialog'>
                 <Typography className='title'>{visitor.name}</Typography>
                 <ModalBtns
-                    edit={() => visitorUpdate(visitor.id)} 
+                    edit={() => navToVisitorUpdate(visitor.id)} 
                     whatsApp={() => whatzapp(visitor.name, visitor.phone)}
                     remove={() => setOpenData(true)}
                 />

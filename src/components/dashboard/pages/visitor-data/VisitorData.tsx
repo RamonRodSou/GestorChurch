@@ -38,7 +38,7 @@ export default function VisitorData() {
         setOpenData(true);
     }
 
-    function newVisitor() {
+    function navToNewVisitor() {
         return navigate(`/dashboard/${userId}/new-visitor`);
     }
 
@@ -120,7 +120,7 @@ export default function VisitorData() {
             )}
 
             <Tooltip className="data-button" title="Click to new visitor">
-                <IconButton onClick={newVisitor}>
+                <IconButton onClick={navToNewVisitor}>
                     <Add/>
                 </IconButton>
             </Tooltip>

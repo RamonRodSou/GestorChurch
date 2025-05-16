@@ -2,7 +2,6 @@ import { Add, Info } from "@mui/icons-material";
 import {
     Box,
   Button,
-  ButtonGroup,
   Container,
   IconButton,
   Paper,
@@ -55,7 +54,7 @@ export default function MemberData() {
         setOpenData(true);
     }
 
-    function newMember() {
+    function navToNewMember() {
         return navigate(`/dashboard/${userId}/new-member`);
     }
 
@@ -110,7 +109,6 @@ export default function MemberData() {
                 ))}
             </Box>
 
-
             {filteredMembers?.length > 0 ? (
                     <TableContainer component={Paper}>
                     <Table size="small">
@@ -153,7 +151,7 @@ export default function MemberData() {
             )}
 
             <Tooltip className='data-button' title="Click to new member">
-                <IconButton onClick={() => newMember()}>
+                <IconButton onClick={() => navToNewMember()}>
                     <Add/>
                 </IconButton>
             </Tooltip>

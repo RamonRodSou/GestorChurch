@@ -36,7 +36,7 @@ export default function GroupData() {
         setOpenData(true);
     }
 
-    function newGroup() {
+    function navToNewGroup() {
         return navigate(`/dashboard/${userId}/new-group`);
     }
 
@@ -100,7 +100,7 @@ export default function GroupData() {
             )}
 
             <Tooltip className='data-button' title="Click to new member">
-                <IconButton onClick={() => newGroup()}>
+                <IconButton onClick={() => navToNewGroup()}>
                     <Add/>
                 </IconButton>
             </Tooltip>

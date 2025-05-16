@@ -16,7 +16,7 @@ export default function GroupDataModal({ open, onClose, group }: GroupDataModalP
 
     if (!group) return null;
 
-    function groupUpdate(groupId: String) {
+    function navToGroupUpdate(groupId: String) {
         return navigate(`/dashboard/${userId}/edit-group/${groupId}`);
     }
          
@@ -25,7 +25,7 @@ export default function GroupDataModal({ open, onClose, group }: GroupDataModalP
             <DialogContent dividers className='dialog'>
                 <Box className='title-and-editBtn'>
                     <Typography className='title'>{group.name}</Typography>
-                    <IconButton onClick={() => groupUpdate(group.id)} className='editBtn'>
+                    <IconButton onClick={() => navToGroupUpdate(group.id)} className='editBtn'>
                         <Edit/>
                     </IconButton>
                 </Box>
