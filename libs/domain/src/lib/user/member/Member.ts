@@ -53,7 +53,6 @@ export class Member extends User implements ILocation{
             json.spouse,
             json.children || [],
             json.role,
-            json.password ?? EMPTY,
             json.isActive,
             json.createdAt
         );
@@ -107,7 +106,7 @@ export class MemberSummary extends User {
             json.name ?? EMPTY,
             json.email ?? null,
             json.phone ?? null,
-            json.password ?? EMPTY
+            json.password ?? null,
         );
     }
 

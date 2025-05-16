@@ -107,8 +107,6 @@ export default function MemberDetails() {
             setOpenSnackbar(true);
             setMember(new Member());
             setCepData(null);
-            setCivilStatus(member.civilStatus);
-            setRole(member.role);
             setChildrenInputs([]);
         }
     };
@@ -117,7 +115,6 @@ export default function MemberDetails() {
         async function load() {
             fetchGroups();
             fetchMembers();
-            validateCEP({ cepData: cepData, setData: setMember });
             setCivilStatus(member.civilStatus);
             setRole(member.role);
 
@@ -126,6 +123,9 @@ export default function MemberDetails() {
                 const loadedMember = Member.fromJson(data);
                 setMember(Member.fromJson(data));
                 setIsEditing(true);
+                setCivilStatus(loadedMember.civilStatus);
+                setRole(loadedMember.role);
+                setChildrenInputs(loadedMember.children ?? []);
 
                 if (loadedMember.zipCode) {
                     checkCEP({ it: loadedMember.zipCode, setCepData });
@@ -133,8 +133,14 @@ export default function MemberDetails() {
             }
         }
         load();
-    }, [memberId, cepData]);
+    }, [memberId]);
 
+    useEffect(() => {
+        if (cepData) {
+            validateCEP({ cepData, setData: setMember });
+        }
+    }, [cepData]);
+    
     return (
         <>
             <BackButton path={'member'}/>
@@ -221,7 +227,7 @@ export default function MemberDetails() {
                             error={!!errors.zipCode}
                             helperText={errors.zipCode}  
                             onChange={(e) => 
-                                handleChange("zipCode", e.target.value.toUpperCase())
+                                handleChange("zipCode", e.target.value)
                             }
                             fullWidth
                             required
@@ -242,12 +248,11 @@ export default function MemberDetails() {
                     <Box mb={2}>
                         <TextField
                             label="Número"
-                            type="number"
                             value={member.houseNumber ?? EMPTY}
                             error={!!errors.houseNumber}
                             helperText={errors.houseNumber}
                             onChange={(e) => 
-                                handleChange("houseNumber", Number(e.target.value))
+                                handleChange("houseNumber", e.target.value.toUpperCase())
                             }
                             fullWidth
                             required

@@ -132,13 +132,12 @@ export default function GroupDetails() {
                     <Box mb={2}>
                         <TextField
                             label="Número"
-                            type="number"
                             value={group.houseNumber ?? EMPTY}
                             error={!!errors.houseNumber}
                             helperText={errors.houseNumber}
                             onChange={(e) => 
-                                handleChange("houseNumber", Number(e.target.value)
-                            )}
+                                handleChange("houseNumber", e.target.value.toUpperCase())
+                            }
                             fullWidth
                             required
                         />

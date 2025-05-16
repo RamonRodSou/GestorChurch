@@ -17,7 +17,9 @@ export async function groupAdd(group: Group) {
             zipCode: group.zipCode,
             neighborhood: group.neighborhood,
             leaders: group.leaders.map((it) => 
-                it?.toJSON?.() ?? null
+                typeof it === "string"
+                ? it
+                : it?.toJSON?.() ?? null
             ),
             members: group.leaders.map((it) => 
                 typeof it === "string"
@@ -71,19 +73,19 @@ export async function findAllGroupsSummary(): Promise<GroupSummary[]> {
     }
 }
 
-export async function findGroupToById (groupId: string): Promise<Group | null> {
+export async function findGroupToById(groupId: string): Promise<Group | null> {
     try {
         const ref = doc(db, 'groups', groupId);
         const snapshot = await getDoc(ref);
 
         if (!snapshot.exists()) return null;
-
         return { id: snapshot.id, ...snapshot.data() } as Group;
+
     } catch (error) {
-        alert('Erro ao GC: ' + error);
+        alert('Erro ao atualizar o GC: ' + error);
         throw error;
     }
-};
+}
 
 export async function findGroupSummaryToById(groupId: string): Promise<GroupSummary | null> {
     try {
@@ -94,7 +96,17 @@ export async function findGroupSummaryToById(groupId: string): Promise<GroupSumm
 
         return { id: snapshot.id, ...snapshot.data() } as GroupSummary;
     } catch (error) {
-        alert('Erro ao GC: ' + error);
+        alert('Erro ao atualizar o GC: ' + error);
+        throw error;
+    }
+}
+
+export async function groupUpdate(id: string, data: Partial<any>): Promise<void> {
+    try {
+        const ref = doc(db, 'groups', id);
+        await updateDoc(ref, data);
+    } catch (error) {
+        alert('Erro ao atualizar groups: ' + error);
         throw error;
     }
 }

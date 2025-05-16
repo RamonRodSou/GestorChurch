@@ -49,7 +49,7 @@ export default function MemberDataModal({ open, onClose, member, groupData }: Me
                 <Typography className='textInfo'> <span className='subTextInfo'>Nascimento: </span>{DateUtil.dateFormated(member.birthdate)}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>TELEFONE: </span>{member.phone}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>GC: </span>{group}</Typography>
-                <Typography className='textInfo'> <span className='subTextInfo'>RUA: </span>{member.street}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>RUA: </span>{member.street}</Typography> 
                 <Typography className='textInfo'> <span className='subTextInfo'>N: </span>{member.houseNumber}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>BAIRRO: </span>{member.neighborhood}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>CIDADE: </span>{member.city}</Typography>
