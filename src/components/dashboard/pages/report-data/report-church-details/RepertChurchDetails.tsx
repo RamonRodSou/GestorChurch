@@ -21,7 +21,7 @@ export default function ReportChurchDetails() {
     function navToReport() {
         navigate(`/dashboard/${userId}/report`, {
             state: { showSnackbar: true }
-        });
+        }); 
     }
     
     async function handleSubmit(e: React.FormEvent) {

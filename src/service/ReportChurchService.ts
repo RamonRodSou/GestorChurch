@@ -1,6 +1,7 @@
 import { ReportChurch } from "@domain/report";
 import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "./firebase";
+import { DateUtil } from "@domain/utils";
 
 export async function reportChurchAdd(report: ReportChurch) {
     try {
@@ -28,7 +29,7 @@ async function savereportToDatabase(report: ReportChurch, userId: string) {
         peopleBaptizedThisMonth: report.peopleBaptizedThisMonth,
         observation: report.observation,
         isActive: report.isActive,
-        createdAt: report.createdAt,
+        createdAt: DateUtil.dateFormatedPtBr(report.createdAt),
     };
 
     return await addDoc(collection(db, 'reports'), reportData);

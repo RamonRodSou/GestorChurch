@@ -3,7 +3,7 @@ import { auth, db } from "./firebase";
 import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { Batism } from "@domain/batism";
 import { EMPTY } from "@domain/utils/string-utils";
-import { ensureMemberSummary } from "@domain/utils";
+import { DateUtil, ensureMemberSummary } from "@domain/utils";
 import { findGroupToById, groupUpdate } from "./GroupService";
 
 export async function memberAdd(member: Member) {
@@ -64,12 +64,25 @@ export async function findMemberToById(id: string): Promise<Member | null> {
 export async function memberUpdate(id: string, data: Partial<Member>): Promise<void> {
     try {
         const ref = doc(db, 'members', id);
-        await updateDoc(ref, data);
+
+        const batism = data.batism ? Batism.fromJson(data.batism).toJSON() : null;
+
+        const plainData: any = {
+            ...data,
+            batism,
+            spouse: data.spouse ? getSpouseSummary(data.spouse) : null,
+            children: data.children?.map((child) =>
+                typeof child === "string" ? child : child?.toJSON?.() ?? null
+            ),
+        };
+
+        await updateDoc(ref, plainData);
     } catch (error) {
         alert('Erro ao atualizar membro: ' + error);
         throw error;
     }
 }
+
 
 function getAuthenticatedUser() {
     const user = auth.currentUser;
@@ -109,7 +122,7 @@ async function saveMemberToDatabase(member: Member, userId: string, passwordHash
         ),
         role: member.role,
         isActive: member.isActive,
-        createdAt: member.createdAt,
+        createdAt: DateUtil.dateFormatedPtBr(member.createdAt),
     };
 
     return await addDoc(collection(db, 'members'), memberData);

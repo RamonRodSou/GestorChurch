@@ -1,6 +1,7 @@
 import { addDoc, collection, getDocs } from "firebase/firestore";
 import { Financial } from "@domain/financial";
 import { auth, db } from "./firebase";
+import { DateUtil } from "@domain/utils";
 
 
 export async function financialAdd(financial: Financial) {
@@ -12,7 +13,7 @@ export async function financialAdd(financial: Financial) {
             type: financial.type,
             value: financial.value,
             description: financial.description,
-            createdAt: financial.createdAt,
+            createdAt: DateUtil.dateFormatedPtBr(financial.createdAt),
         });
     } catch (error) {
         throw error;

@@ -16,7 +16,7 @@ export default function ReportData() {
 
     useEffect(() => {
         if (location.state?.showSnackbar) {
-        setOpenSnackbar(true);
+            setOpenSnackbar(true);
         }
     }, [location.state]);
     

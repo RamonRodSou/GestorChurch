@@ -2,7 +2,6 @@ import '../group.scss';
 import { useEffect, useState } from "react";
 import { Box, Button, Container, TextField, Autocomplete } from "@mui/material";
 import BackButton from '@components/back-button/BackButton';
-import SnackBarMessage from "@components/snackBarMessage/SnackBarMessage";
 import { MemberSummary } from '@domain/user';
 import { findAllMembersSummary } from '@service/MemberService';
 import { EMPTY } from "@domain/utils/string-utils";
@@ -13,14 +12,16 @@ import validateCEP from '@domain/utils/validateCEP';
 import CepData from '@domain/interface/ICepData';
 import { checkCEP } from '@domain/utils/checkCEP';
 import { validateGroupForm } from '@domain/utils/validateGroupForm';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function GroupDetails() {
     const [group, setGroup] = useState<Group>(new Group());
     const [allMembers, setAllMembers] = useState<MemberSummary[]>([]);
     const [membersInputs, setMembersInputs] = useState<(MemberSummary | string)[]>([]);
-    const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
     const [cepData, setCepData] = useState<CepData | null>(null);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const { userId } = useParams();
+    const navigate = useNavigate();
 
     function handleChange(field: keyof Group, value: any) {
         setGroup(prev => Group.fromJson({ ...prev, [field]: value }));
@@ -29,6 +30,13 @@ export default function GroupDetails() {
     function handleAddMemberField() {
         setMembersInputs([...membersInputs, EMPTY]);
     };
+
+        
+    function navToGroup() {
+        navigate(`/dashboard/${userId}/group`, {
+            state: { showSnackbar: true }
+        });
+    }
 
     function handleMemberChange(index: number, value: MemberSummary | string) {
         const updated = [...membersInputs];
@@ -51,11 +59,10 @@ export default function GroupDetails() {
         const updatedGroup = Group.fromJson({ ...group });
 
         await groupAdd(updatedGroup);
-        
-        setOpenSnackbar(true);
         setGroup(new Group());
         setCepData(null);
         setMembersInputs([]);
+        navToGroup();
     };
 
     useEffect(() => {
@@ -85,8 +92,13 @@ export default function GroupDetails() {
                         <Autocomplete
                             multiple
                             value={group.leaders || []}
-                            onChange={(_, newValue) => 
-                                handleChange("leaders", newValue)}
+                            onChange={(_, newValue) => {
+                                const normalized = newValue.map(val => {
+                                    const match = allMembers.find(m => m.id === val.id);
+                                    return match || val;
+                                });
+                                handleChange("leaders", normalized);
+                            }}
                             options={allMembers}
                             getOptionLabel={(option) =>
                                 typeof option === 'string' ? option : option.name
@@ -103,7 +115,6 @@ export default function GroupDetails() {
                             noOptionsText="Nenhum membro encontrado"
                         />
                     </Box>
-
                     <Box mb={2}>
                         <TextField
                             label="CEP"
@@ -220,12 +231,7 @@ export default function GroupDetails() {
                         </Button>
                     </Box>
                 </form>
-            </Container>
-            <SnackBarMessage 
-                message={"Grupo familiar criado com sucesso!"} 
-                openSnackbar={openSnackbar} 
-                setOpenSnackbar={setOpenSnackbar}
-            />        
+            </Container>   
         </>
     );
 }

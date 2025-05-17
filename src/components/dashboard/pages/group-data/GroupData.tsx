@@ -41,6 +41,7 @@ export default function GroupData() {
     }
 
     useEffect(() => {
+        setOpenSnackbar(true);
         findAllGroups()
             .then((it) => {
                 setData(it);

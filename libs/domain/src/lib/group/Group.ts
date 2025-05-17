@@ -15,6 +15,7 @@ export class Group implements ILocation {
         public neighborhood: string = EMPTY,
         public leaders: MemberSummary[] = [],
         public members: MemberSummary[] = [],
+        public isActive: boolean = true,
         public createdAt: string = new Date().toISOString()
     ) { }
 
@@ -30,6 +31,7 @@ export class Group implements ILocation {
             json.neighborhood,
             (json.leaders || []).map(MemberSummary.fromJson),
             (json.members || []).map(MemberSummary.fromJson),
+            json.isActive,
             json.createdAt
         );
     }
@@ -46,6 +48,7 @@ export class Group implements ILocation {
             neighborhood: this.neighborhood,
             leaders: this.leaders,
             members: this.members,
+            isActive: this.isActive,
             createdAt: this.createdAt,
         };
     }
@@ -56,6 +59,7 @@ export class GroupSummary {
         public readonly id: string = uuidv4(),
         public name: string = EMPTY,
         public leaders: MemberSummary[] = [],
+        public isActive: boolean = true
     ) {
     }
 
@@ -64,6 +68,7 @@ export class GroupSummary {
             json.id,
             json.name ?? EMPTY,
             json.leaders || [],
+            json.isActive
         );
     }
 
@@ -72,6 +77,7 @@ export class GroupSummary {
             id: this.id,
             name: this.name,
             leaders: this.leaders,
+            isActive: this.isActive
         };
     }
 }

@@ -91,7 +91,14 @@ export default function MemberDetails() {
         if (!validateMemberForm({ member, setErrors })) return;
 
         if (isEditing) {
-            await memberUpdate(member.id, member.toJSON());
+            const updatedMember = Member.fromJson({
+                ...member,
+                cepData,
+                role,
+                civilStatus,
+            });
+
+            await memberUpdate(member.id, updatedMember.toJSON());
             setOpenSnackbar(true);
         } else {
             const updatedMember = Member.fromJson({
@@ -358,9 +365,10 @@ export default function MemberDetails() {
                         <Box mb={2}>
                             <DatePicker
                                 label="Data do Batismo"
-                                value={dayjs(member.batism.baptismDate)}
+                                value={member.batism.baptismDate ? dayjs(member.batism.baptismDate) : null}
                                 onChange={(date) =>
                                     handleBatismChange("baptismDate", date?.toDate() ?? new Date())
+                                    
                                 }
                                 format="DD/MM/YYYY"
                                 slotProps={{ textField: { fullWidth: true } }}

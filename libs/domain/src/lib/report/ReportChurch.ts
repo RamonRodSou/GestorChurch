@@ -41,6 +41,7 @@ export class ReportChurch {
     }
 
     toJSON(): object {
+        console.log(this)
         return {
             id: this.id,
             totalPeople: this.totalPeople,
