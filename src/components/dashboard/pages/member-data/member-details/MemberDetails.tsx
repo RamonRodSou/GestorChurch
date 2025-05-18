@@ -1,4 +1,3 @@
-import '../member.scss';
 import { useEffect, useState } from "react";
 import dayjs from 'dayjs';
 import { Autocomplete, Box, Button, Container, TextField } from "@mui/material";
@@ -16,7 +15,7 @@ import { validateMemberForm } from '@domain/utils/validateMemberForm';
 import { findAllGroups } from '@service/GroupService';
 import validateCEP from '@domain/utils/validateCEP';
 import { checkCEP } from '@domain/utils/checkCEP';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useCredentials } from '@context/CredentialsContext';
 
 export default function MemberDetails() {
@@ -32,9 +31,16 @@ export default function MemberDetails() {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const isEditOrNew = isEditing ? `Editar membro: ${member.name}` : 'Novo Membro'
     const { memberId } = useParams();
+    const navigate = useNavigate();
     const { clearCredentials } = useCredentials();
 
     const selectedGroup = groups.find(group => group.id === member.groupId) ?? null;
+
+    function navToMember() {
+        navigate(`/dashboard/${memberId}/member`, {
+            state: { showSnackbar: true }
+        }); 
+    }
 
     function handleChange(field: keyof Member, value: any) {
         const parsedValue =
@@ -87,36 +93,31 @@ export default function MemberDetails() {
     };
 
     async function handleSubmit(e: React.FormEvent): Promise<void> {
-        e.preventDefault(); 
+        e.preventDefault();
         if (!validateMemberForm({ member, setErrors })) return;
 
+        const base = {
+            ...member,
+            cepData,
+            role,
+            civilStatus,
+            children: childrenInputs
+        };
+
         if (isEditing) {
-            const updatedMember = Member.fromJson({
-                ...member,
-                cepData,
-                role,
-                civilStatus,
-            });
-
+            const updatedMember = Member.fromJson(base);
             await memberUpdate(member.id, updatedMember.toJSON());
-            setOpenSnackbar(true);
         } else {
-            const updatedMember = Member.fromJson({
-                ...member,
-                cepData,
-                role,
-                civilStatus,
-            });
-
-            await memberAdd(updatedMember);
+            const newMember = Member.fromJson(base);
+            await memberAdd(newMember);
             clearCredentials();
-
             setOpenSnackbar(true);
             setMember(new Member());
             setCepData(null);
             setChildrenInputs([]);
         }
-    };
+        navToMember();
+    }
 
     useEffect(() => {
         async function load() {
@@ -376,7 +377,7 @@ export default function MemberDetails() {
                         </Box>
                     </span>
 
-                    <Box className="family">
+                    <Box mb={2}>
                         <h3>Família</h3>
                         <Box mb={2}>
                             <TextField
@@ -455,10 +456,7 @@ export default function MemberDetails() {
                         <Button variant="outlined" onClick={handleAddChildField}>
                             Adicionar Filho
                         </Button>
-
-                    </Box>
-
-                                        
+                    </Box>      
                     <Button type="submit" variant="contained" color="primary" fullWidth>
                         Salvar Cliente
                     </Button>

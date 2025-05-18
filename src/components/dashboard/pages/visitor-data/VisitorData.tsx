@@ -1,9 +1,6 @@
-import './visitor-data.scss';
-import { Add, Info } from "@mui/icons-material";
+import { Info } from "@mui/icons-material";
 import {
-    Container,
     IconButton,
-    Tooltip,
     Typography,
     Table, 
     TableBody, 
@@ -12,34 +9,26 @@ import {
     TableHead, 
     TableRow, 
     Paper,
-    Box
 } from "@mui/material";
 import { useContext, useEffect, useState } from 'react';
 import { ManagerContext } from '@context/ManagerContext';
-import { useNavigate, useParams } from 'react-router-dom';
 import Search from '@components/search/Search';
-import SnackBarMessage from '@components/snackBarMessage/SnackBarMessage';
 import { Visitor } from '@domain/user/visitor/Visitor';
 import { findAllVisitors } from '@service/VisitorService';
 import VisitorDataModal from './visitor-data-modal/VisitorDataModal';
 import { whatzapp } from '@domain/utils';
+import Layout from '@components/layout/Layout';
 
 export default function VisitorData() {
     const [data, setData] = useState<Visitor[]>([]);
     const [filtered, setFiltered] = useState<Visitor[]>([]);
     const [openData, setOpenData] = useState(false);
     const [selectedVisitor, setSelectedVisitor] = useState<Visitor | null>(null);
-    const { userId } = useParams();
-    const { openSnackbar, setOpenSnackbar, isMobile } = useContext(ManagerContext);
-    const navigate = useNavigate();
+    const { isMobile } = useContext(ManagerContext);
     
     function handleOpenDetails(visitor: Visitor) {
         setSelectedVisitor(visitor);
         setOpenData(true);
-    }
-
-    function navToNewVisitor() {
-        return navigate(`/dashboard/${userId}/new-visitor`);
     }
 
     useEffect(() => { 
@@ -52,12 +41,7 @@ export default function VisitorData() {
     }, []);
 
     return (
-        <Container className="data-container">
-            <Box mb={3}>
-                <Typography variant="h4" component="h1" className='title'>
-                    Visitantes
-                </Typography>
-            </Box>
+        <Layout title="Visitantes" path="new-visitor" message="Visitante criado com sucesso!">
             <Search<Visitor> 
                 data={data} 
                 onFilter={setFiltered} 
@@ -82,7 +66,6 @@ export default function VisitorData() {
                         )}
 
                         <TableCell className='title-secondary'>Info</TableCell>
-
                     </TableRow>
                     </TableHead>
                     <TableBody>
@@ -117,23 +100,11 @@ export default function VisitorData() {
                 Nenhum visitante encontrado.
                 </Typography>
             )}
-
-            <Tooltip className="data-button" title="Click to new visitor">
-                <IconButton onClick={navToNewVisitor}>
-                    <Add/>
-                </IconButton>
-            </Tooltip>
             <VisitorDataModal
                 open={openData}
                 onClose={() => setOpenData(false)}
                 visitor={selectedVisitor}
             />
-            <SnackBarMessage 
-                message={"Visitante criado com sucesso!"} 
-                openSnackbar={openSnackbar} 
-                setOpenSnackbar={setOpenSnackbar}
-            />
-        </Container>
-
+        </Layout>
     );
 }

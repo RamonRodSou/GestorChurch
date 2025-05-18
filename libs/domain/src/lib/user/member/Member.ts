@@ -26,9 +26,9 @@ export class Member extends User implements ILocation{
         public spouse: MemberSummary | null = null,
         public children: MemberSummary[] = [],
         public role: Role = Role.MEMBER,
-        password: string = 'IgrejaIAF',
         public isActive: boolean = true,
-		public createdAt: string = new Date().toISOString()
+		public createdAt: string = new Date().toISOString(),
+        password: string = 'IgrejaIAF'
     ) {
 		super(id, name, phone, password, createdAt);
     }
@@ -88,17 +88,14 @@ export class Member extends User implements ILocation{
     }  
 }
 
-export class MemberSummary extends User {
+export class MemberSummary {
     constructor(
         public readonly id: string = uuidv4(),
         public name: string = EMPTY,
         public email: string = EMPTY,
         public phone: string = EMPTY,
-        password: string = EMPTY,
 
-    ) {
-        super(id, name, phone, password);
-     }
+    ) { }
 
     static fromJson(json: any): MemberSummary {
         return new MemberSummary(
@@ -106,7 +103,6 @@ export class MemberSummary extends User {
             json.name ?? EMPTY,
             json.email ?? null,
             json.phone ?? null,
-            json.password ?? null,
         );
     }
 
@@ -117,9 +113,5 @@ export class MemberSummary extends User {
             email: this.email,
             phone: this.phone,
         };
-    }
-
-    async getPasswordHash(): Promise<string> {
-        return bcrypt.hash(this.password, 10);
     }  
 }

@@ -1,4 +1,3 @@
-import '../group.scss';
 import { useEffect, useState } from "react";
 import { Box, Button, Container, TextField, Autocomplete } from "@mui/material";
 import BackButton from '@components/back-button/BackButton';
@@ -221,15 +220,14 @@ export default function GroupDetails() {
                             />
                         </Box>
                     ))}
-                    <Button variant="outlined" onClick={handleAddMemberField}>
-                        Adicionar Membro
-                    </Button>
-
-                    <Box mt={3}>
-                        <Button type="submit" variant="contained" color="primary">
-                            Salvar Grupo
+                    <Box mb={2}>
+                        <Button variant="outlined" onClick={handleAddMemberField}>
+                            Adicionar Membro
                         </Button>
                     </Box>
+                    <Button type="submit" variant="contained" color="primary" fullWidth>
+                        Salvar Grupo
+                    </Button>
                 </form>
             </Container>   
         </>

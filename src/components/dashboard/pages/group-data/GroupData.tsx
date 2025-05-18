@@ -1,7 +1,5 @@
-import { Add, Info } from "@mui/icons-material";
+import { Info } from "@mui/icons-material";
 import {
-    Box,
-  Container,
   IconButton,
   Paper,
   Table,
@@ -10,38 +8,27 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tooltip,
   Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import Search from '@components/search/Search';
 import { Group } from "@domain/group/Group";
 import { findAllGroups } from "@service/GroupService";
-import SnackBarMessage from "@components/snackBarMessage/SnackBarMessage";
-import { ManagerContext } from "@context/ManagerContext";
 import GroupDataModal from "./group-data-modal/groupDataModa";
+import Layout from "@components/layout/Layout";
 
 export default function GroupData() {
     const [data, setData] = useState<Group[]>([]);
     const [filtered, setFiltered] = useState<Group[]>([]);
     const [openData, setOpenData] = useState(false);
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
-    const { openSnackbar, setOpenSnackbar } = useContext(ManagerContext);
-    const { userId } = useParams();
-    const navigate = useNavigate();
 
     function handleOpenDetails(g: Group) {
         setSelectedGroup(g);
         setOpenData(true);
     }
 
-    function navToNewGroup() {
-        return navigate(`/dashboard/${userId}/new-group`);
-    }
-
     useEffect(() => {
-        setOpenSnackbar(true);
         findAllGroups()
             .then((it) => {
                 setData(it);
@@ -51,12 +38,7 @@ export default function GroupData() {
     }, []);
 
     return (
-        <Container className='data-container'>
-            <Box mb={3}>
-                <Typography variant="h4" component="h1" className='title'>
-                    GC
-                </Typography>
-            </Box>
+        <Layout title="GC" path="new-group" message="GC criado com sucesso!">
             <Search<Group> 
                 data={data} 
                 onFilter={setFiltered} 
@@ -99,22 +81,11 @@ export default function GroupData() {
                     Nenhum gc encontrado.
                 </Typography>
             )}
-
-            <Tooltip className='data-button' title="Click to new member">
-                <IconButton onClick={() => navToNewGroup()}>
-                    <Add/>
-                </IconButton>
-            </Tooltip>
             <GroupDataModal
                 open={openData}
                 onClose={() => setOpenData(false)}
                 group={selectedGroup}
             />
-            <SnackBarMessage 
-                message={"GC criado com sucesso!"} 
-                openSnackbar={openSnackbar} 
-                setOpenSnackbar={setOpenSnackbar}
-            />
-        </Container>
+        </Layout>
     );
 }

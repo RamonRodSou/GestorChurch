@@ -193,7 +193,7 @@ export default function ReportChurchDetails() {
                         />
                     </Box>
                     <Box mt={3}>
-                        <Button type="submit" variant="contained" color="primary">
+                        <Button type="submit" variant="contained" color="primary" fullWidth>
                             Salvar Relatório
                         </Button>
                     </Box>

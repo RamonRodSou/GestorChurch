@@ -71,9 +71,7 @@ export async function memberUpdate(id: string, data: Partial<Member>): Promise<v
             ...data,
             batism,
             spouse: data.spouse ? getSpouseSummary(data.spouse) : null,
-            children: data.children?.map((child) =>
-                typeof child === "string" ? child : child?.toJSON?.() ?? null
-            ),
+            children: data.children ?? (await getDoc(ref)).data()?.children ?? []
         };
 
         await updateDoc(ref, plainData);
@@ -106,7 +104,6 @@ async function saveMemberToDatabase(member: Member, userId: string, passwordHash
         cpf: member.cpf,
         email: member.email,
         phone: member.phone,
-        passwordHash,
         groupId: member.groupId,
         street: member.street,
         houseNumber: member.houseNumber,
@@ -123,6 +120,7 @@ async function saveMemberToDatabase(member: Member, userId: string, passwordHash
         role: member.role,
         isActive: member.isActive,
         createdAt: DateUtil.dateFormatedPtBr(member.createdAt),
+        passwordHash,
     };
 
     return await addDoc(collection(db, 'members'), memberData);
@@ -145,10 +143,12 @@ async function addMemberToGroup(member: Member, memberRef: any) {
 }
 
 async function updateSpouseReferences(member: Member, memberId: string) {
+    
     const membersQuery = query(
         collection(db, 'members'),
-        where('spouse', '==', member.name)
+        where('spouse.id', '==', member.id)
     );
+    
     const spouseSnapshot = await getDocs(membersQuery);
 
     const thisMemberSummary = {

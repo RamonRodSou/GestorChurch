@@ -1,8 +1,7 @@
-import { Add, Info } from "@mui/icons-material";
+import { Info } from "@mui/icons-material";
 import {
     Box,
   Button,
-  Container,
   IconButton,
   Paper,
   Table,
@@ -11,21 +10,18 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tooltip,
   Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import Search from '@components/search/Search';
 import { Member } from '@domain/user';
 import { findAllMembers } from "@service/MemberService";
 import MemberDataModal from "./member-data-modal/MemberDataModa";
-import SnackBarMessage from "@components/snackBarMessage/SnackBarMessage";
-import { ManagerContext } from "@context/ManagerContext";
 import { findGroupSummaryToById } from "@service/GroupService";
 import { GroupSummary } from "@domain/group";
 import { whatzapp } from "@domain/utils";
 import { Role } from "@domain/enums";
+import Layout from "@components/layout/Layout";
 
 export default function MemberData() {
     const [data, setData] = useState<Member[]>([]);
@@ -34,9 +30,6 @@ export default function MemberData() {
     const [selectedMember, setSelectedMember] = useState<Member | null>(null);
     const [openData, setOpenData] = useState(false);
     const [groupData, setGroupData] = useState<GroupSummary | null>(null); 
-    const { openSnackbar, setOpenSnackbar } = useContext(ManagerContext);
-    const { userId } = useParams();
-    const navigate = useNavigate();
 
     const roleEntries = Object.entries(Role)
     
@@ -50,12 +43,8 @@ export default function MemberData() {
         } else {
             setGroupData(null)
         }
-        setSelectedMember(member);  
+        setSelectedMember(member); 
         setOpenData(true);
-    }
-
-    function navToNewMember() {
-        return navigate(`/dashboard/${userId}/new-member`);
     }
 
     const filteredMembers = filtered.filter(item => {
@@ -73,12 +62,7 @@ export default function MemberData() {
     }, []);
 
     return (
-        <Container className='data-container'>
-            <Box mb={3}>
-                <Typography variant="h4" component="h1" className='title'>
-                    Membros
-                </Typography>
-            </Box>
+        <Layout title="Membros" path="new-member" message="Membro criado com sucesso!">
             <Search<Member> 
                 data={data} 
                 onFilter={setFiltered} 
@@ -109,7 +93,9 @@ export default function MemberData() {
                 ))}
             </Box>
 
-            {filteredMembers?.length > 0 ? (
+            {filteredMembers
+                .sort
+                ?.length > 0 ? (
                     <TableContainer component={Paper}>
                     <Table size="small">
                         <TableHead>
@@ -149,23 +135,12 @@ export default function MemberData() {
                     Nenhum colaborador encontrado.
                 </Typography>
             )}
-
-            <Tooltip className='data-button' title="Click to new member">
-                <IconButton onClick={() => navToNewMember()}>
-                    <Add/>
-                </IconButton>
-            </Tooltip>
-            <MemberDataModal
+        <MemberDataModal
                 groupData={groupData}
                 open={openData}
                 onClose={() => setOpenData(false)}
                 member={selectedMember}
             />
-            <SnackBarMessage 
-                message={"Membro criado com sucesso!"} 
-                openSnackbar={openSnackbar} 
-                setOpenSnackbar={setOpenSnackbar}
-            />
-        </Container>
+        </Layout>
     );
 }
