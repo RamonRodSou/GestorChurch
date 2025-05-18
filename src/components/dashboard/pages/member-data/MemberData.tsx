@@ -85,7 +85,7 @@ export default function MemberData() {
                 label={'Buscar Membro'}
                 searchBy={(item, term) =>
                     item.name.toLowerCase().includes(term.toLowerCase()) ||
-                    item.phone.includes(term)
+                    item.phone.includes(term) 
                 }
             />
             
