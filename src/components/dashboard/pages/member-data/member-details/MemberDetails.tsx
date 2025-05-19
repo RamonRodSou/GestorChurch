@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import dayjs from 'dayjs';
 import { Autocomplete, Box, Button, Container, TextField } from "@mui/material";
 import BackButton from '@components/back-button/BackButton';
-import { Member, MemberSummary } from '@domain/user';
+import { ChildrenSummary, Member, MemberSummary } from '@domain/user';
 import { findAllMembersSummary, findMemberToById, memberAdd, memberUpdate } from '@service/MemberService';
 import { EMPTY } from "@domain/utils/string-utils";
 import SnackBarMessage from "@components/snackBarMessage/SnackBarMessage";
 import { CivilStatus, Role } from "@domain/enums";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Batism } from "@domain/batism";
-import { ensureMemberSummary } from '@domain/utils/EnsuredMemberSummary';
+import { ensureChildrenSummary, ensureMemberSummary } from '@domain/utils/EnsuredSummary';
 import ICepData from '@domain/interface/ICepData';
 import { validateMemberForm } from '@domain/utils/validateMemberForm';
 import { findAllGroups } from '@service/GroupService';
@@ -17,6 +17,7 @@ import validateCEP from '@domain/utils/validateCEP';
 import { checkCEP } from '@domain/utils/checkCEP';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCredentials } from '@context/CredentialsContext';
+import { findAllChildrensSummary } from "@service/ChildrenService";
 
 export default function MemberDetails() {
     const [member, setMember] = useState<Member>(new Member());
@@ -24,7 +25,8 @@ export default function MemberDetails() {
     const [civilStatus, setCivilStatus] = useState<CivilStatus>(CivilStatus.SINGLE);
     const [role, setRole] = useState<Role>(Role.MEMBER);
     const [allMembers, setAllMembers] = useState<MemberSummary[]>([]);
-    const [childrenInputs, setChildrenInputs] = useState<(MemberSummary | string)[]>([]);
+    const [allChidrens, setAllChildrens] = useState<ChildrenSummary[]>([]);
+    const [childrenInputs, setChildrenInputs] = useState<(ChildrenSummary | string)[]>([]);
     const [cepData, setCepData] = useState<ICepData | null>(null);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
@@ -66,9 +68,9 @@ export default function MemberDetails() {
         setChildrenInputs([...childrenInputs, EMPTY]);
     };
 
-    function handleChildrenChange(index: number, value: MemberSummary | string) {
+    function handleChildrenChange(index: number, value: ChildrenSummary | string) {
         const updated = [...childrenInputs];
-        updated[index] = ensureMemberSummary(value);
+        updated[index] = ensureChildrenSummary(value);
         setChildrenInputs(updated);
         setMember(prev => {
             const updatedMember = { ...prev, children: updated };
@@ -85,6 +87,11 @@ export default function MemberDetails() {
     async function  fetchMembers(): Promise<void> {
         const response = await findAllMembersSummary();
         setAllMembers(response);
+    };
+
+    async function  fetchChildrens(): Promise<void> {
+        const response = await findAllChildrensSummary();
+        setAllChildrens(response);
     };
 
     async function fetchGroups(): Promise<void>  {
@@ -123,6 +130,7 @@ export default function MemberDetails() {
         async function load() {
             fetchGroups();
             fetchMembers();
+            fetchChildrens();
             setCivilStatus(member.civilStatus);
             setRole(member.role);
 
@@ -430,7 +438,7 @@ export default function MemberDetails() {
                                     freeSolo
                                     value={child}
                                     onChange={(_, newValue) => handleChildrenChange(index, newValue ?? EMPTY)}
-                                    options={allMembers}
+                                    options={allChidrens}
                                     getOptionLabel={(option) =>
                                         typeof option === 'string' ? option.toUpperCase() : option.name.toUpperCase()
                                     }
@@ -458,7 +466,7 @@ export default function MemberDetails() {
                         </Button>
                     </Box>      
                     <Button type="submit" variant="contained" color="primary" fullWidth>
-                        Salvar Cliente
+                        Salvar Membro
                     </Button>
                 </form>
                 <SnackBarMessage 

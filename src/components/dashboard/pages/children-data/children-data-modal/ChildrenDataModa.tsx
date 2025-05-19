@@ -1,0 +1,71 @@
+import { Dialog, DialogContent, Typography } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Children } from '@domain/user';
+import { whatzapp } from '@domain/utils/whatszappAPI';
+import { GroupSummary } from '@domain/group';
+import ModalBtns from '@components/modalBtns/ModalBtns';
+import ConfirmModal from '@components/confirm-modal/ConfirmModal';
+import { useState } from 'react';
+import { DateUtil } from '@domain/utils';
+import { childrenUpdate } from '@service/ChildrenService';
+
+interface ChildrenDataModalProps {
+    open: boolean;
+    onClose: () => void;
+    children: Children | null;
+    groupData?: GroupSummary | null; 
+}
+
+export default function ChildrenDataModal({ open, onClose, children, groupData }: ChildrenDataModalProps) {
+    const [openData, setOpenData] = useState(false);
+    const navigate = useNavigate();
+    const { userId } = useParams();
+    const group: string = groupData ? groupData?.name : 'SEM GC';
+    const parent = children?.parent.map(m => m?.name.split(' ')[0]).join(' / ');
+    const phone: string = children?.phone ? children.phone :`RESPONÁVEL - ${children?.parent.map((it) => it.phone).join(' / ')}`; 
+    const email: string = children?.email || 'SEM EMAIL';
+
+    if (!children) return null;     
+
+    async function editChildren(childrenId: String) {
+        return await navigate(`/dashboard/${userId}/edit-children/${childrenId}`);
+    }
+
+    async function remove (children: Children) {
+        children.isActive = false;
+        await childrenUpdate(children.id, children);
+        setOpenData(false);
+        onClose();
+    }
+
+    return (
+        <Dialog open={open} onClose={onClose} fullWidth>
+            <DialogContent dividers className='dialog'>
+                <Typography className='title'>{children.name}</Typography>
+                <ModalBtns
+                    edit={() => editChildren(children.id)} 
+                    whatsApp={() => whatzapp(children.name, children?.phone ?? children.parent.at(0))}
+                    remove={() => setOpenData(true)}
+                />                
+                <Typography className='textInfo'> <span className='subTextInfo'>Nascimento: </span>{DateUtil.dateFormated(children.birthdate)}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>TELEFONE: </span>{phone}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>         
+                    RESPONSÁVEL: </span>{parent} 
+                </Typography>
+                {children.batism && (
+                    <Typography className='textInfo'> <span className='subTextInfo'>BATISMO: </span>{DateUtil.dateFormated(children.batism.baptismDate)}</Typography>
+                )}
+                <Typography className='textInfo'> <span className='subTextInfo'>GC: </span>{group}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>STATUS: </span>{children.role}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>EMAIL: </span>{email}</Typography>
+            </DialogContent>
+            <ConfirmModal
+                message={`Tem certeza que deseja remover o membro ${children.name}`}
+                open={openData}
+                onConfirm={() => remove(children)}
+                onClose={() => setOpenData(false)}
+            />
+        </Dialog>
+    );
+}
+ 

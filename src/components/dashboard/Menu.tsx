@@ -7,6 +7,7 @@ import {
     Person2Outlined,
     Diversity3Outlined,
     StickyNote2Outlined,
+    ChildCare,
   } from '@mui/icons-material';
 
 export interface IMenu {
@@ -31,6 +32,11 @@ export const getMenuItems  = (permission: number | null): IMenu[] => {
             path: 'member',
             label: 'Membros',
             icon: <Group/>,
+        },
+        {
+            path: 'children',
+            label: 'Crianças',
+            icon: <ChildCare/>,
         },
         {
             path: 'group',

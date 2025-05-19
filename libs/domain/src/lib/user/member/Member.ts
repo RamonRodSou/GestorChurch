@@ -5,6 +5,7 @@ import { Batism } from '@domain/batism/Batism';
 import { CivilStatus, Role } from '@domain/enums';
 import { ILocation } from '@domain/interface/ILocation';
 import bcrypt from 'bcryptjs';
+import { ChildrenSummary } from '../children/Children';
 
 export class Member extends User implements ILocation{
   constructor(
@@ -24,7 +25,7 @@ export class Member extends User implements ILocation{
         public batism: Batism = new Batism(),
         public civilStatus: CivilStatus = CivilStatus.SINGLE,
         public spouse: MemberSummary | null = null,
-        public children: MemberSummary[] = [],
+        public children: ChildrenSummary[] = [],
         public role: Role = Role.MEMBER,
         public isActive: boolean = true,
 		public createdAt: string = new Date().toISOString(),

@@ -4,7 +4,7 @@ import BackButton from '@components/back-button/BackButton';
 import { MemberSummary } from '@domain/user';
 import { findAllMembersSummary } from '@service/MemberService';
 import { EMPTY } from "@domain/utils/string-utils";
-import { ensureMemberSummary } from '@domain/utils/EnsuredMemberSummary';
+import { ensureMemberSummary } from '@domain/utils/EnsuredSummary';
 import { Group } from '@domain/group/Group';
 import { groupAdd } from '@service/GroupService';
 import validateCEP from '@domain/utils/validateCEP';

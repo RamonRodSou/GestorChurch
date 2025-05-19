@@ -14,6 +14,8 @@ import GroupData from '@components/dashboard/pages/group-data/GroupData';
 import GroupDetails from '@components/dashboard/pages/group-data/group-details/GroupDetails';
 import ReportData from '@components/dashboard/pages/report-data/ReportData';
 import ReportChurchDetails from '@components/dashboard/pages/report-data/report-church-details/RepertChurchDetails';
+import ChildrenDetails from '@components/dashboard/pages/children-data/children-details/ChildrenDetails';
+import ChildrenData from '@components/dashboard/pages/children-data/ChildrenData';
 
 function AppRouter() {
     return (
@@ -29,6 +31,9 @@ function AppRouter() {
                     <Route path="member" element={<MemberData/>}/>
                     <Route path="new-member" element={<MemberDetails/>}/>
                     <Route path="/dashboard/:userId/edit-member/:memberId" element={<MemberDetails/>}/>
+                    <Route path="children" element={<ChildrenData/>}/>
+                    <Route path="new-children" element={<ChildrenDetails/>}/>
+                    <Route path="/dashboard/:userId/edit-children/:childrenId" element={<ChildrenDetails/>}/>
                     <Route path="group" element={<GroupData/>}/>
                     <Route path="new-group" element={<GroupDetails/>}/>
                     <Route path="/dashboard/:userId/edit-group/:groupId" element={<GroupDetails/>}/>

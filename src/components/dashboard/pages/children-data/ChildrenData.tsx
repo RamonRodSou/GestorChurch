@@ -1,41 +1,41 @@
 import { Info } from "@mui/icons-material";
 import {
     Box,
-  Button,
-  IconButton,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
+    Button,
+    IconButton,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
 } from "@mui/material";
 import { useEffect, useState } from 'react';
 import Search from '@components/search/Search';
-import { Member } from '@domain/user';
-import { findAllMembers } from "@service/MemberService";
-import MemberDataModal from "./member-data-modal/MemberDataModa";
+import { Children } from '@domain/user';
 import { findGroupSummaryToById } from "@service/GroupService";
 import { GroupSummary } from "@domain/group";
 import { whatzapp } from "@domain/utils";
-import { Role } from "@domain/enums";
+import { ChildrenRole, Role } from "@domain/enums";
 import Layout from "@components/layout/Layout";
+import { findAllChildrens } from "@service/ChildrenService";
+import ChildrenDataModal from "./children-data-modal/ChildrenDataModa";
 
-export default function MemberData() {
-    const [data, setData] = useState<Member[]>([]);
-    const [filtered, setFiltered] = useState<Member[]>([]);
-    const [filter, setFilter] = useState<Role | string>('all');
-    const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+export default function ChildrenData() {
+    const [data, setData] = useState<Children[]>([]);
+    const [filtered, setFiltered] = useState<Children[]>([]);
+    const [filter, setFilter] = useState<ChildrenRole | string>('all');
+    const [selectedChildren, setSelectedChildren] = useState<Children | null>(null);
     const [openData, setOpenData] = useState(false);
     const [groupData, setGroupData] = useState<GroupSummary | null>(null); 
 
     const roleEntries = Object.entries(Role)
     
-    function handleOpenDetails(member: Member) {
-        if (member.groupId) {
-            findGroupSummaryToById(member.groupId)
+    function handleOpenDetails(children: Children) {
+        if (children.groupId) {
+            findGroupSummaryToById(children.groupId)
                 .then((group) => {
                     setGroupData(group);
                 })
@@ -43,17 +43,17 @@ export default function MemberData() {
         } else {
             setGroupData(null)
         }
-        setSelectedMember(member); 
+        setSelectedChildren(children); 
         setOpenData(true);
     }
 
     const filteredMembers = filtered.filter(item => {
         if (filter === 'all') return true;
-        return item.role === Role[filter.toUpperCase() as keyof typeof Role];
+        return item.role === ChildrenRole[filter.toUpperCase() as keyof typeof ChildrenRole];
     });
 
     useEffect(() => {
-        findAllMembers()
+        findAllChildrens()
             .then((it) => {
                 setData(it);
                 setFiltered(it);
@@ -62,11 +62,11 @@ export default function MemberData() {
     }, []);
 
     return (
-        <Layout title="Membros" path="new-member" message="Membro criado com sucesso!">
-            <Search<Member> 
+        <Layout title="Crianças" path="new-children" message="Crainça criado com sucesso!">
+            <Search<Children> 
                 data={data} 
                 onFilter={setFiltered} 
-                label={'Buscar Membro'}
+                label={'Buscar Criança'}
                 searchBy={(item, term) =>
                     item.name.toLowerCase().includes(term.toLowerCase()) ||
                     item.phone.includes(term) 
@@ -104,7 +104,6 @@ export default function MemberData() {
                             <TableCell className='title-secondary'>Telefone</TableCell>
                             <TableCell className='title-secondary'>Status</TableCell>
                             <TableCell className='title-secondary'>Info</TableCell>
-
                         </TableRow>
                         </TableHead>
                         <TableBody>
@@ -132,14 +131,14 @@ export default function MemberData() {
                     </TableContainer>
             ) : (
                 <Typography variant="body1" sx={{ color: 'var(--primary-title)' }}>
-                    Nenhum membro encontrado.
+                    Nenhuma criança encontrada.
                 </Typography>
             )}
-        <MemberDataModal
+        <ChildrenDataModal
                 groupData={groupData}
                 open={openData}
                 onClose={() => setOpenData(false)}
-                member={selectedMember}
+                children={selectedChildren}
             />
         </Layout>
     );

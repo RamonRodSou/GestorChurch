@@ -1,4 +1,4 @@
-export * from './EnsuredMemberSummary';
+export * from './EnsuredSummary';
 export * from './checkCEP';
 export * from './dateUtils';
 export * from './string-utils';
