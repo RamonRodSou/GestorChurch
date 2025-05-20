@@ -14,26 +14,26 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from 'react';
 import Search from '@components/search/Search';
-import { Children } from '@domain/user';
+import { Child } from '@domain/user';
 import { findGroupSummaryToById } from "@service/GroupService";
 import { GroupSummary } from "@domain/group";
 import { whatzapp } from "@domain/utils";
-import { ChildrenRole, Role } from "@domain/enums";
 import Layout from "@components/layout/Layout";
 import { findAllChildrens } from "@service/ChildrenService";
 import ChildrenDataModal from "./children-data-modal/ChildrenDataModa";
+import { AgeGroup } from "@domain/enums/AgeGroup";
 
 export default function ChildrenData() {
-    const [data, setData] = useState<Children[]>([]);
-    const [filtered, setFiltered] = useState<Children[]>([]);
-    const [filter, setFilter] = useState<ChildrenRole | string>('all');
-    const [selectedChildren, setSelectedChildren] = useState<Children | null>(null);
+    const [data, setData] = useState<Child[]>([]);
+    const [filtered, setFiltered] = useState<Child[]>([]);
+    const [filter, setFilter] = useState<AgeGroup | string>('all');
+    const [selectedChild, setSelectedChild] = useState<Child | null>(null);
     const [openData, setOpenData] = useState(false);
     const [groupData, setGroupData] = useState<GroupSummary | null>(null); 
 
-    const roleEntries = Object.entries(Role)
+    const roleEntries = Object.entries(AgeGroup)
     
-    function handleOpenDetails(children: Children) {
+    function handleOpenDetails(children: Child) {
         if (children.groupId) {
             findGroupSummaryToById(children.groupId)
                 .then((group) => {
@@ -43,13 +43,13 @@ export default function ChildrenData() {
         } else {
             setGroupData(null)
         }
-        setSelectedChildren(children); 
+        setSelectedChild(children); 
         setOpenData(true);
     }
 
     const filteredMembers = filtered.filter(item => {
         if (filter === 'all') return true;
-        return item.role === ChildrenRole[filter.toUpperCase() as keyof typeof ChildrenRole];
+        return item.ageGroup === AgeGroup[filter.toUpperCase() as keyof typeof AgeGroup];
     });
 
     useEffect(() => {
@@ -63,7 +63,7 @@ export default function ChildrenData() {
 
     return (
         <Layout title="Crianças" path="new-children" message="Crainça criado com sucesso!">
-            <Search<Children> 
+            <Search<Child> 
                 data={data} 
                 onFilter={setFiltered} 
                 label={'Buscar Criança'}
@@ -138,7 +138,7 @@ export default function ChildrenData() {
                 groupData={groupData}
                 open={openData}
                 onClose={() => setOpenData(false)}
-                children={selectedChildren}
+                children={selectedChild}
             />
         </Layout>
     );

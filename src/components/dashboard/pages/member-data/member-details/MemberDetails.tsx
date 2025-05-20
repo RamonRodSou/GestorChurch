@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import dayjs from 'dayjs';
 import { Autocomplete, Box, Button, Container, TextField } from "@mui/material";
 import BackButton from '@components/back-button/BackButton';
-import { ChildrenSummary, Member, MemberSummary } from '@domain/user';
+import { ChildSummary, Member, MemberSummary } from '@domain/user';
 import { findAllMembersSummary, findMemberToById, memberAdd, memberUpdate } from '@service/MemberService';
 import { EMPTY } from "@domain/utils/string-utils";
 import SnackBarMessage from "@components/snackBarMessage/SnackBarMessage";
-import { CivilStatus, Role } from "@domain/enums";
+import { CivilStatus, Role, YesOrNot } from "@domain/enums";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Batism } from "@domain/batism";
-import { ensureChildrenSummary, ensureMemberSummary } from '@domain/utils/EnsuredSummary';
+import { ensureChildSummary, ensureMemberSummary } from '@domain/utils/EnsuredSummary';
 import ICepData from '@domain/interface/ICepData';
 import { validateMemberForm } from '@domain/utils/validateMemberForm';
 import { findAllGroups } from '@service/GroupService';
@@ -25,9 +25,10 @@ export default function MemberDetails() {
     const [civilStatus, setCivilStatus] = useState<CivilStatus>(CivilStatus.SINGLE);
     const [role, setRole] = useState<Role>(Role.MEMBER);
     const [allMembers, setAllMembers] = useState<MemberSummary[]>([]);
-    const [allChidrens, setAllChildrens] = useState<ChildrenSummary[]>([]);
-    const [childrenInputs, setChildrenInputs] = useState<(ChildrenSummary | string)[]>([]);
+    const [allChidrens, setAllChildrens] = useState<ChildSummary[]>([]);
+    const [childrenInputs, setChildrenInputs] = useState<(ChildSummary | string)[]>([]);
     const [cepData, setCepData] = useState<ICepData | null>(null);
+    const [yesOrNot, setYesOrNot] = useState<YesOrNot>(YesOrNot.NOT);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
     const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -68,9 +69,9 @@ export default function MemberDetails() {
         setChildrenInputs([...childrenInputs, EMPTY]);
     };
 
-    function handleChildrenChange(index: number, value: ChildrenSummary | string) {
+    function handleChildrenChange(index: number, value: ChildSummary | string) {
         const updated = [...childrenInputs];
-        updated[index] = ensureChildrenSummary(value);
+        updated[index] = ensureChildSummary(value);
         setChildrenInputs(updated);
         setMember(prev => {
             const updatedMember = { ...prev, children: updated };
@@ -107,6 +108,7 @@ export default function MemberDetails() {
             ...member,
             cepData,
             role,
+            yesOrNot,
             civilStatus,
             children: childrenInputs
         };
@@ -133,6 +135,7 @@ export default function MemberDetails() {
             fetchChildrens();
             setCivilStatus(member.civilStatus);
             setRole(member.role);
+            setYesOrNot(member.isImageAuthorized === true ? YesOrNot.YES : YesOrNot.NOT )
 
             if (memberId) {
                 const data = await findMemberToById(memberId);
@@ -141,7 +144,7 @@ export default function MemberDetails() {
                 setIsEditing(true);
                 setCivilStatus(loadedMember.civilStatus);
                 setRole(loadedMember.role);
-                setChildrenInputs(loadedMember.children ?? []);
+                setChildrenInputs(loadedMember.child ?? []);
 
                 if (loadedMember.zipCode) {
                     checkCEP({ it: loadedMember.zipCode, setCepData });
@@ -324,7 +327,7 @@ export default function MemberDetails() {
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label="Grupo Familiar"
+                                    label="GC"
                                     fullWidth
                                 />
                             )}
@@ -343,6 +346,24 @@ export default function MemberDetails() {
                             SelectProps={{ native: true }}
                         >
                             {Object.values(Role).map((status) => (
+                                <option key={status} value={status}>
+                                    {status}
+                                </option>
+                            ))}
+                        </TextField>
+                    </Box>
+                    <Box mb={2}>
+                        <TextField
+                            select
+                            label="Autoriza o uso de imagem?"
+                            value={yesOrNot === YesOrNot.YES ? "true" : "false"}
+                            onChange={(e) => 
+                                handleChange("isImageAuthorized", e.target.value)
+                            }                            
+                            fullWidth
+                            SelectProps={{ native: true }}
+                        >
+                            {Object.values(YesOrNot).map((status) => (
                                 <option key={status} value={status}>
                                     {status}
                                 </option>

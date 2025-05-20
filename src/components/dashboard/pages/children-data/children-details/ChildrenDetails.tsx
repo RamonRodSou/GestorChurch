@@ -2,23 +2,26 @@ import { useEffect, useState } from "react";
 import dayjs from 'dayjs';
 import { Autocomplete, Box, Button, Container, TextField } from "@mui/material";
 import BackButton from '@components/back-button/BackButton';
-import { Children, MemberSummary } from '@domain/user';
+import { Child, MemberSummary } from '@domain/user';
 import { EMPTY } from "@domain/utils/string-utils";
 import SnackBarMessage from "@components/snackBarMessage/SnackBarMessage";
-import { ChildrenRole } from "@domain/enums";
+import { ChildRole, YesOrNot } from "@domain/enums";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Batism } from "@domain/batism";
 import { ensureMemberSummary } from '@domain/utils/EnsuredSummary';
 import { findAllGroups } from '@service/GroupService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCredentials } from '@context/CredentialsContext';
-import { childrenAdd, childrenUpdate, findChildrenToById } from "@service/ChildrenService";
 import { findAllMembers } from "@service/MemberService";
+import { childAdd, childUpdate, findChildToById } from "@service/ChildrenService";
+import { AgeGroup } from "@domain/enums/AgeGroup";
 
-export default function ChildrenDetails() {
-    const [data, setData] = useState<Children>(new Children());
+export default function ChildDetails() {
+    const [data, setData] = useState<Child>(new Child());    
     const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-    const [role, setRole] = useState<ChildrenRole>(ChildrenRole.EMPTY);
+    const [role, setRole] = useState<ChildRole>(ChildRole.EMPTY);
+    const [age, setAge] = useState<AgeGroup>(AgeGroup.CHILD);
+    const [yesOrNot, setYesOrNot] = useState<YesOrNot>(YesOrNot.NOT);
     const [allParent, setAllParent] = useState<MemberSummary[]>([]);
     const [parentInputs, setParentInputs] = useState<(MemberSummary | string)[]>([]);
     const [errors, _] = useState<{ [key: string]: string }>({});
@@ -31,16 +34,16 @@ export default function ChildrenDetails() {
 
     const selectedGroup = groups.find(group => group.id === data.groupId) ?? null;
 
-    function navToChildren() {
+    function navToChild() {
         navigate(`/dashboard/${userId}/children`, {
             state: { showSnackbar: true }
         }); 
     }
 
-    function handleChange(field: keyof Children, value: any) {
+    function handleChange(field: keyof Child, value: any) {
         setData(prev => {
             const updated = { ...prev, [field]: value };
-            return Children.fromJson(updated);
+            return Child.fromJson(updated);
         });
     };
 
@@ -48,7 +51,7 @@ export default function ChildrenDetails() {
         setData((prev) => {
             const updatedBatism = { ...prev.batism, [field]: value };
             const updated = { ...prev, batism: updatedBatism };
-            return Children.fromJson(updated);
+            return Child.fromJson(updated);
         });
     };
 
@@ -59,10 +62,12 @@ export default function ChildrenDetails() {
     function handleParentChange(index: number, value: MemberSummary | string) {
         const updated = [...parentInputs];
         updated[index] = ensureMemberSummary(value);
-        setParentInputs(updated);
+        const cleanedParents: MemberSummary[] = updated.map(ensureMemberSummary); 
+        setParentInputs(cleanedParents);
+
         setData(prev => {
-            const update = { ...prev, children: updated };
-            return Children.fromJson(update);
+            const update = { ...prev, parents: cleanedParents };
+            return Child.fromJson(update);
         });
     };
 
@@ -89,21 +94,22 @@ export default function ChildrenDetails() {
         const base = {
             ...data,
             role,
+            age,
             parent: parentInputs
         };
 
         if (isEditing) {
-            const update = Children.fromJson(base);
-            await childrenUpdate(data.id, update.toJSON());
+            const update = Child.fromJson(base);
+            await childUpdate(data.id, update.toJSON());
         } else {
-            const newChildren = Children.fromJson(base);
-            await childrenAdd(newChildren);
+            const newChild = Child.fromJson(base);
+            await childAdd(newChild);
             clearCredentials();
             setOpenSnackbar(true);
-            setData(new Children());
+            setData(new Child());
             setParentInputs([]);
         }
-        navToChildren();
+        navToChild();
     }
 
     useEffect(() => {
@@ -111,14 +117,15 @@ export default function ChildrenDetails() {
             fetchGroups();
             fetchMembers();
             setRole(data.role);
+            setAge(data.ageGroup);
 
             if (userId) {
-                const data = await findChildrenToById(userId);
-                const loadedChildren = Children.fromJson(data);
-                setData(Children.fromJson(data));
+                const data = await findChildToById(userId);
+                const loadedChildren = Child.fromJson(data);
+                setData(Child.fromJson(data));
                 setIsEditing(true);
                 setRole(loadedChildren.role);
-                setParentInputs(loadedChildren.parent ?? []);
+                setParentInputs(loadedChildren.parents ?? []);
             }
         }
         load();
@@ -192,7 +199,7 @@ export default function ChildrenDetails() {
                             onChange={(_, newValue) => {
                                 setData(prev => {
                                     const updatedchildren = { ...prev, groupId: newValue?.id ?? null };
-                                    return Children.fromJson(updatedchildren);
+                                    return Child.fromJson(updatedchildren);
                                 });
                             }}
                             options={groups}
@@ -214,56 +221,152 @@ export default function ChildrenDetails() {
                             select
                             label="Cargo"
                             value={role}
-                            onChange={(e) => setRole(e.target.value as ChildrenRole)}
+                            onChange={(e) => setRole(e.target.value as ChildRole)}
                             fullWidth
                             SelectProps={{ native: true }}
                         >
-                            {Object.values(ChildrenRole).map((status) => (
+                            {Object.values(ChildRole).map((status) => (
                                 <option key={status} value={status}>
                                     {status}
                                 </option>
                             ))}
                         </TextField>
                     </Box>
-                    <span>
-                        <h3>Batismo</h3>
-                        <Box mb={2}>
-                            <TextField
-                                label="Nome da Igreja"
-                                value={data.batism?.churchName}
-                                onChange={(e) => 
-                                    handleBatismChange("churchName", e.target.value.toUpperCase())
-                                }
-                                fullWidth
-                            />
-                        </Box>
-                        <Box mb={2}>
-                            <TextField
-                                label="Nome do Lider que batizou"
-                                value={data.batism?.leaderName}
-                                onChange={(e) => 
-                                    handleBatismChange("leaderName", e.target.value.toUpperCase())
-                                }
-                                fullWidth
-                            />
-                        </Box>
-                        <Box mb={2}>
-                            <DatePicker
-                                label="Data do Batismo"
-                                value={data.batism?.baptismDate ? dayjs(data.batism?.baptismDate) : null}
-                                onChange={(date) =>
-                                    handleBatismChange("baptismDate", date?.toDate() ?? null)
-                                    
-                                }
-                                format="DD/MM/YYYY"
-                                slotProps={{ textField: { fullWidth: true } }}
-                            />
-                        </Box>
-                    </span>
+                    <Box mb={2}>
+                        <TextField
+                            select
+                            label="Faixa etária"
+                            value={age}
+                            onChange={(e) => setAge(e.target.value as AgeGroup)}
+                            fullWidth
+                            SelectProps={{ native: true }}
+                        >
+                            {Object.values(AgeGroup).map((status) => (
+                                <option key={status} value={status}>
+                                    {status}
+                                </option>
+                            ))}
+                        </TextField>
+                    </Box>
+                    <Box mb={2}>
+                        <TextField
+                            select
+                            label="Autoriza o uso de imagem?"
+                            value={yesOrNot === YesOrNot.YES ? "true" : "false"}
+                            onChange={(e) => 
+                                handleChange("isImageAuthorized", e.target.value)
+                            }                            
+                            fullWidth
+                            SelectProps={{ native: true }}
+                        >
+                            {Object.values(YesOrNot).map((status) => (
+                                <option key={status} value={status}>
+                                    {status}
+                                </option>
+                            ))}
+                        </TextField>
+                    </Box>
+                    <Box mb={2}>
+                        <TextField
+                            select
+                            label="É Batizado?"
+                            value={yesOrNot}
+                            onChange={(e) => setYesOrNot(e.target.value as YesOrNot)}
+                            fullWidth
+                            SelectProps={{ native: true }}
+                        >
+                            {Object.values(YesOrNot).map((status) => (
+                                <option key={status} value={status}>
+                                    {status}
+                                </option>
+                            ))}
+                        </TextField>
+                    </Box>
+
+                    {yesOrNot == YesOrNot.YES &&(
+                        <span>
+                            <h3>Batismo</h3>
+                            <Box mb={2}>
+                                <TextField
+                                    label="Nome da Igreja"
+                                    value={data.batism?.churchName}
+                                    onChange={(e) => 
+                                        handleBatismChange("churchName", e.target.value.toUpperCase())
+                                    }
+                                    fullWidth
+                                />
+                            </Box>
+                            <Box mb={2}>
+                                <TextField
+                                    label="Nome do Lider que batizou"
+                                    value={data.batism?.leaderName}
+                                    onChange={(e) => 
+                                        handleBatismChange("leaderName", e.target.value.toUpperCase())
+                                    }
+                                    fullWidth
+                                />
+                            </Box>
+                            <Box mb={2}>
+                                <DatePicker
+                                    label="Data do Batismo"
+                                    value={data.batism?.baptismDate ? dayjs(data.batism?.baptismDate) : null}
+                                    onChange={(date) =>
+                                        handleBatismChange("baptismDate", date?.toDate() ?? null)
+                                        
+                                    }
+                                    format="DD/MM/YYYY"
+                                    slotProps={{ textField: { fullWidth: true } }}
+                                />
+                            </Box>
+                        </span>
+                    )}
 
                     <Box mb={2}>
+                        <TextField
+                            label="Usa alguma medicação? Qual?"
+                            type="medication"
+                            value={data.medication}
+                            onChange={(e) => 
+                                handleChange("medication", e.target.value.toUpperCase())
+                            }
+                            fullWidth
+                        />
+                    </Box>
+                    <Box mb={2}>
+                        <TextField
+                            label="Alguma necessidade especial? Qual?"
+                            type="specialNeed"
+                            value={data.specialNeed}
+                            onChange={(e) => 
+                                handleChange("specialNeed", e.target.value.toUpperCase())
+                            }
+                            fullWidth
+                        />
+                    </Box>
+                    <Box mb={2}>
+                        <TextField
+                            label="Alguma alergia? Qual?"
+                            type="allergy"
+                            value={data.allergy}
+                            onChange={(e) => 
+                                handleChange("allergy", e.target.value.toUpperCase())
+                            }
+                            fullWidth
+                        />
+                    </Box>
+                    <Box mb={2}>
+                        <TextField
+                            label="Alguma necessidade especial? Qual?"
+                            type="specialNeed"
+                            value={data.specialNeed}
+                            onChange={(e) => 
+                                handleChange("specialNeed", e.target.value.toUpperCase())
+                            }
+                            fullWidth
+                        />
+                    </Box>
+                    <Box mb={2}>
                         <h3>Família</h3>
-
                         {parentInputs.map((child, index) => (
                             <Box key={index} mb={2}>
                                 <Autocomplete

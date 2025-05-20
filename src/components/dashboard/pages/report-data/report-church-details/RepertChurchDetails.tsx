@@ -8,7 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export default function ReportChurchDetails() {
     const [report, setReport] = useState<ReportChurch>(new ReportChurch());
-    const [worship, setWorship ] = useState<WorshipType>(WorshipType.SUNDAY_NIGHT);
+    const [worship, setWorship ] = useState<WorshipType>(WorshipType.SUNDAY);
     const [timePeriod, setTimePeriod ] = useState<TimePeriod>(TimePeriod.MORNING);
 
     const { userId } = useParams();
@@ -55,7 +55,7 @@ export default function ReportChurchDetails() {
                             ))}
                         </TextField>
                     </Box>
-                    {worship === WorshipType.SUNDAY_NIGHT && (
+                    {worship === WorshipType.SUNDAY && (
                     <Box mb={2}>
                         <TextField
                             select

@@ -1,21 +1,20 @@
-import { Children, ChildrenSummary } from "@domain/user";
 import { auth, db } from "./firebase";
 import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { Batism } from "@domain/batism";
 import { DateUtil } from "@domain/utils";
 import { findGroupToById, groupUpdate } from "./GroupService";
-import { findAllMembers, memberUpdate } from "./MemberService";
+import { Child, ChildSummary } from "@domain/user";
 
-export async function childrenAdd(children: Children) {
+export async function childAdd(child: Child) {
     try {
         const user = getAuthenticatedUser();
-        const passwordHash = await children.getPasswordHash();
+        const passwordHash = await child.getPasswordHash();
 
-        const childrenRef = await saveChildrenToDatabase(children, user.uid, passwordHash);
+        const childRef = await saveChildToDatabase(child, user.uid, passwordHash);
 
-        if(children.groupId != null) await addChildrenToGroup(children, childrenRef);
+        if(child.groupId != null) await addChildToGroup(child, childRef);
 
-        await updateParentReferences(children, childrenRef.id);
+        await updateParentReferences(child, childRef.id);
 
     } catch (error) {
         alert('Erro ao adicionar membro: ' + error);
@@ -23,45 +22,45 @@ export async function childrenAdd(children: Children) {
     }
 }
 
-export async function findAllChildrens(): Promise<Children[]> {
+export async function findAllChildrens(): Promise<Child[]> {
     try {
         getAuthenticatedUser();
 
         const snapshot = await getDocs(collection(db, 'childrens'));
-        return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Children));
+        return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Child));
     } catch (error) {
         alert('Erro ao listar as criançãs: ' + error);
         throw error;
     }
 }
 
-export async function findAllChildrensSummary(): Promise<ChildrenSummary[]> {
+export async function findAllChildrensSummary(): Promise<ChildSummary[]> {
     try {
         getAuthenticatedUser();
 
         const snapshot = await getDocs(collection(db, 'childrens'));
-        return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as ChildrenSummary));
+        return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as ChildSummary));
     } catch (error) {
         alert('Erro ao listar as crianças: ' + error);
         throw error;
     }
 }
 
-export async function findChildrenToById(id: string): Promise<Children | null> {
+export async function findChildToById(id: string): Promise<Child | null> {
     try {
         const ref = doc(db, 'childrens', id);
         const snapshot = await getDoc(ref);
 
         if (!snapshot.exists()) return null;
 
-        return { id: snapshot.id, ...snapshot.data() } as Children;
+        return { id: snapshot.id, ...snapshot.data() } as Child;
     } catch (error) {
         alert('Erro ao buscar as crianças: ' + error);
         throw error;
     }
 }
 
-export async function childrenUpdate(id: string, data: Partial<Children>): Promise<void> {
+export async function childUpdate(id: string, data: Partial<Child>): Promise<void> {
     try {
         const ref = doc(db, 'childrens', id);
 
@@ -70,7 +69,7 @@ export async function childrenUpdate(id: string, data: Partial<Children>): Promi
         const plainData: any = {
             ...data,
             batism,
-            children: data.parent ?? (await getDoc(ref)).data()?.children ?? []
+            children: data.parents ?? (await getDoc(ref)).data()?.children ?? []
         };
 
         await updateDoc(ref, plainData);
@@ -87,35 +86,40 @@ function getAuthenticatedUser() {
     return user;
 }
 
-async function saveChildrenToDatabase(children: Children, userId: string, passwordHash: string) {
+async function saveChildToDatabase(child: Child, userId: string, passwordHash: string) {
     const data = {
         userId,
-        name: children.name,
-        birthdate: children.birthdate ? children.birthdate.toJSON() : null,
-        email: children.email,
-        phone: children.phone,
-        groupId: children.groupId,
-        batism: children.batism ? Batism.fromJson(children.batism).toJSON() : null,
-        parent: children.parent.map((it) =>
+        name: child.name,
+        birthdate: child.birthdate ? child.birthdate.toJSON() : null,
+        email: child.email,
+        phone: child.phone,
+        groupId: child.groupId,
+        batism: child.batism ? Batism.fromJson(child.batism).toJSON() : null,
+        parents: child.parents.map((it) =>
             typeof it === "string" ? it : it?.toJSON?.() ?? null
         ),
-        role: children.role,
-        isActive: children.isActive,
-        createdAt: DateUtil.dateFormatedPtBr(children.createdAt),
+        role: child.role,
+        ageGroup: child.ageGroup,
+        medication: child.medication,
+        specialNeed : child.specialNeed,
+        allergy: child.allergy,
+        isImageAuthorized: child.isImageAuthorized,
+        isActive: child.isActive,
+        createdAt: DateUtil.dateFormatedPtBr(child.createdAt),
         passwordHash,
     };
 
     return await addDoc(collection(db, 'childrens'), data);
 }
 
-async function addChildrenToGroup(children: Children, childrenRef: any) {
-    const summary = new ChildrenSummary(
-        childrenRef.id,
-        children.name,
-        children.phone
+async function addChildToGroup(child: Child, childRef: any) {
+    const summary = new ChildSummary(
+        childRef.id,
+        child.name,
+        child.phone
     );
 
-    const group = await findGroupToById(children.groupId!);
+    const group = await findGroupToById(child.groupId!);
     if (!group) {
         throw new Error('Grupo não encontrado');
     }
@@ -124,40 +128,37 @@ async function addChildrenToGroup(children: Children, childrenRef: any) {
     await groupUpdate(group.id, { members: updatedChildrens });
 }
 
-async function updateParentReferences(children: Children, childrenId: string) {
-    const members = await findAllMembers();
-    const childrenSummary: ChildrenSummary = new ChildrenSummary (
-        childrenId,
-        children.name,
-        children.phone,
-    );
+async function updateParentReferences(child: Child, childId: string) {
+    const childrenSummary = new ChildSummary(
+        childId,
+        child.name,
+        child.phone
+    ).toJSON();
 
-    for (const parentName of children.parent) {
-        if (!parentName || typeof parentName !== "string") continue;
+    for (const parent of child.parents) {
+        if (!parent || typeof parent === "string" || !parent.id) continue;
 
-        const parentFirstName = getFirstName(parentName);
+        const parentDocRef = doc(db, 'members', parent.id);
+        const parentSnapshot = await getDoc(parentDocRef);
 
-        const parent = members.find(m =>
-            getFirstName(m.name) === parentFirstName
-        );
+        if (!parentSnapshot.exists()) continue;
 
-        if (!parent) continue;
+        const parentData = parentSnapshot.data();
+        const parentChildren = Array.isArray(parentData.children) ? parentData.children : [];
 
-        const parentChildren = parent.children ?? [];
-
-        const index = parentChildren.findIndex(c =>
-            getFirstName(c.name) === getFirstName(children.name)
+        const index = parentChildren.findIndex((child: any) =>
+            getFirstName(child.name) === getFirstName(child.name)
         );
 
         if (index !== -1) {
-            parentChildren[index] = childrenSummary; 
+            parentChildren[index] = childrenSummary;
         } else {
-            parentChildren.push(childrenSummary); 
+            parentChildren.push(childrenSummary);
+        }
 
-        await memberUpdate(parent.id, {
+        await updateDoc(parentDocRef, {
             children: parentChildren,
         });
-    }
     }
 }
 

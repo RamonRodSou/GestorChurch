@@ -1,4 +1,4 @@
-import { ChildrenSummary, MemberSummary } from "@domain/user";
+import { ChildSummary, MemberSummary } from "@domain/user";
 
 export function ensureMemberSummary(input: unknown): MemberSummary {
     if (input instanceof MemberSummary) {
@@ -16,17 +16,17 @@ export function ensureMemberSummary(input: unknown): MemberSummary {
     throw new Error('Valor inválido para MemberSummary');
 }
 
-export function ensureChildrenSummary(input: unknown): ChildrenSummary {
-    if (input instanceof ChildrenSummary) {
+export function ensureChildSummary(input: unknown): ChildSummary {
+    if (input instanceof ChildSummary) {
         return input;
     }
 
     if (typeof input === 'string') {
-        return new ChildrenSummary(undefined, input.toUpperCase());
+        return new ChildSummary(undefined, input.toUpperCase());
     }
 
     if (typeof input === 'object' && input !== null) {
-        return ChildrenSummary.fromJson(input);
+        return ChildSummary.fromJson(input);
     }
 
     throw new Error('Valor inválido para ChildrenSummary');

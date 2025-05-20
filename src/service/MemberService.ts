@@ -71,7 +71,7 @@ export async function memberUpdate(id: string, data: Partial<Member>): Promise<v
             ...data,
             batism,
             spouse: data.spouse ? getSpouseSummary(data.spouse) : null,
-            children: data.children ?? (await getDoc(ref)).data()?.children ?? []
+            children: data.child ?? (await getDoc(ref)).data()?.child ?? []
         };
 
         await updateDoc(ref, plainData);
@@ -80,7 +80,6 @@ export async function memberUpdate(id: string, data: Partial<Member>): Promise<v
         throw error;
     }
 }
-
 
 function getAuthenticatedUser() {
     const user = auth.currentUser;
@@ -114,11 +113,12 @@ async function saveMemberToDatabase(member: Member, userId: string, passwordHash
         batism: member.batism ? Batism.fromJson(member.batism).toJSON() : null,
         civilStatus: member.civilStatus,
         spouse: getSpouseSummary(member.spouse),
-        children: member.children.map((child) =>
+        children: member.child.map((child) =>
             typeof child === "string" ? child : child?.toJSON?.() ?? null
         ),
         role: member.role,
         isActive: member.isActive,
+        isImageAuthorized: member.isImageAuthorized,
         createdAt: DateUtil.dateFormatedPtBr(member.createdAt),
         passwordHash,
     };

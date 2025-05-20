@@ -16,6 +16,10 @@ import ReportData from '@components/dashboard/pages/report-data/ReportData';
 import ReportChurchDetails from '@components/dashboard/pages/report-data/report-church-details/RepertChurchDetails';
 import ChildrenDetails from '@components/dashboard/pages/children-data/children-details/ChildrenDetails';
 import ChildrenData from '@components/dashboard/pages/children-data/ChildrenData';
+import ReportGroupData from '@components/dashboard/pages/report-group-data/ReportGroupData';
+import VisitorGroupData from '@components/dashboard/pages/visitor-group-data/VisitorGroupData';
+import VisitorGroupDetails from '@components/dashboard/pages/visitor-group-data/visitor-group-details/VisitorGroupDetails';
+import ReportGroupDetails from '@components/dashboard/pages/report-group-data/report-group-details/ReportGroupDetails';
 
 function AppRouter() {
     return (
@@ -41,6 +45,11 @@ function AppRouter() {
                     <Route path="preferences" element={<Preferences/>}/>
                     <Route path="report" element={<ReportData/>}/>
                     <Route path="new-report-church" element={<ReportChurchDetails/>}/>
+                    <Route path="report-group" element={<ReportGroupData/>}/>
+                    <Route path="new-report-group" element={<ReportGroupDetails/>}/>
+                    <Route path="visitor-group" element={<VisitorGroupData/>}/>
+                    <Route path="new-visitor-group" element={<VisitorGroupDetails/>}/>
+                    <Route path="/dashboard/:userId/edit-visitor-group/:visitorGroupId" element={<VisitorGroupDetails/>}/>
                 </Route>
                 <Route path="*" element={<Navigate to="/login"/>}/>
             </Routes>

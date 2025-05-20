@@ -1,6 +1,6 @@
 export enum WorshipType {
-    SUNDAY_NIGHT = 'DOMINGO',
-    WEDNESDAY_NIGHT = 'QUARTA-FEIRA',
+    SUNDAY = 'DOMINGO',
+    WEDNESDAY = 'QUARTA-FEIRA',
     YOUTH = 'JOVEM',
     TEENS = 'POTÊNCIA TEENS',
     KIDS = 'KIDS',

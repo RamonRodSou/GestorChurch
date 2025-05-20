@@ -9,7 +9,7 @@ export async function reportChurchAdd(report: ReportChurch) {
         await saveReportToDatabase(report, user.uid);
 
     } catch (error) {
-        alert('Erro ao adicionar membro: ' + error);
+        alert('Erro ao adicionar relatório: ' + error);
         throw error;
     }
 }

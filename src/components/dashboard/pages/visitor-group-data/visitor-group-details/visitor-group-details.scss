@@ -1,0 +1,23 @@
+:root {
+    .details-container {
+        display: flex;
+        justify-content: center;
+        align-items: start;
+        margin: 0 auto;
+
+        .details-form {
+            width: 100%;
+        }
+
+        .visitDate {
+            color: var(--primary-title);
+            margin-left: 1rem
+        }
+
+        @media (min-width: 600px) {
+            .details-form {
+                padding: 1rem;
+            }
+        }
+    }
+}

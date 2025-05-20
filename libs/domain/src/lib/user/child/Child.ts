@@ -2,11 +2,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { User } from '../User';
 import { EMPTY } from '@domain/utils/string-utils';
 import { Batism } from '@domain/batism/Batism';
-import { ChildrenRole } from '@domain/enums';
+import { ChildRole } from '@domain/enums';
 import bcrypt from 'bcryptjs';
 import { MemberSummary } from '../member/Member';
+import { AgeGroup } from '@domain/enums/AgeGroup';
 
-export class Children extends User {
+export class Child extends User {
   constructor(
         public readonly id: string = uuidv4(),
         public name: string = EMPTY,
@@ -15,8 +16,13 @@ export class Children extends User {
         public phone: string = EMPTY,
         public groupId: string | null = null,
         public batism: Batism | null = null,
-        public parent: MemberSummary[] = [],
-        public role: ChildrenRole = ChildrenRole.EMPTY,
+        public parents: MemberSummary[] = [],
+        public role: ChildRole = ChildRole.EMPTY,
+        public ageGroup: AgeGroup = AgeGroup.CHILD,
+        public medication: string | null = null,
+        public specialNeed : string | null = null,
+        public allergy: string | null = null,
+        public isImageAuthorized: boolean = true,
         public isActive: boolean = true,
         public createdAt: string = new Date().toISOString(),
         password: string = 'IgrejaIAF'
@@ -24,8 +30,8 @@ export class Children extends User {
         super(id, name, phone, password, createdAt);
     }
 
-    static fromJson(json: any): Children {
-        return new Children(
+    static fromJson(json: any): Child {
+        return new Child(
             json.id,
             json.name,
             new Date(json.birthdate),
@@ -33,8 +39,13 @@ export class Children extends User {
             json.phone,
             json.groupId,
             json.batism,
-            json.parent || [],
+            json.parents || [],
             json.role,
+            json.ageGroup,
+            json.medication,
+            json.specialNeed,
+            json.allergy,
+            json.isImageAuthorized,
             json.isActive,
             json.createdAt
         );
@@ -49,8 +60,13 @@ export class Children extends User {
             phone: this.phone,
             groupId: this.groupId,
             batism: this.batism ?? null,
-            parent: this.parent,
+            parents: this.parents,
             role: this.role,
+            ageGroup: this.ageGroup,
+            medication: this.medication,
+            specialNeed: this.specialNeed,
+            allergy: this.allergy,
+            isImageAuthorized: this.isImageAuthorized,
             isActive: this.isActive,
             createdAt: this.createdAt,
         };
@@ -61,16 +77,15 @@ export class Children extends User {
     }  
 }
 
-export class ChildrenSummary {
+export class ChildSummary {
     constructor(
         public readonly id: string = uuidv4(),
         public name: string = EMPTY,
         public phone: string = EMPTY,
-
     ) { }
 
-    static fromJson(json: any): ChildrenSummary {
-        return new ChildrenSummary(
+    static fromJson(json: any): ChildSummary {
+        return new ChildSummary(
             json.id,
             json.name ?? EMPTY,
             json.phone ?? null,

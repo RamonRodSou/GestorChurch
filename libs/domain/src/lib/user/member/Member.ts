@@ -5,7 +5,7 @@ import { Batism } from '@domain/batism/Batism';
 import { CivilStatus, Role } from '@domain/enums';
 import { ILocation } from '@domain/interface/ILocation';
 import bcrypt from 'bcryptjs';
-import { ChildrenSummary } from '../children/Children';
+import { ChildSummary } from '../child/Child';
 
 export class Member extends User implements ILocation{
   constructor(
@@ -25,9 +25,10 @@ export class Member extends User implements ILocation{
         public batism: Batism = new Batism(),
         public civilStatus: CivilStatus = CivilStatus.SINGLE,
         public spouse: MemberSummary | null = null,
-        public children: ChildrenSummary[] = [],
+        public child: ChildSummary[] = [],
         public role: Role = Role.MEMBER,
         public isActive: boolean = true,
+        public isImageAuthorized: boolean = true,
 		public createdAt: string = new Date().toISOString(),
         password: string = 'IgrejaIAF'
     ) {
@@ -52,9 +53,10 @@ export class Member extends User implements ILocation{
             json.batism,
             json.civilStatus,
             json.spouse,
-            json.children || [],
+            json.child || [],
             json.role,
             json.isActive,
+            json.isImageAuthorized,
             json.createdAt
         );
     }
@@ -77,9 +79,10 @@ export class Member extends User implements ILocation{
             batism: this.batism,
             civilStatus: this.civilStatus,
             spouse: this.spouse,
-            children: this.children,
+            child: this.child,
             role: this.role,
             isActive: this.isActive,
+            isImageAuthorized: this.isImageAuthorized,
             createdAt: this.createdAt,
         };
     }

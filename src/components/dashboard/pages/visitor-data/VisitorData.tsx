@@ -45,7 +45,7 @@ export default function VisitorData() {
             <Search<Visitor> 
                 data={data} 
                 onFilter={setFiltered} 
-                label={'Buscar Visitor'}
+                label={'Buscar Visitante'}
                 searchBy={(item, term) =>
                     item.name.toLowerCase().includes(term.toLowerCase()) ||
                     item.phone.includes(term)

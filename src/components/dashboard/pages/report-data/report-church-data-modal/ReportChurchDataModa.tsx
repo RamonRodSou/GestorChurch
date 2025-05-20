@@ -13,7 +13,7 @@ interface ReportChurchDataModalProps {
 }
 
 export default function ReportChurchDataModal({ open, onClose, report }: ReportChurchDataModalProps) {
-    const [openData, setOpenData] = useState(false);
+    const [openData, setOpenData] = useState<boolean>(false);
     const observation = report?.observation 
         ? report.observation
         : 'NENHUMA OBSERVAÇÃO';
