@@ -85,13 +85,13 @@ export default function ReportGraph() {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="totalPeople" fill="#2196f3" name="Pessoas Totais" barSize={30}/>
+                    <Bar dataKey="totalPeople" fill="#2196f3" name="Pessoas" barSize={30}/>
                     <Bar dataKey="totalChildren" fill="#4caf50" name="Crianças" barSize={30}/>
                     <Bar dataKey="totalVolunteers" fill="#ff9800" name="Voluntários" barSize={30}/>
-                    <Bar dataKey="decisionsForJesus" fill="#e91e63" name="Decisões por Jesus" barSize={30}/>
-                    <Bar dataKey="baptismCandidates" fill="#673ab7" name="Candidatos ao Batismo" barSize={30}/>
-                    <Bar dataKey="firstTimeVisitors" fill="#00bcd4" name="Visitantes Novos" barSize={30}/>
-                    <Bar dataKey="returningPeople" fill="#8bc34a" name="Retornos" barSize={30}/>
+                    <Bar dataKey="decisionsForJesus" fill="#e91e63" name="Aceitaram Jesus" barSize={30}/>
+                    <Bar dataKey="baptismCandidates" fill="#673ab7" name="Deram nome p/ Batismo" barSize={30}/>
+                    <Bar dataKey="firstTimeVisitors" fill="#00bcd4" name="Visitantes" barSize={30}/>
+                    <Bar dataKey="returningPeople" fill="#8bc34a" name="Voltaram na Igreja" barSize={30}/>
                     <Bar dataKey="newMembers" fill="#795548" name="Novos Membros" barSize={30}/>
                     <Bar dataKey="peopleBaptizedThisMonth" fill="#f44336" name="Batizados no Mês" barSize={30}/>
                 </BarChart>
