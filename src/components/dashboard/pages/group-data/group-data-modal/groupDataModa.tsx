@@ -29,12 +29,13 @@ export default function GroupDataModal({ open, onClose, group }: GroupDataModalP
                         <Edit/>
                     </IconButton>
                 </Box>
-                <Typography className='subTitle'> <span className='subTextInfo'>Lideres: </span>{group.leaders.map(it => it.name.split(" ")[0]).join(" / ")}</Typography>         
-                <Typography className='textInfo'> <span className='subTextInfo'>Rua: </span>{group.street}</Typography>
+                <Typography className='subTitle'> <span className='subTextInfo'>LIDERES: </span>{group.leaders.map(it => it.name.split(" ")[0]).join(" / ")}</Typography>         
+                <Typography className='textInfo'> <span className='subTextInfo'>DIA: </span>{group.weekDay}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>RUA: </span>{group.street}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>N: </span>{group.houseNumber}</Typography>
-                <Typography className='textInfo'> <span className='subTextInfo'>Bairro: </span>{group.neighborhood}</Typography>
-                <Typography className='textInfo'> <span className='subTextInfo'>Cidade: </span>{group.city}</Typography>
-                <Typography className='textInfo'> <span className='subTextInfo'>Estado: </span>{group.state}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>BAIRRO: </span>{group.neighborhood}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>CIDADE: </span>{group.city}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>ESTADO: </span>{group.state}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>CEP: </span>{group.zipCode}</Typography>
                 <h3 className='subTextInfo'> Membros:</h3>
                 <Typography className='textInfo'>

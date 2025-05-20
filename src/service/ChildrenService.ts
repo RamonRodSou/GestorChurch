@@ -1,7 +1,6 @@
 import { auth, db } from "./firebase";
 import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { Batism } from "@domain/batism";
-import { DateUtil } from "@domain/utils";
 import { findGroupToById, groupUpdate } from "./GroupService";
 import { Child, ChildSummary } from "@domain/user";
 
@@ -105,7 +104,7 @@ async function saveChildToDatabase(child: Child, userId: string, passwordHash: s
         allergy: child.allergy,
         isImageAuthorized: child.isImageAuthorized,
         isActive: child.isActive,
-        createdAt: DateUtil.dateFormatedPtBr(child.createdAt),
+        createdAt: child.createdAt,
         passwordHash,
     };
 

@@ -4,7 +4,7 @@ import { TimePeriod, WorshipType } from '@domain/enums';
 export class ReportChurch {
     constructor(
         public readonly id: string = uuidv4(),
-        public worship: WorshipType = WorshipType.SUNDAY_NIGHT,
+        public worship: WorshipType = WorshipType.SUNDAY,
         public timePeriod: TimePeriod | null = null,
         public totalPeople: number = 0,
         public totalChildren: number = 0,
@@ -41,7 +41,6 @@ export class ReportChurch {
     }
 
     toJSON(): object {
-        console.log(this)
         return {
             id: this.id,
             totalPeople: this.totalPeople,

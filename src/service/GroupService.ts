@@ -1,7 +1,6 @@
 import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import { Group, GroupSummary } from "@domain/group";
-import { DateUtil } from "@domain/utils";
 
 export async function groupAdd(group: Group) {
     try {
@@ -11,6 +10,7 @@ export async function groupAdd(group: Group) {
         const groupRef = await addDoc(collection(db, 'groups'), {
             userId: user.uid,
             name: group.name,
+            weekDay: group.weekDay,
             street: group.street,
             houseNumber: group.houseNumber,
             city: group.city,
@@ -28,7 +28,7 @@ export async function groupAdd(group: Group) {
                 : it?.toJSON?.() ?? null
             ),
             isActive: group.isActive,
-            createdAt: DateUtil.dateFormatedPtBr(group.createdAt),
+            createdAt: group.createdAt,
         });
 
         const groupId = groupRef.id;

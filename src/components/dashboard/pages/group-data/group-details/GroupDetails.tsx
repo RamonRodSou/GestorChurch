@@ -12,9 +12,11 @@ import CepData from '@domain/interface/ICepData';
 import { checkCEP } from '@domain/utils/checkCEP';
 import { validateGroupForm } from '@domain/utils/validateGroupForm';
 import { useNavigate, useParams } from 'react-router-dom';
+import { WeekDays } from "@domain/enums";
 
 export default function GroupDetails() {
     const [group, setGroup] = useState<Group>(new Group());
+    const [day, setDay] = useState<WeekDays>(WeekDays.THURSDAY);
     const [allMembers, setAllMembers] = useState<MemberSummary[]>([]);
     const [membersInputs, setMembersInputs] = useState<(MemberSummary | string)[]>([]);
     const [cepData, setCepData] = useState<CepData | null>(null);
@@ -55,8 +57,8 @@ export default function GroupDetails() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         if (!validateGroupForm({ group, setErrors })) return;
-        const updatedGroup = Group.fromJson({ ...group });
-
+        const updatedGroup = Group.fromJson({...group });
+        updatedGroup.weekDay = day;
         await groupAdd(updatedGroup);
         setGroup(new Group());
         setCepData(null);
@@ -113,6 +115,22 @@ export default function GroupDetails() {
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             noOptionsText="Nenhum membro encontrado"
                         />
+                    </Box>
+                    <Box mb={2}>
+                        <TextField
+                            select
+                            label="Dia da Semana"
+                            value={day}
+                            onChange={(e) => setDay(e.target.value as WeekDays)}
+                            fullWidth
+                            SelectProps={{ native: true }}
+                        >
+                            {Object.values(WeekDays).map((status) => (
+                                <option key={status} value={status}>
+                                    {status}
+                                </option>
+                            ))}
+                        </TextField>
                     </Box>
                     <Box mb={2}>
                         <TextField

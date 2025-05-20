@@ -3,7 +3,7 @@ import { auth, db } from "./firebase";
 import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { Batism } from "@domain/batism";
 import { EMPTY } from "@domain/utils/string-utils";
-import { DateUtil, ensureMemberSummary } from "@domain/utils";
+import { ensureMemberSummary } from "@domain/utils";
 import { findGroupToById, groupUpdate } from "./GroupService";
 
 export async function memberAdd(member: Member) {
@@ -116,16 +116,16 @@ async function saveMemberToDatabase(member: Member, userId: string, passwordHash
         children: member.children.map((child) =>
             typeof child === "string" ? child : child?.toJSON?.() ?? null
         ),
-        role: member.role,
+         role: member.role,
         isActive: member.isActive,
         isImageAuthorized: member.isImageAuthorized,
-        createdAt: DateUtil.dateFormatedPtBr(member.createdAt),
+        createdAt: member.createdAt,
         passwordHash,
     };
 
     return await addDoc(collection(db, 'members'), memberData);
 }
-
+ 
 async function addMemberToGroup(member: Member, memberRef: any) {
     const memberSummary = new MemberSummary(
         memberRef.id,

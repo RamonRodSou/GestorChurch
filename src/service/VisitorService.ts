@@ -2,7 +2,6 @@ import firebase from "firebase/compat/app"
 import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import { Visitor } from "@domain/user/visitor/Visitor";
-import { DateUtil } from "@domain/utils";
 
 export async function visitorAdd(vistor: Visitor) {
     try {
@@ -14,7 +13,7 @@ export async function visitorAdd(vistor: Visitor) {
             phone: vistor.phone,
             visitHistory: vistor.visitHistory,
             isActive: vistor.isActive,
-            createdAt: DateUtil.dateFormatedPtBr(vistor.createdAt),
+            createdAt: vistor.createdAt,
         });
     } catch (error) {
         alert('Erro ao registrar um novo visitante: ' + error);

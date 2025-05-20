@@ -2,11 +2,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { EMPTY } from '@domain/utils/string-utils';
 import { MemberSummary } from '@domain/user';
 import { ILocation } from '@domain/interface';
+import { WeekDays } from '@domain/enums';
 
 export class Group implements ILocation {
     constructor(
         public readonly id: string = uuidv4(),
         public name: string = EMPTY,
+        public weekDay: WeekDays = WeekDays.THURSDAY,
         public street: string = EMPTY,
         public houseNumber: string = EMPTY,
         public city: string = EMPTY,
@@ -23,6 +25,7 @@ export class Group implements ILocation {
         return new Group(
             json.id,
             json.name,
+            json.weekDay,
             json.street,
             json.houseNumber,
             json.city,
@@ -40,6 +43,7 @@ export class Group implements ILocation {
         return {
             id: this.id,
             name: this.name,
+            weekDay: this.weekDay,
             street: this.street,
             houseNumber: this.houseNumber,
             city: this.city,

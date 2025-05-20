@@ -60,6 +60,7 @@ export default function ReportGroupDetails() {
     
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+        report.weekDay = day;
         report.childrens = selectedChildrens;
         report.members = selectedMembers;
         report.visitors = selectedVisitors;
@@ -186,7 +187,7 @@ export default function ReportGroupDetails() {
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             fullWidth
                         />
-                    </Box>
+                    </Box> 
                     <Box mb={2}>
                         <TextField
                             type="text"

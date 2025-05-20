@@ -1,7 +1,6 @@
 import { ReportGroup } from "@domain/report";
 import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
-import { DateUtil } from "@domain/utils";
 
 export async function reportGroupAdd(report: ReportGroup) {
     try {
@@ -71,7 +70,7 @@ async function saveReportGroupToDatabase(report: ReportGroup, userId: string) {
         value: report.value,
         observation: report.observation,
         isActive: report.isActive,
-        createdAt: DateUtil.dateFormatedPtBr(report.createdAt)
+        createdAt: report.createdAt
     };
 
     return await addDoc(collection(db, 'report_groups'), reportData);

@@ -57,7 +57,7 @@ export default function VisitorGraph() {
             <Typography variant="h5" gutterBottom sx={{ mt: 4 }} className='title-secondary'>👥 Movimento de Visitantes</Typography>
             <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={visitorData}>
-                    <CartesianGrid strokeDasharray="3 3" />
+                    <CartesianGrid strokeDasharray="3" />
                     <XAxis dataKey="month" />
                     <YAxis />
                     <Tooltip />

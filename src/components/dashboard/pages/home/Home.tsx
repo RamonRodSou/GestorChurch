@@ -4,6 +4,7 @@ import CardData from './card-data/CardData';
 import FinancialGraph from './financial-graph/FinancialGraph';
 import { FinancialProvider } from '@context/FinancialContext';
 import VisitorGraph from './visitor-graph/visitorGraph'
+import ReportGraph from './report-graph/reportGraph';
 
 export default function Home() {
 
@@ -13,6 +14,7 @@ export default function Home() {
                 <Typography variant="h4" className='title'>Painel Geral</Typography>
                 <FinancialGraph/>
                 <VisitorGraph/>
+                <ReportGraph/>
                 <CardData/>
             </Container>
         </FinancialProvider>
