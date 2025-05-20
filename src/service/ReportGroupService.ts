@@ -55,6 +55,7 @@ async function saveReportGroupToDatabase(report: ReportGroup, userId: string) {
         groupId: report.groupId,
         weekDay: report.weekDay,
         time: report.time,
+        date: report.date ? report.date.toJSON() : null,
         members: report.members.map((member) => ({
             id: member.id,
             name: member.name,

@@ -53,6 +53,7 @@ async function saveReportToDatabase(report: ReportChurch, userId: string) {
     const reportData = {
         userId,
         worship: report.worship,
+        date: report.date ? report.date.toJSON() : null,
         totalPeople: report.totalPeople,
         timePeriod: report.timePeriod,
         totalChildren: report.totalChildren,

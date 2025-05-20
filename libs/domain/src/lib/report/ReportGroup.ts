@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 import { WeekDays } from '@domain/enums';
-import { EMPTY } from '@domain/utils';
 import { ChildSummary, MemberSummary } from '@domain/user';
 import { VisitorGroup } from '@domain/user/visitor/VisitorGroup';
 
@@ -9,7 +8,8 @@ export class ReportGroup {
         public readonly id: string = uuidv4(),
         public groupId: string | null = null,
         public weekDay: WeekDays = WeekDays.THURSDAY,
-        public time: string = EMPTY,
+        public time: string = '19:30',
+        public date: Date = new Date(),
         public members: MemberSummary[] = [],
         public childrens: ChildSummary[] = [],
         public visitors: VisitorGroup[] = [],
@@ -26,6 +26,7 @@ export class ReportGroup {
             json.groupId,
             json.weekDay,
             json.time,
+            json.date,
             json.members || [],
             json.childrens || [],
             json.visitors || [],
@@ -42,6 +43,7 @@ export class ReportGroup {
             groupId: this.groupId,
             weekDay: this.weekDay,
             time: this.time,
+            date: this.date.toISOString(),
             members: this.members, 
             childrens: this.childrens, 
             visitors: this.visitors,

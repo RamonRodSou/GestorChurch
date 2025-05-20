@@ -8,6 +8,7 @@ import { ReportChurch } from '@domain/report';
 import ReportChurchDataModal from './report-church-data-modal/ReportChurchDataModa';
 import Layout from '@components/layout/Layout';
 import { ManagerContext } from '@context/ManagerContext';
+import { DateUtil } from '@domain/utils';
 
 export default function ReportData() {
     const [_, setData]= useState<ReportChurch[]>([]);
@@ -48,7 +49,9 @@ export default function ReportData() {
                         <TableBody>
                         {filtered.map((it) => (
                                 <TableRow key={it.id}>
-                                    <TableCell className='data-text'>{it.worship}</TableCell>
+                                    <TableCell className='data-text'>
+                                        {DateUtil.dateFormated(it.date).slice(0, 5) + ' - ' + it.worship}
+                                    </TableCell>
                                     {it.timePeriod != null  
                                         ? <TableCell className='data-text'>{it.timePeriod}</TableCell>
                                         : <TableCell className='data-text'>NOITE</TableCell>

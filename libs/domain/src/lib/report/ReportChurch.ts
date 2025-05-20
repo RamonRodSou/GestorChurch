@@ -5,6 +5,7 @@ export class ReportChurch {
     constructor(
         public readonly id: string = uuidv4(),
         public worship: WorshipType = WorshipType.SUNDAY,
+        public date: Date = new Date(),
         public timePeriod: TimePeriod | null = null,
         public totalPeople: number = 0,
         public totalChildren: number = 0,
@@ -17,13 +18,14 @@ export class ReportChurch {
         public peopleBaptizedThisMonth: number = 0,
         public observation: string | null = null,
         public isActive: boolean = true,
-        public createdAt: string = new Date().toISOString()
+        public createdAt: string = new Date().toISOString() 
     ) { }
 
     static fromJson(json: any): ReportChurch {
         return new ReportChurch(
             json.id,
             json.worship,
+            json.date,
             json.timePeriod,
             json.totalPeople,
             json.totalChildren,
@@ -43,8 +45,10 @@ export class ReportChurch {
     toJSON(): object {
         return {
             id: this.id,
-            totalPeople: this.totalPeople,
+            worship: this.worship,
+            date: this.date.toISOString(),
             timePeriod: this.timePeriod,
+            totalPeople: this.timePeriod,
             totalChildren: this.totalChildren,
             totalVolunteers: this.totalVolunteers,
             decisionsForJesus: this.decisionsForJesus,
@@ -55,7 +59,7 @@ export class ReportChurch {
             peopleBaptizedThisMonth: this.peopleBaptizedThisMonth,
             observation: this.observation,
             isActive: this.isActive,
-            createdAt: this.createdAt,
+            createdAt: this.createdAt
         };
     }
 }

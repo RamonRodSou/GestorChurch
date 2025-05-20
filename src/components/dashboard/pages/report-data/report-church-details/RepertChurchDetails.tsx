@@ -2,7 +2,9 @@ import BackButton from "@components/back-button/BackButton";
 import { TimePeriod, WorshipType } from "@domain/enums";
 import { ReportChurch } from "@domain/report";
 import { Box, Button, Container, TextField } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
 import { reportChurchAdd } from "@service/ReportChurchService";
+import dayjs from "dayjs";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -56,23 +58,38 @@ export default function ReportChurchDetails() {
                         </TextField>
                     </Box>
                     {worship === WorshipType.SUNDAY && (
-                    <Box mb={2}>
-                        <TextField
-                            select
-                            label="Horario do Culto"
-                            value={timePeriod}
-                            onChange={(e) => setTimePeriod(e.target.value as TimePeriod)}
-                            fullWidth
-                            SelectProps={{ native: true }}
-                        >
-                            {Object.values(TimePeriod).map((status) => (
-                                <option key={status} value={status}>
-                                    {status}
-                                </option>
-                            ))}
-                        </TextField>
-                    </Box>
+                        <Box mb={2}>
+                            <TextField
+                                select
+                                label="Horario do Culto"
+                                value={timePeriod}
+                                onChange={(e) => setTimePeriod(e.target.value as TimePeriod)}
+                                fullWidth
+                                SelectProps={{ native: true }}
+                            >
+                                {Object.values(TimePeriod).map((status) => (
+                                    <option key={status} value={status}>
+                                        {status}
+                                    </option>
+                                ))}
+                            </TextField>
+                        </Box>
                     )}
+                    <Box mb={2}>
+                        <DatePicker
+                            label="Data do GC"
+                                value={report.date ? dayjs(report.date) : null}
+                                onChange={(date) => {
+                                    handleChange("date", date?.toDate() ?? null);
+                                }}
+                            format="DD/MM/YYYY"
+                            slotProps={{
+                                textField: {
+                                    fullWidth: true,
+                                },
+                            }}                        
+                        />
+                    </Box>
                     <Box mb={2}>
                         <TextField
                             type="number"

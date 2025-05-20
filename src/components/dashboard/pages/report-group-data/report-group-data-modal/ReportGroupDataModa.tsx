@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { ReportGroup } from '@domain/report';
 import { reportGroupUpdate } from '@service/ReportGroupService';
 import { GroupSummary } from '@domain/group';
+import { DateUtil } from '@domain/utils';
 
 interface ReportGroupDataModalProps {
     open: boolean;
@@ -38,8 +39,9 @@ export default function ReportGroupDataModal({ open, onClose, report, groupData 
         <Dialog open={open} onClose={onClose} fullWidth>
             <DialogContent dividers className='dialog'>
                     <Typography className='title'> <span className='subTextInfo'></span>{group}</Typography>
-            <Typography className='textInfo'> <span className='subTextInfo'>DIA: </span>{leaders}</Typography>
+            <Typography className='textInfo'> <span className='subTextInfo'>LIDERES: </span>{leaders}</Typography>
                     <Typography className='textInfo'> <span className='subTextInfo'>DIA: </span>{report.weekDay}</Typography>
+                    <Typography className='textInfo'> <span className='subTextInfo'>DATA: </span>{DateUtil.dateFormated(report.date)}</Typography>
                     <Typography className='textInfo'> <span className='subTextInfo'>HORÁRIO: </span>{report.time}</Typography>
                     <Typography className='textInfo'> <span className='subTextInfo'>OFERTA: </span>R$ {report.value}</Typography>
                     <Typography className='textInfo'> <span className='subTextInfo'>MEMBROS: </span>{members}</Typography>

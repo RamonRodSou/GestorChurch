@@ -5,11 +5,13 @@ import { ReportGroup } from "@domain/report";
 import { ChildSummary, MemberSummary } from "@domain/user";
 import { VisitorGroup } from "@domain/user/visitor/VisitorGroup";
 import { Autocomplete, Box, Button, Container, TextField } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
 import { findAllChildrens } from "@service/ChildrenService";
 import { findAllGroups } from "@service/GroupService";
 import { findAllMembers } from "@service/MemberService";
 import { reportGroupAdd } from "@service/ReportGroupService";
 import { findAllVisitorsGroup } from "@service/VisitorGroupService";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -85,7 +87,7 @@ export default function ReportGroupDetails() {
             <BackButton path={'report-group'} />
             <Container className='details-container'>
                 <form onSubmit={handleSubmit} className="details-form">
-                    <h2>Novo Relatório de Culto</h2>
+                    <h2>Novo Relatório do GC</h2>
                     <Box mb={2}>
                         <Autocomplete
                             value={selectedGroup} 
@@ -129,7 +131,7 @@ export default function ReportGroupDetails() {
                     </Box>
                     <Box mb={2}>
                         <TextField
-                            type="text"
+                            type="time"
                             label="Horário do GC: "
                             value={report.time}
                             onChange={(e) => 
@@ -139,7 +141,21 @@ export default function ReportGroupDetails() {
                             required
                         />
                     </Box>
-
+                    <Box mb={2}>
+                        <DatePicker
+                            label="Data do GC"
+                              value={report.date ? dayjs(report.date) : null}
+                                onChange={(date) => {
+                                    handleChange("date", date?.toDate() ?? null);
+                                }}
+                            format="DD/MM/YYYY"
+                            slotProps={{
+                                textField: {
+                                    fullWidth: true,
+                                },
+                            }}                        
+                        />
+                    </Box>
                     <Box mb={2}>
                         <TextField
                             type="text"

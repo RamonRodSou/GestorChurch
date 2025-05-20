@@ -9,6 +9,7 @@ import { findAllReportsGroup } from '@service/ReportGroupService';
 import { GroupSummary } from '@domain/group';
 import { findAllGroupsSummary, findGroupSummaryToById } from '@service/GroupService';
 import ReportGroupDataModal from './report-group-data-modal/ReportGroupDataModa';
+import { DateUtil } from '@domain/utils';
 
 export default function ReportGroupData() {
     const [_, setData]= useState<ReportGroup[]>([]);
@@ -83,7 +84,9 @@ export default function ReportGroupData() {
                         {filtered.map((it) => (
                                 <TableRow key={it.id}>
                                     <TableCell className='data-text'>{it.groupId ? visitorGroupMap.get(it.groupId)?.name : 'Sem Grupo'}</TableCell>
-                                    <TableCell className='data-text'>{it.weekDay}</TableCell>
+                                    <TableCell className='data-text'>
+                                        {DateUtil.dateFormated(it.date).slice(0, 5) + ' - ' + it.weekDay}
+                                    </TableCell>
                                     <TableCell className='data-text'>{it.createdAt}</TableCell>
                                     <TableCell className='data-text'>                                   
                                         <IconButton onClick={() => handleOpenDetails(it)}>

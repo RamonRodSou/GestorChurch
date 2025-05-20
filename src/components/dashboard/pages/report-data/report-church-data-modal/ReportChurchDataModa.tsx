@@ -4,6 +4,7 @@ import ConfirmModal from '@components/confirm-modal/ConfirmModal';
 import { useState } from 'react';
 import { ReportChurch } from '@domain/report';
 import { reportUpdate } from '@service/ReportChurchService';
+import { DateUtil } from '@domain/utils';
 
 interface ReportChurchDataModalProps {
     open: boolean;
@@ -31,7 +32,7 @@ export default function ReportChurchDataModal({ open, onClose, report }: ReportC
         <Dialog open={open} onClose={onClose} fullWidth>
             <DialogContent dividers className='dialog'>
                     <Typography className='title'>{`${report.worship} - ${report?.timePeriod}`}</Typography>        
-                    <Typography className='textInfo'> <span className='subTextInfo'>DATA: </span>{report.createdAt}</Typography>
+                    <Typography className='textInfo'> <span className='subTextInfo'>DATA: </span>{DateUtil.dateFormated(report.date)}</Typography>
                     <Typography className='textInfo'> <span className='subTextInfo'>TOTAL DE PESSOA: </span>{report.totalPeople}</Typography>
                     <Typography className='textInfo'> <span className='subTextInfo'>TOAL DE CRIANÇÃS: </span>{report.totalChildren}</Typography> 
                     <Typography className='textInfo'> <span className='subTextInfo'>TOAL DE VOLUNTÁRIOS: </span>{report.totalVolunteers}</Typography>
