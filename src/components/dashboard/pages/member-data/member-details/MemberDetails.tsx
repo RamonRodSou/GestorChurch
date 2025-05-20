@@ -144,7 +144,7 @@ export default function MemberDetails() {
                 setIsEditing(true);
                 setCivilStatus(loadedMember.civilStatus);
                 setRole(loadedMember.role);
-                setChildrenInputs(loadedMember.child ?? []);
+                setChildrenInputs(loadedMember.children ?? []);
 
                 if (loadedMember.zipCode) {
                     checkCEP({ it: loadedMember.zipCode, setCepData });

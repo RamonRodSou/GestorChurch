@@ -169,71 +169,6 @@ export default function ChildDetails() {
                     </Box>
                     <Box mb={2}>
                         <TextField
-                            label="Telefone"
-                            type='number'
-                            value={data.phone}
-                            onChange={(e) => 
-                                handleChange("phone", e.target.value)
-                            }
-                            error={!!errors.phone}
-                            helperText={errors.phone}      
-                            fullWidth
-                        />
-                    </Box>
-                    <Box mb={2}>
-                        <TextField
-                            label="Email"
-                            type="email"
-                            value={data.email}
-                            // error={!!errors.email}
-                            helperText={errors.email}                       
-                            onChange={(e) => 
-                                handleChange("email", e.target.value.toUpperCase())
-                            }
-                            fullWidth
-                        />
-                    </Box>
-                    <Box mb={2}>
-                        <Autocomplete
-                            value={selectedGroup} 
-                            onChange={(_, newValue) => {
-                                setData(prev => {
-                                    const updatedchildren = { ...prev, groupId: newValue?.id ?? null };
-                                    return Child.fromJson(updatedchildren);
-                                });
-                            }}
-                            options={groups}
-                            getOptionLabel={(option) => option.name}
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Grupo Familiar"
-                                    fullWidth
-                                />
-                            )}
-                            isOptionEqualToValue={(option, value) => option.id === value?.id} 
-                            filterOptions={(x) => x}
-                            noOptionsText="Nenhum grupo encontrado"
-                        />
-                    </Box>
-                    <Box mb={2}>
-                        <TextField
-                            select
-                            label="Cargo"
-                            value={role}
-                            onChange={(e) => setRole(e.target.value as ChildRole)}
-                            fullWidth
-                            SelectProps={{ native: true }}
-                        >
-                            {Object.values(ChildRole).map((status) => (
-                                <option key={status} value={status}>
-                                    {status}
-                                </option>
-                            ))}
-                        </TextField>
-                    </Box>
-                    <Box mb={2}>
-                        <TextField
                             select
                             label="Faixa etária"
                             value={age}
@@ -248,6 +183,129 @@ export default function ChildDetails() {
                             ))}
                         </TextField>
                     </Box>
+                    {age !== AgeGroup.CHILD && (
+                        <>
+                            <Box mb={2}>
+                                <TextField
+                                    label="Telefone"
+                                    type='number'
+                                    value={data.phone}
+                                    onChange={(e) => 
+                                        handleChange("phone", e.target.value)
+                                    }
+                                    error={!!errors.phone}
+                                    helperText={errors.phone}      
+                                    fullWidth
+                                />
+                            </Box>
+                            <Box mb={2}>
+                                <TextField
+                                    label="Email"
+                                    type="email"
+                                    value={data.email}
+                                    // error={!!errors.email}
+                                    helperText={errors.email}                       
+                                    onChange={(e) => 
+                                        handleChange("email", e.target.value.toUpperCase())
+                                    }
+                                    fullWidth
+                                />
+                            </Box>
+                            <Box mb={2}>
+                                <Autocomplete
+                                    value={selectedGroup} 
+                                    onChange={(_, newValue) => {
+                                        setData(prev => {
+                                            const updatedchildren = { ...prev, groupId: newValue?.id ?? null };
+                                            return Child.fromJson(updatedchildren);
+                                        });
+                                    }}
+                                    options={groups}
+                                    getOptionLabel={(option) => option.name}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label="Grupo Familiar"
+                                            fullWidth
+                                        />
+                                    )}
+                                    isOptionEqualToValue={(option, value) => option.id === value?.id} 
+                                    filterOptions={(x) => x}
+                                    noOptionsText="Nenhum grupo encontrado"
+                                />
+                            </Box>
+                            <Box mb={2}>
+                                <TextField
+                                    select
+                                    label="Cargo"
+                                    value={role}
+                                    onChange={(e) => setRole(e.target.value as ChildRole)}
+                                    fullWidth
+                                    SelectProps={{ native: true }}
+                                >
+                                    {Object.values(ChildRole).map((status) => (
+                                        <option key={status} value={status}>
+                                            {status}
+                                        </option>
+                                    ))}
+                                </TextField>
+                            </Box>
+                            <Box mb={2}>
+                                <TextField
+                                    select
+                                    label="É Batizado?"
+                                    value={yesOrNot}
+                                    onChange={(e) => setYesOrNot(e.target.value as YesOrNot)}
+                                    fullWidth
+                                    SelectProps={{ native: true }}
+                                >
+                                    {Object.values(YesOrNot).map((status) => (
+                                        <option key={status} value={status}>
+                                            {status}
+                                        </option>
+                                    ))}
+                                </TextField>
+                            </Box>
+
+                            {yesOrNot == YesOrNot.YES &&(
+                                <span>
+                                    <h3>Batismo</h3>
+                                    <Box mb={2}>
+                                        <TextField
+                                            label="Nome da Igreja"
+                                            value={data.batism?.churchName}
+                                            onChange={(e) => 
+                                                handleBatismChange("churchName", e.target.value.toUpperCase())
+                                            }
+                                            fullWidth
+                                        />
+                                    </Box>
+                                    <Box mb={2}>
+                                        <TextField
+                                            label="Nome do Lider que batizou"
+                                            value={data.batism?.leaderName}
+                                            onChange={(e) => 
+                                                handleBatismChange("leaderName", e.target.value.toUpperCase())
+                                            }
+                                            fullWidth
+                                        />
+                                    </Box>
+                                    <Box mb={2}>
+                                        <DatePicker
+                                            label="Data do Batismo"
+                                            value={data.batism?.baptismDate ? dayjs(data.batism?.baptismDate) : null}
+                                            onChange={(date) =>
+                                                handleBatismChange("baptismDate", date?.toDate() ?? null)
+                                                
+                                            }
+                                            format="DD/MM/YYYY"
+                                            slotProps={{ textField: { fullWidth: true } }}
+                                        />
+                                    </Box>
+                                </span>
+                            )}
+                        </>
+                    )}
                     <Box mb={2}>
                         <TextField
                             select
@@ -266,61 +324,6 @@ export default function ChildDetails() {
                             ))}
                         </TextField>
                     </Box>
-                    <Box mb={2}>
-                        <TextField
-                            select
-                            label="É Batizado?"
-                            value={yesOrNot}
-                            onChange={(e) => setYesOrNot(e.target.value as YesOrNot)}
-                            fullWidth
-                            SelectProps={{ native: true }}
-                        >
-                            {Object.values(YesOrNot).map((status) => (
-                                <option key={status} value={status}>
-                                    {status}
-                                </option>
-                            ))}
-                        </TextField>
-                    </Box>
-
-                    {yesOrNot == YesOrNot.YES &&(
-                        <span>
-                            <h3>Batismo</h3>
-                            <Box mb={2}>
-                                <TextField
-                                    label="Nome da Igreja"
-                                    value={data.batism?.churchName}
-                                    onChange={(e) => 
-                                        handleBatismChange("churchName", e.target.value.toUpperCase())
-                                    }
-                                    fullWidth
-                                />
-                            </Box>
-                            <Box mb={2}>
-                                <TextField
-                                    label="Nome do Lider que batizou"
-                                    value={data.batism?.leaderName}
-                                    onChange={(e) => 
-                                        handleBatismChange("leaderName", e.target.value.toUpperCase())
-                                    }
-                                    fullWidth
-                                />
-                            </Box>
-                            <Box mb={2}>
-                                <DatePicker
-                                    label="Data do Batismo"
-                                    value={data.batism?.baptismDate ? dayjs(data.batism?.baptismDate) : null}
-                                    onChange={(date) =>
-                                        handleBatismChange("baptismDate", date?.toDate() ?? null)
-                                        
-                                    }
-                                    format="DD/MM/YYYY"
-                                    slotProps={{ textField: { fullWidth: true } }}
-                                />
-                            </Box>
-                        </span>
-                    )}
-
                     <Box mb={2}>
                         <TextField
                             label="Usa alguma medicação? Qual?"
@@ -350,17 +353,6 @@ export default function ChildDetails() {
                             value={data.allergy}
                             onChange={(e) => 
                                 handleChange("allergy", e.target.value.toUpperCase())
-                            }
-                            fullWidth
-                        />
-                    </Box>
-                    <Box mb={2}>
-                        <TextField
-                            label="Alguma necessidade especial? Qual?"
-                            type="specialNeed"
-                            value={data.specialNeed}
-                            onChange={(e) => 
-                                handleChange("specialNeed", e.target.value.toUpperCase())
                             }
                             fullWidth
                         />

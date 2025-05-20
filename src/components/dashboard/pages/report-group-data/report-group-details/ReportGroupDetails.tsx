@@ -33,7 +33,7 @@ export default function ReportGroupDetails() {
     };
     
     function navToReport() {
-        navigate(`/dashboard/${userId}/report-group`, {
+        navigate(`/dashboard/${userId}/home`, {
             state: { showSnackbar: true }
         }); 
     }
@@ -60,9 +60,6 @@ export default function ReportGroupDetails() {
     
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        console.log("Membros selecionados:", selectedMembers);
-        console.log("Crianças selecionadas:", selectedChildrens);
-        console.log("Visitantes selecionados:", selectedVisitors);
         report.childrens = selectedChildrens;
         report.members = selectedMembers;
         report.visitors = selectedVisitors;
@@ -185,7 +182,7 @@ export default function ReportGroupDetails() {
                             getOptionLabel={(option) => option.name}
                             value={selectedVisitors}
                             onChange={(_, newValue) => setSelectedVisitors(newValue)}
-                            renderInput={(params) => <TextField {...params} label="Selecione os Visitantes" />}
+                            renderInput={(params) => <TextField {...params} label="Selecione os Visitantes do GC" />}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             fullWidth
                         />

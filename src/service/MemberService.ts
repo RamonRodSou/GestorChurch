@@ -71,7 +71,7 @@ export async function memberUpdate(id: string, data: Partial<Member>): Promise<v
             ...data,
             batism,
             spouse: data.spouse ? getSpouseSummary(data.spouse) : null,
-            children: data.child ?? (await getDoc(ref)).data()?.child ?? []
+            children: data.children ?? (await getDoc(ref)).data()?.child ?? []
         };
 
         await updateDoc(ref, plainData);
@@ -113,7 +113,7 @@ async function saveMemberToDatabase(member: Member, userId: string, passwordHash
         batism: member.batism ? Batism.fromJson(member.batism).toJSON() : null,
         civilStatus: member.civilStatus,
         spouse: getSpouseSummary(member.spouse),
-        children: member.child.map((child) =>
+        children: member.children.map((child) =>
             typeof child === "string" ? child : child?.toJSON?.() ?? null
         ),
         role: member.role,

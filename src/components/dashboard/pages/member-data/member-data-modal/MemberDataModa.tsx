@@ -21,7 +21,7 @@ export default function MemberDataModal({ open, onClose, member, groupData }: Me
     const navigate = useNavigate();
     const { userId } = useParams();
     const group: string = groupData ? groupData?.name : 'SEM GC';
-    const children = member?.child.map(m => m?.name.split(' ')[0]).join(' / ');
+    const children = member?.children?.map(it => it.name.split(' ')[0]).join(' / ')
 
     if (!member) return null;     
 
