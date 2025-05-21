@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/pt-br"; 
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ReportChurch } from "@domain/report";
-import { allMonth } from "../all-month";
+import { allMonth } from "../../../../../../libs/domain/src/lib/utils/all-month";
 dayjs.extend(customParseFormat);
 
 type ReportWithMonth = ReportChurch & { month: string };

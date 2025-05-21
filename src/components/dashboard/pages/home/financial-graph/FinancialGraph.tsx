@@ -4,7 +4,7 @@ import { Typography } from '@mui/material';
 import { findAllFinancials } from '@service/FinancialService';
 import { useContext, useEffect, useState } from 'react';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { allMonth } from '../all-month';
+import { allMonth } from '../../../../../../libs/domain/src/lib/utils/all-month';
 import { useFinancial } from '@context/FinancialContext';
 import { PermissionContext } from '@context/PermissionContext';
 import { MoneyMovement } from '@domain/enums';

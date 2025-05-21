@@ -17,7 +17,7 @@ import Search from '@components/search/Search';
 import { Child } from '@domain/user';
 import { findGroupSummaryToById } from "@service/GroupService";
 import { GroupSummary } from "@domain/group";
-import { whatzapp } from "@domain/utils";
+import { NOT_REGISTER, whatzapp } from "@domain/utils";
 import Layout from "@components/layout/Layout";
 import { findAllChildrens } from "@service/ChildrenService";
 import ChildrenDataModal from "./children-data-modal/ChildrenDataModa";
@@ -102,7 +102,7 @@ export default function ChildrenData() {
                         <TableRow>
                             <TableCell className='title-secondary'>Nome</TableCell>
                             <TableCell className='title-secondary'>Telefone</TableCell>
-                            <TableCell className='title-secondary'>Status</TableCell>
+                            <TableCell className='title-secondary'>Faixa Etária</TableCell>
                             <TableCell className='title-secondary'>Info</TableCell>
                         </TableRow>
                         </TableHead>
@@ -116,9 +116,9 @@ export default function ChildrenData() {
                                         className='data-text onClick' 
                                         onClick={() => whatzapp(it.name, it.phone)}
                                     >
-                                    {it.phone}
+                                    {it.phone ? it.phone : NOT_REGISTER}
                                 </TableCell>
-                                    <TableCell className='data-text'>{it.role}</TableCell>
+                                    <TableCell className='data-text'>{it.ageGroup}</TableCell>
                                     <TableCell className='data-text'>                                   
                                         <IconButton onClick={() => handleOpenDetails(it)}>
                                             <Info/>
