@@ -87,7 +87,7 @@ export default function ReportGroupData() {
                                     <TableCell className='data-text'>
                                         {DateUtil.dateFormated(it.date).slice(0, 5) + ' - ' + it.weekDay}
                                     </TableCell>
-                                    <TableCell className='data-text'>{DateUtil.dateFormated(it.date)}</TableCell>
+                                    <TableCell className='data-text'>{DateUtil.dateFormated(it.createdAt)}</TableCell>
                                     <TableCell className='data-text'>                                   
                                         <IconButton onClick={() => handleOpenDetails(it)}>
                                             <Info/>
