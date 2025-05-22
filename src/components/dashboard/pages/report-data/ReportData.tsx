@@ -11,7 +11,7 @@ import { ManagerContext } from '@context/ManagerContext';
 import { DateUtil } from '@domain/utils';
 
 export default function ReportData() {
-    const [_, setData]= useState<ReportChurch[]>([]);
+    const [data, setData]= useState<ReportChurch[]>([]);
     const [filtered, setFiltered] = useState<ReportChurch[]>([]);
     const [openData, setOpenData] = useState(false);
     const [selectedReport, setSelectedReport] = useState<ReportChurch | null>(null);
@@ -35,7 +35,7 @@ export default function ReportData() {
     }, [location.state]);
     
     return (
-        <Layout title="Relatórios" path="new-report-church" message="Relatório criado com sucesso!">
+        <Layout total={data?.length} title="Relatórios" path="new-report-church" message="Relatório criado com sucesso!">
             {filtered?.length > 0 ? (
                     <TableContainer component={Paper}>
                     <Table size="small">

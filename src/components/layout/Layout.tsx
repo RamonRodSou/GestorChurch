@@ -6,13 +6,14 @@ import { ReactNode, useContext } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 
 interface Data {
+    total: number;
     title: string;
     message: string;
     path: string;
     children: ReactNode
 }
 
-export default function Layout({title, message, path, children}: Data) {
+export default function Layout({total, title, message, path, children}: Data) {
     const { openSnackbar, setOpenSnackbar } = useContext(ManagerContext);
     const { userId } = useParams();
     const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function Layout({title, message, path, children}: Data) {
         <Container>
             <Box mb={3}>
                 <Typography variant="h4" component="h1" className='title'>
-                    {title}
+                    {total + ' - ' + title}
                 </Typography>
             </Box>
             <main>

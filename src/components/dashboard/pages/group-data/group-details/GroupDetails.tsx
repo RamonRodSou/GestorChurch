@@ -29,7 +29,7 @@ export default function GroupDetails() {
     };
 
     function handleAddMemberField() {
-        setMembersInputs([...membersInputs, EMPTY]);
+        setMembersInputs([...membersInputs, EMPTY]); 
     };
 
         
@@ -92,7 +92,7 @@ export default function GroupDetails() {
                     <Box mb={2}>
                         <Autocomplete
                             multiple
-                            value={group.leaders || []}
+                            value={group.leaders}
                             onChange={(_, newValue) => {
                                 const normalized = newValue.map(val => {
                                     const match = allMembers.find(m => m.id === val.id);

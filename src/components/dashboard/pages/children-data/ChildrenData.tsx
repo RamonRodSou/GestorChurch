@@ -62,7 +62,7 @@ export default function ChildrenData() {
     }, []);
 
     return (
-        <Layout title="Crianças" path="new-children" message="Crainça criado com sucesso!">
+        <Layout total={data?.length} title="Crianças" path="new-children" message="Crainça criado com sucesso!">
             <Search<Child> 
                 data={data} 
                 onFilter={setFiltered} 

@@ -12,7 +12,7 @@ import ReportGroupDataModal from './report-group-data-modal/ReportGroupDataModa'
 import { DateUtil } from '@domain/utils';
 
 export default function ReportGroupData() {
-    const [_, setData]= useState<ReportGroup[]>([]);
+    const [data, setData]= useState<ReportGroup[]>([]);
     const [filtered, setFiltered] = useState<ReportGroup[]>([]);
     const [openData, setOpenData] = useState(false);
     const [selectedReport, setSelectedReport] = useState<ReportGroup | null>(null);
@@ -68,7 +68,7 @@ export default function ReportGroupData() {
     }, [location.state]);
     
     return (
-        <Layout title="Relatórios dos GCs" path="new-report-group" message="Relatório criado com sucesso!">
+        <Layout total={data?.length} title="Relatórios dos GCs" path="new-report-group" message="Relatório criado com sucesso!">
             {filtered?.length > 0 ? (
                     <TableContainer component={Paper}>
                     <Table size="small">

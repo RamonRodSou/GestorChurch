@@ -41,7 +41,7 @@ export default function VisitorData() {
     }, []);
 
     return (
-        <Layout title="Visitantes" path="new-visitor" message="Visitante criado com sucesso!">
+        <Layout total={data?.length} title="Visitantes" path="new-visitor" message="Visitante criado com sucesso!">
             <Search<Visitor> 
                 data={data} 
                 onFilter={setFiltered} 

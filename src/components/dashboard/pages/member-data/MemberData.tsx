@@ -62,7 +62,7 @@ export default function MemberData() {
     }, []);
 
     return (
-        <Layout title="Membros" path="new-member" message="Membro criado com sucesso!">
+        <Layout total={data?.length} title="Membros" path="new-member" message="Membro criado com sucesso!">
             <Search<Member> 
                 data={data} 
                 onFilter={setFiltered} 
@@ -72,7 +72,6 @@ export default function MemberData() {
                     item.phone.includes(term) 
                 }
             />
-            
             <Box className="boxFilter">
                 <Button
                     variant={filter === 'all' ? 'contained' : 'outlined'}

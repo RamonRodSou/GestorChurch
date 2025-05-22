@@ -38,7 +38,7 @@ export default function GroupData() {
     }, []);
 
     return (
-        <Layout title="GC" path="new-group" message="GC criado com sucesso!">
+        <Layout total={data?.length} title="GC" path="new-group" message="GC criado com sucesso!">
             <Search<Group> 
                 data={data} 
                 onFilter={setFiltered} 

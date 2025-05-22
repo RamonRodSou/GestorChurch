@@ -49,7 +49,7 @@ export default function VisitorGroupData() {
     }, []);
 
     return (
-        <Layout title="Visitantes dos GCs" path="new-visitor-group" message="Visitante criado com sucesso!">
+        <Layout total={data?.length} title="Visitantes dos GCs" path="new-visitor-group" message="Visitante criado com sucesso!">
             <Search<VisitorGroup> 
                 data={data} 
                 onFilter={setFiltered} 
