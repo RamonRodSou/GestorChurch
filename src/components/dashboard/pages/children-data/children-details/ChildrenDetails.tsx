@@ -12,8 +12,8 @@ import { ensureMemberSummary } from '@domain/utils/EnsuredSummary';
 import { findAllGroups } from '@service/GroupService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCredentials } from '@context/CredentialsContext';
-import { findAllMembers } from "@service/MemberService";
-import { childAdd, childUpdate, findChildToById } from "@service/ChildrenService";
+import { findAllMembers, memberUpdate } from "@service/MemberService";
+import { childAdd, findChildToById } from "@service/ChildrenService";
 import { AgeGroup } from "@domain/enums/AgeGroup";
 
 export default function ChildDetails() {
@@ -28,20 +28,21 @@ export default function ChildDetails() {
     const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const isEditOrNew = isEditing ? `Editar criança: ${data.name}` : 'Novo criança'
-    const { userId } = useParams();
+    const { childId } = useParams();
     const navigate = useNavigate();
     const { clearCredentials } = useCredentials();
 
     const selectedGroup = groups.find(group => group.id === data.groupId) ?? null;
 
     function navToChild() {
-        navigate(`/dashboard/${userId}/children`, {
+        navigate(`/dashboard/${childId}/children`, {
             state: { showSnackbar: true }
         }); 
     }
 
     function handleChange(field: keyof Child, value: any) {
         setData(prev => {
+            data.ageGroup = age;
             const updated = { ...prev, [field]: value };
             return Child.fromJson(updated);
         });
@@ -89,8 +90,6 @@ export default function ChildDetails() {
 
     async function handleSubmit(e: React.FormEvent): Promise<void> {
         e.preventDefault();
-        // if (!validateMemberForm({ data, setErrors })) return;
-
         const base = {
             ...data,
             role,
@@ -100,9 +99,11 @@ export default function ChildDetails() {
 
         if (isEditing) {
             const update = Child.fromJson(base);
-            await childUpdate(data.id, update.toJSON());
+            await memberUpdate(data.id, update.toJSON());       
         } else {
             const newChild = Child.fromJson(base);
+            console.log(newChild)
+            newChild.ageGroup = age;
             await childAdd(newChild);
             clearCredentials();
             setOpenSnackbar(true);
@@ -119,17 +120,18 @@ export default function ChildDetails() {
             setRole(data.role);
             setAge(data.ageGroup);
 
-            if (userId) {
-                const data = await findChildToById(userId);
-                const loadedChildren = Child.fromJson(data);
-                setData(Child.fromJson(data));
+            if (childId) {
+                const base = await findChildToById(childId);
+                const loadedChildren = Child.fromJson(base);
+                setData(Child.fromJson(base));
                 setIsEditing(true);
                 setRole(loadedChildren.role);
+                setAge(loadedChildren.ageGroup)
                 setParentInputs(loadedChildren.parents ?? []);
             }
         }
         load();
-    }, [userId]);
+    }, [childId]);
     
     return (
         <>

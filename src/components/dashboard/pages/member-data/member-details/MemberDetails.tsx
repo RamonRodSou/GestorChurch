@@ -64,7 +64,7 @@ export default function MemberDetails() {
             return Member.fromJson(updated);
         });
     };
-
+ 
     function handleAddChildField() {
         setChildrenInputs([...childrenInputs, EMPTY]);
     };
