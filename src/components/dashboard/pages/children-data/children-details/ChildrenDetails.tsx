@@ -12,8 +12,8 @@ import { ensureMemberSummary } from '@domain/utils/EnsuredSummary';
 import { findAllGroups } from '@service/GroupService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCredentials } from '@context/CredentialsContext';
-import { findAllMembers, memberUpdate } from "@service/MemberService";
-import { childAdd, findChildToById } from "@service/ChildrenService";
+import { findAllMembers } from "@service/MemberService";
+import { childAdd, childUpdate, findChildToById } from "@service/ChildrenService";
 import { AgeGroup } from "@domain/enums/AgeGroup";
 
 export default function ChildDetails() {
@@ -99,12 +99,12 @@ export default function ChildDetails() {
 
         if (isEditing) {
             const update = Child.fromJson(base);
-            await memberUpdate(data.id, update.toJSON());       
+            await childUpdate(data.id, update.toJSON());       
         } else {
             const newChild = Child.fromJson(base);
             console.log(newChild)
             newChild.ageGroup = age;
-            await childAdd(newChild);
+            await childAdd(newChild); 
             clearCredentials();
             setOpenSnackbar(true);
             setData(new Child());
@@ -329,8 +329,8 @@ export default function ChildDetails() {
                     <Box mb={2}>
                         <TextField
                             label="Usa alguma medicação? Qual?"
-                            type="medication"
                             value={data.medication}
+                            InputLabelProps={{ shrink: true }}
                             onChange={(e) => 
                                 handleChange("medication", e.target.value.toUpperCase())
                             }
@@ -340,7 +340,7 @@ export default function ChildDetails() {
                     <Box mb={2}>
                         <TextField
                             label="Alguma necessidade especial? Qual?"
-                            type="specialNeed"
+                            InputLabelProps={{ shrink: true }}
                             value={data.specialNeed}
                             onChange={(e) => 
                                 handleChange("specialNeed", e.target.value.toUpperCase())
@@ -351,7 +351,7 @@ export default function ChildDetails() {
                     <Box mb={2}>
                         <TextField
                             label="Alguma alergia? Qual?"
-                            type="allergy"
+                            InputLabelProps={{ shrink: true }}
                             value={data.allergy}
                             onChange={(e) => 
                                 handleChange("allergy", e.target.value.toUpperCase())
