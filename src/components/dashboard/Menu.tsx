@@ -25,7 +25,7 @@ export const getMenuItems = (permission: number | null): IMenu[] => {
   const items: IMenu[] = [
     { path: 'home', label: 'Início', icon: <Home/>, visible: true },
     { path: 'visitor', label: 'Visitantes', icon: <Person2Outlined />, visible: true },
-    { path: 'member', label: 'Membros', icon: <Group />, visible: level >= 5 },
+    { path: 'member', label: 'Membros', icon: <Group />, visible: level >= 3 },
     { path: 'children', label: 'Crianças', icon: <ChildCare />, visible: level >= 3 },
     { path: 'report', label: 'Relatório', icon: <StickyNote2Outlined />, visible: level >= 5 },
     { path: 'group', label: 'GC', icon: <Diversity3Outlined />, visible: level >= 5 },
