@@ -162,11 +162,11 @@ export default function ReportGroupDetails() {
                     </Box>
                     <Box mb={2}>
                         <TextField
-                            type="text"
+                            type="number"
                             label="Valor da Oferta: "
                             value={report.value ?? 0}
                             onChange={(e) => 
-                                handleChange("value", Number(e.target.value))
+                                handleChange("value", (e.target.value))
                             }
                             fullWidth
                             required
