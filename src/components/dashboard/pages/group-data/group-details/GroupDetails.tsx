@@ -233,7 +233,11 @@ export default function GroupDetails() {
                                         ? false
                                         : option.id === value.id
                                 }
-                                filterOptions={(x) => x}
+                                filterOptions={(options, state) => {
+                                    return options.filter(option =>
+                                        option.name.toLowerCase().includes(state.inputValue.toLowerCase())
+                                    );
+                                }}
                                 noOptionsText="Nenhum membro encontrado"
                             />
                         </Box>

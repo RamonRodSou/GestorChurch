@@ -332,7 +332,11 @@ export default function MemberDetails() {
                                 />
                             )}
                             isOptionEqualToValue={(option, value) => option.id === value?.id} 
-                            filterOptions={(x) => x}
+                            filterOptions={(options, state) => {
+                                return options.filter(option =>
+                                    option.name.toLowerCase().includes(state.inputValue.toLowerCase())
+                                );
+                            }}  
                             noOptionsText="Nenhum grupo encontrado"
                         />
                     </Box>
@@ -448,7 +452,11 @@ export default function MemberDetails() {
                                         />
                                     )}
                                     isOptionEqualToValue={(option, value) => option.id === value.id}
-                                    filterOptions={(x) => x}
+                                    filterOptions={(options, state) => {
+                                        return options.filter(option =>
+                                            option.name.toLowerCase().includes(state.inputValue.toLowerCase())
+                                        );
+                                    }}    
                                     noOptionsText="Nenhum membro encontrado"
                                 />
                             </Box>
@@ -477,7 +485,11 @@ export default function MemberDetails() {
                                             ? false
                                             : option.id === value.id
                                     }
-                                    filterOptions={(x) => x}
+                                    filterOptions={(options, state) => {
+                                        return options.filter(option =>
+                                            option.name.toLowerCase().includes(state.inputValue.toLowerCase())
+                                        );
+                                    }}                                    
                                     noOptionsText="Nenhum membro encontrado"
                                 />
                             </Box>
