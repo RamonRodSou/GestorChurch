@@ -69,6 +69,11 @@ export default function MemberDetails() {
         setChildrenInputs([...childrenInputs, EMPTY]);
     };
 
+    function handleRemoveChildField(index: number) {
+        setChildrenInputs(childrenInputs.filter((_, i) => i !== index));
+    };
+
+
     function handleChildrenChange(index: number, value: ChildSummary | string) {
         const updated = [...childrenInputs];
         updated[index] = ensureChildSummary(value);
@@ -462,8 +467,9 @@ export default function MemberDetails() {
                             </Box>
                         )}
                         {childrenInputs.map((child, index) => (
-                            <Box key={index} mb={2}>
+                            <Box key={index} className='boxAutoComplete'>
                                 <Autocomplete
+                                    className='autoComplete'
                                     freeSolo
                                     value={child}
                                     onChange={(_, newValue) => handleChildrenChange(index, newValue ?? EMPTY)}
@@ -492,6 +498,14 @@ export default function MemberDetails() {
                                     }}                                    
                                     noOptionsText="Nenhum membro encontrado"
                                 />
+                                <Button 
+                                    variant="outlined" 
+                                    onClick={() => handleRemoveChildField(index)} 
+                                    color="secondary"
+                                    style={{ marginLeft: '10px' }}
+                                >
+                                    X
+                                </Button>
                             </Box>
                         ))}
                         <Button variant="outlined" onClick={handleAddChildField}>

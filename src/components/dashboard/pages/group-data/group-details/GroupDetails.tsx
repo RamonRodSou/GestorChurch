@@ -32,7 +32,10 @@ export default function GroupDetails() {
         setMembersInputs([...membersInputs, EMPTY]); 
     };
 
-        
+    function handleRemoveChildField(index: number) {
+        setMembersInputs(membersInputs.filter((_, i) => i !== index));
+    };
+
     function navToGroup() {
         navigate(`/dashboard/${userId}/group`, {
             state: { showSnackbar: true }
@@ -208,9 +211,10 @@ export default function GroupDetails() {
                     </Box>                        
                     <h3>Membros do Grupo</h3>
                     {membersInputs.map((member, index) => (
-                        <Box key={index} mb={2}>
+                        <Box key={index} className='boxAutoComplete'>
                             <Autocomplete
                                 freeSolo
+                                className='autoComplete'
                                 value={member}
                                 onChange={(_, newValue) => handleMemberChange(index, newValue ?? EMPTY)}
                                 options={allMembers}
@@ -240,6 +244,14 @@ export default function GroupDetails() {
                                 }}
                                 noOptionsText="Nenhum membro encontrado"
                             />
+                                <Button 
+                                    variant="outlined" 
+                                    onClick={() => handleRemoveChildField(index)} 
+                                    color="secondary"
+                                    style={{ marginLeft: '10px' }}
+                                >
+                                    X
+                                </Button>
                         </Box>
                     ))}
                     <Box mb={2}>
@@ -247,7 +259,7 @@ export default function GroupDetails() {
                             Adicionar Membro
                         </Button>
                     </Box>
-                    <Button type="submit" variant="contained" color="primary" fullWidth>
+                    <Button type="submit" variant="contained" color="primary" fullWidth> 
                         Salvar Grupo
                     </Button>
                 </form>

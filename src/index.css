@@ -127,6 +127,21 @@
             }
     }
 
+    .boxAutoComplete {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 1rem 0 ;
+
+        .autoComplete {
+            flex-grow: 1;
+        }
+
+        button {
+            height: 55px;
+        }
+    }
+
     @media (min-width: 600px) {
         .title {
             font-size: 2.5rem;

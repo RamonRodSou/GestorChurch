@@ -27,14 +27,14 @@ export default function ChildDetails() {
     const [errors, _] = useState<{ [key: string]: string }>({});
     const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
     const [isEditing, setIsEditing] = useState<boolean>(false);
-    const isEditOrNew = isEditing ? `Editar criança: ${data.name}` : 'Novo criança'
+    const isEditOrNew = isEditing ? `Editar menor de idade: ${data.name}` : 'Novo menor de idade'
     const { childId } = useParams();
     const navigate = useNavigate();
     const { clearCredentials } = useCredentials();
 
     const selectedGroup = groups.find(group => group.id === data.groupId) ?? null;
 
-    function navToChild() {
+    function navToChild() { 
         navigate(`/dashboard/${childId}/children`, {
             state: { showSnackbar: true }
         }); 
@@ -58,6 +58,10 @@ export default function ChildDetails() {
 
     function handleAddChildField() {
         setParentInputs([...parentInputs, EMPTY]);
+    };
+
+    function handleRemoveChildField(index: number) {
+        setParentInputs(parentInputs.filter((_, i) => i !== index));
     };
 
     function handleParentChange(index: number, value: MemberSummary | string) {
@@ -102,7 +106,6 @@ export default function ChildDetails() {
             await childUpdate(data.id, update.toJSON());       
         } else {
             const newChild = Child.fromJson(base);
-            console.log(newChild)
             newChild.ageGroup = age;
             await childAdd(newChild); 
             clearCredentials();
@@ -366,9 +369,10 @@ export default function ChildDetails() {
                     <Box mb={2}>
                         <h3>Família</h3>
                         {parentInputs.map((child, index) => (
-                            <Box key={index} mb={2}>
+                            <Box key={index}  className='boxAutoComplete'>
                                 <Autocomplete
                                     freeSolo
+                                    className='autoComplete'
                                     value={child}
                                     onChange={(_, newValue) => handleParentChange(index, newValue ?? EMPTY)}
                                     options={allParent}
@@ -396,6 +400,14 @@ export default function ChildDetails() {
                                     }}  
                                     noOptionsText="Nenhum membro encontrado"
                                 />
+                                <Button 
+                                    variant="outlined" 
+                                    onClick={() => handleRemoveChildField(index)} 
+                                    color="secondary"
+                                    style={{ marginLeft: '10px' }}
+                                >
+                                    X
+                                </Button>
                             </Box>
                         ))}
                         <Button variant="outlined" onClick={handleAddChildField}>
