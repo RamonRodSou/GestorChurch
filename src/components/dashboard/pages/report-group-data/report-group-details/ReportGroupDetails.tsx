@@ -105,6 +105,7 @@ export default function ReportGroupDetails() {
                                     {...params}
                                     label="GC"
                                     fullWidth
+                                    required
                                 />
                             )}
                             isOptionEqualToValue={(option, value) => option.id === value?.id} 

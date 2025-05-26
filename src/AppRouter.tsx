@@ -27,6 +27,7 @@ function AppRouter() {
             <Routes>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/" element={<Login/>}/>
+                <Route path="*" element={<Login/>}/>
                 <Route path="/dashboard/:userId" element={<ProtectedRoute><Dashboard/></ProtectedRoute>}>
                     <Route path="home" element={<Home/>}/>
                     <Route path="visitor" element={<VisitorData/>}/>
