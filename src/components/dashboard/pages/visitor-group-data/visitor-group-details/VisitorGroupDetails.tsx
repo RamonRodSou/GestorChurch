@@ -71,6 +71,7 @@ export default function VisitorGroupDetails() {
                     <Box mb={2}>
                         <TextField
                             label="Telefone"
+                            type='number'
                             value={data.phone}
                             onChange={(e) => handleChange("phone", e.target.value)}
                             fullWidth
