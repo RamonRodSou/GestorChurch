@@ -64,8 +64,6 @@ export default function ReportGroupData() {
                 setFiltered(it);
         })
         loadGroups();
-
-        console.log(data)
     }, [location.state]);
     
     return (
