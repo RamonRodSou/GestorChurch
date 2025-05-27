@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from 'react';
 import Search from '@components/search/Search';
-import { whatzapp } from '@domain/utils';
+import { EMPTY, whatzapp } from '@domain/utils';
 import Layout from '@components/layout/Layout';
 import { VisitorGroup } from "@domain/user/visitor/VisitorGroup";
 import { findAllVisitorsGroup } from "@service/VisitorGroupService";
@@ -22,6 +22,13 @@ export default function VisitorGroupData() {
     const [filtered, setFiltered] = useState<VisitorGroup[]>([]);
     const [_, setGroups] = useState<GroupSummary[]>([]);
     const [visitorGroupMap, setVisitorGroupMap] = useState<Map<string, GroupSummary>>(new Map());
+
+
+    function organizedGcName(a: VisitorGroup, b: VisitorGroup) {
+        const nameA = visitorGroupMap.get(a.groupId || EMPTY)?.name ?? 'Sem Grupo';
+        const nameB = visitorGroupMap.get(b.groupId || EMPTY)?.name ?? 'Sem Grupo';
+        return nameA.localeCompare(nameB, 'pt-BR', { sensitivity: 'base' });
+    }
 
     useEffect(() => {
         const loadGroups = async () => {
@@ -72,6 +79,7 @@ export default function VisitorGroupData() {
                     <TableBody>
                     {filtered
                         .filter((it) => it.isActive)
+                        .sort((a, b) => organizedGcName(a, b))
                         .map((it) => (
                             <TableRow key={it.id}>
                                 <TableCell className='data-text'>{it.name}</TableCell>

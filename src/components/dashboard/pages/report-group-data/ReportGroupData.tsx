@@ -36,7 +36,6 @@ export default function ReportGroupData() {
         setSelectedReport(r); 
         setOpenData(true);
     }
-    
 
     async function loadGroups() {
         try {
@@ -65,6 +64,8 @@ export default function ReportGroupData() {
                 setFiltered(it);
         })
         loadGroups();
+
+        console.log(data)
     }, [location.state]);
     
     return (
@@ -81,7 +82,10 @@ export default function ReportGroupData() {
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {filtered.map((it) => (
+                        {filtered
+                            .filter((it) => it.isActive)
+                            .sort((a, b) => DateUtil.organizedToLastDate(a, b))
+                            .map((it) => (
                                 <TableRow key={it.id}>
                                     <TableCell className='data-text'>{it.groupId ? visitorGroupMap.get(it.groupId)?.name : 'Sem Grupo'}</TableCell>
                                     <TableCell className='data-text'>

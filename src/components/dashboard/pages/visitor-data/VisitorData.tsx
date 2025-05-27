@@ -18,6 +18,7 @@ import { findAllVisitors } from '@service/VisitorService';
 import VisitorDataModal from './visitor-data-modal/VisitorDataModal';
 import { whatzapp } from '@domain/utils';
 import Layout from '@components/layout/Layout';
+import dayjs from "dayjs";
 
 export default function VisitorData() {
     const [data, setData] = useState<Visitor[]>([]);
@@ -39,6 +40,15 @@ export default function VisitorData() {
             })
             .catch(console.error);
     }, []);
+
+    function organizedToLastDate(a: Visitor, b: Visitor): number {
+        const lastVisitA = a.visitHistory?.[a.visitHistory.length - 1]?.split(', ')[1];
+        const lastVisitB = b.visitHistory?.[b.visitHistory.length - 1]?.split(', ')[1];
+        const dateA = lastVisitA ? dayjs(lastVisitA, 'DD/MM/YYYY').valueOf() : 0;
+        const dateB = lastVisitB ? dayjs(lastVisitB, 'DD/MM/YYYY').valueOf() : 0;
+
+        return dateB - dateA;
+    }
 
     return (
         <Layout total={data?.length} title="Visitantes" path="new-visitor" message="Visitante criado com sucesso!">
@@ -71,6 +81,7 @@ export default function VisitorData() {
                     <TableBody>
                     {filtered
                         .filter((it) => it.isActive)
+                        .sort((a, b) => organizedToLastDate(a, b) )
                         .map((it) => (
                             <TableRow key={it.id}>
                                 <TableCell className='data-text'>{it.name}</TableCell>

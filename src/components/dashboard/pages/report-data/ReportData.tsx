@@ -47,7 +47,10 @@ export default function ReportData() {
                         </TableRow>
                         </TableHead>
                         <TableBody>
-                        {filtered.map((it) => (
+                        {filtered
+                            .filter((it) => it.isActive)
+                            .sort((a, b) => DateUtil.organizedToLastDate(a, b))
+                            .map((it) => (
                                 <TableRow key={it.id}>
                                     <TableCell className='data-text'>
                                         {DateUtil.dateFormated(it.date).slice(0, 5) + ' - ' + it.worship}

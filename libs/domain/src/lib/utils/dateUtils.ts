@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export class DateUtil {
 
     static dateFormated(date: Date | string) {
@@ -43,4 +45,11 @@ export class DateUtil {
 
         return date.getMonth() === now.getMonth() - 1 && date.getFullYear() === now.getFullYear();
     }
+
+    static organizedToLastDate<T extends { date?: string | Date }>(a: T, b: T): number {    
+        const dateA = a.date ? dayjs(a.date).valueOf() : 0;
+        const dateB = b.date ? dayjs(b.date).valueOf() : 0;
+        return dateB - dateA;
+    }
+    
 }
