@@ -1,5 +1,5 @@
 import { auth } from "@service/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { browserLocalPersistence, setPersistence, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@service/firebase";
 import { AdminSummary } from "@domain/user";
@@ -8,6 +8,9 @@ import { EMPTY } from "@domain/utils/string-utils";
 export class AuthService {
     static async login(email: string, password: string): Promise<AdminSummary> {
         try {
+            
+            await setPersistence(auth, browserLocalPersistence);
+
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             
             const adminDoc = await getDoc(doc(db, "admins", userCredential.user.uid));
