@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Box, Button, Container, TextField, Autocomplete } from "@mui/material";
 import BackButton from '@components/back-button/BackButton';
-import { MemberSummary } from '@domain/user';
-import { findAllMembersSummary } from '@service/MemberService';
+import { Member, MemberSummary } from '@domain/user';
+import { findAllMembers, findAllMembersSummary } from '@service/MemberService';
 import { EMPTY } from "@domain/utils/string-utils";
 import { ensureMemberSummary } from '@domain/utils/EnsuredSummary';
 import { Group } from '@domain/group/Group';
@@ -12,13 +12,15 @@ import CepData from '@domain/interface/ICepData';
 import { checkCEP } from '@domain/utils/checkCEP';
 import { validateGroupForm } from '@domain/utils/validateGroupForm';
 import { useNavigate, useParams } from 'react-router-dom';
-import { WeekDays } from "@domain/enums";
+import { Role, WeekDays } from "@domain/enums";
 
 export default function GroupDetails() {
     const [group, setGroup] = useState<Group>(new Group());
     const [day, setDay] = useState<WeekDays>(WeekDays.THURSDAY);
     const [allMembers, setAllMembers] = useState<MemberSummary[]>([]);
     const [membersInputs, setMembersInputs] = useState<(MemberSummary | string)[]>([]);
+    const [leaders, setLeaders] = useState<Member[]>([]);
+    const [selectLeader, setSelectLeader] = useState<MemberSummary[]>([]);
     const [cepData, setCepData] = useState<CepData | null>(null);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const { userId } = useParams();
@@ -34,6 +36,11 @@ export default function GroupDetails() {
 
     function handleRemoveChildField(index: number) {
         setMembersInputs(membersInputs.filter((_, i) => i !== index));
+    };
+
+    async function fetchLeaders(): Promise<void>  {
+        const response = await findAllMembers();
+        setLeaders(response.filter((it) => it.role === Role.LEADER));
     };
 
     function navToGroup() {
@@ -60,8 +67,11 @@ export default function GroupDetails() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         if (!validateGroupForm({ group, setErrors })) return;
+
         const updatedGroup = Group.fromJson({...group });
         updatedGroup.weekDay = day;
+        updatedGroup.leaders = selectLeader;
+
         await groupAdd(updatedGroup);
         setGroup(new Group());
         setCepData(null);
@@ -71,7 +81,10 @@ export default function GroupDetails() {
 
     useEffect(() => {
         fetchMembers();
-        validateCEP({cepData: cepData, setData: setGroup})
+        fetchLeaders();
+        if (cepData) {
+            validateCEP({ cepData: cepData, setData: setGroup })
+        }
     }, [cepData]);
 
     return (
@@ -93,12 +106,24 @@ export default function GroupDetails() {
                         />
                     </Box>
                     <Box mb={2}>
-                        <Autocomplete
+                        <Box mb={2}>
+                            <Autocomplete
+                                multiple
+                                options={leaders}
+                                getOptionLabel={(option) => option.name}
+                                value={selectLeader}
+                                onChange={(_, newValue) => setSelectLeader(newValue)}
+                                renderInput={(params) => <TextField {...params} label="Selecione os Lideres" />}
+                                isOptionEqualToValue={(option, value) => option.id === value.id}
+                                fullWidth
+                            />
+                        </Box>
+                        {/* <Autocomplete
                             multiple
                             value={group.leaders}
                             onChange={(_, newValue) => {
                                 const normalized = newValue.map(val => {
-                                    const match = allMembers.find(m => m.id === val.id);
+                                    const match = allMembers.find(m => m?.id === val.id);
                                     return match || val;
                                 });
                                 handleChange("leaders", normalized);
@@ -117,7 +142,7 @@ export default function GroupDetails() {
                             )}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             noOptionsText="Nenhum membro encontrado"
-                        />
+                        /> */}
                     </Box>
                     <Box mb={2}>
                         <TextField
@@ -139,8 +164,8 @@ export default function GroupDetails() {
                         <TextField
                             label="CEP"
                             onBlur={(e) => checkCEP({ it: e.target.value, setCepData })}
-                            helperText={errors.zipCode}
-                            error={!!errors.zipCode}
+                            value={group.zipCode}
+
                             onChange={(e) => 
                                 handleChange("zipCode", e.target.value)
                             }
@@ -151,7 +176,7 @@ export default function GroupDetails() {
                     <Box mb={2}>
                         <TextField
                             label="Rua"
-                            value={cepData?.logradouro}
+                            value={cepData?.logradouro.toUpperCase()}
                             InputLabelProps={{ shrink: true }}
                             onChange={(e) => 
                                 handleChange("street", e.target.value.toUpperCase())
@@ -176,7 +201,7 @@ export default function GroupDetails() {
                     <Box mb={2}>
                         <TextField
                             label="Bairro"
-                            value={cepData?.bairro}
+                            value={cepData?.bairro.toUpperCase()}
                             InputLabelProps={{ shrink: true }}
                             onChange={(e) => 
                                 handleChange("neighborhood", e.target.value.toUpperCase())
@@ -188,7 +213,7 @@ export default function GroupDetails() {
                     <Box mb={2}>
                         <TextField
                             label="Cidade"
-                            value={cepData?.localidade}
+                            value={cepData?.localidade.toUpperCase()}
                             onChange={(e) => 
                                 handleChange("city", e.target.value.toUpperCase())
                             }
@@ -200,7 +225,7 @@ export default function GroupDetails() {
                     <Box mb={2}>
                         <TextField
                             label="Estado"
-                            value={cepData?.uf}
+                            value={cepData?.uf.toUpperCase()}
                             onChange={(e) => 
                                 handleChange("state", e.target.value.toUpperCase())
                             }
@@ -219,7 +244,7 @@ export default function GroupDetails() {
                                 onChange={(_, newValue) => handleMemberChange(index, newValue ?? EMPTY)}
                                 options={allMembers}
                                 getOptionLabel={(option) =>
-                                    typeof option === 'string' ? option : option.name
+                                    typeof option === 'string' ? option : option?.name
                                 }
                                 renderInput={(params) => (
                                     <TextField
