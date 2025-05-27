@@ -20,39 +20,62 @@ import ReportGroupData from '@components/dashboard/pages/report-group-data/Repor
 import VisitorGroupData from '@components/dashboard/pages/visitor-group-data/VisitorGroupData';
 import VisitorGroupDetails from '@components/dashboard/pages/visitor-group-data/visitor-group-details/VisitorGroupDetails';
 import ReportGroupDetails from '@components/dashboard/pages/report-group-data/report-group-details/ReportGroupDetails';
+import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@service/firebase';
+import { User } from 'firebase/auth'; 
 
 function AppRouter() {
-    return (
+    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState<User | null>(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+  if (loading) return <p>Carregando...</p>; 
+    return (  
         <BrowserRouter>
             <Routes>
-                <Route path="/login" element={<Login/>}/>
-                <Route path="/" element={<Login/>}/>
-                <Route path="*" element={<Login/>}/>
-                <Route path="/dashboard/:userId" element={<ProtectedRoute><Dashboard/></ProtectedRoute>}>
-                    <Route path="home" element={<Home/>}/>
-                    <Route path="visitor" element={<VisitorData/>}/>
-                    <Route path="new-visitor" element={<VisitorDetails/>}/>
-                    <Route path="/dashboard/:userId/edit-visitor/:visitorId" element={<VisitorDetails/>}/>
-                    <Route path="member" element={<MemberData/>}/>
-                    <Route path="new-member" element={<MemberDetails/>}/>
-                    <Route path="/dashboard/:userId/edit-member/:memberId" element={<MemberDetails/>}/>
-                    <Route path="children" element={<ChildrenData/>}/>
-                    <Route path="new-children" element={<ChildrenDetails/>}/>
-                    <Route path="/dashboard/:userId/edit-children/:childId" element={<ChildrenDetails/>}/>
-                    <Route path="group" element={<GroupData/>}/>
-                    <Route path="new-group" element={<GroupDetails/>}/>
-                    <Route path="/dashboard/:userId/edit-group/:groupId" element={<GroupDetails/>}/>
-                    <Route path="financial" element={<FinancialData/>}/>
-                    <Route path="preferences" element={<Preferences/>}/>
-                    <Route path="report" element={<ReportData/>}/>
-                    <Route path="new-report-church" element={<ReportChurchDetails/>}/>
-                    <Route path="report-group" element={<ReportGroupData/>}/>
-                    <Route path="new-report-group" element={<ReportGroupDetails/>}/>
-                    <Route path="visitor-group" element={<VisitorGroupData/>}/>
-                    <Route path="new-visitor-group" element={<VisitorGroupDetails/>}/>
-                    <Route path="/dashboard/:userId/edit-visitor-group/:visitorGroupId" element={<VisitorGroupDetails/>}/>
-                </Route>
-                <Route path="*" element={<Navigate to="/login"/>}/>
+                {!user ? (
+                    <>
+                        <Route path="/login" element={<Login/>}/>
+                        <Route path="*" element={<Navigate to="/login" replace />} />
+                    </>
+                ) : (
+                    <>
+                        <Route path="/dashboard/:userId" element={<ProtectedRoute><Dashboard/></ProtectedRoute>}>
+                            <Route path="home" element={<Home/>}/>
+                            <Route path="visitor" element={<VisitorData/>}/>
+                            <Route path="new-visitor" element={<VisitorDetails/>}/>
+                            <Route path="/dashboard/:userId/edit-visitor/:visitorId" element={<VisitorDetails/>}/>
+                            <Route path="member" element={<MemberData/>}/>
+                            <Route path="new-member" element={<MemberDetails/>}/>
+                            <Route path="/dashboard/:userId/edit-member/:memberId" element={<MemberDetails/>}/>
+                            <Route path="children" element={<ChildrenData/>}/>
+                            <Route path="new-children" element={<ChildrenDetails/>}/>
+                            <Route path="/dashboard/:userId/edit-children/:childId" element={<ChildrenDetails/>}/>
+                            <Route path="group" element={<GroupData/>}/>
+                            <Route path="new-group" element={<GroupDetails/>}/>
+                            <Route path="/dashboard/:userId/edit-group/:groupId" element={<GroupDetails/>}/>
+                            <Route path="financial" element={<FinancialData/>}/>
+                            <Route path="preferences" element={<Preferences/>}/>
+                            <Route path="report" element={<ReportData/>}/>
+                            <Route path="new-report-church" element={<ReportChurchDetails/>}/>
+                            <Route path="report-group" element={<ReportGroupData/>}/>
+                            <Route path="new-report-group" element={<ReportGroupDetails/>}/>
+                            <Route path="visitor-group" element={<VisitorGroupData/>}/>
+                            <Route path="new-visitor-group" element={<VisitorGroupDetails/>}/>
+                            <Route path="/dashboard/:userId/edit-visitor-group/:visitorGroupId" element={<VisitorGroupDetails/>}/>
+                        </Route>
+                        <Route path="*" element={<Navigate to={`/dashboard/${user?.uid}/home`} replace />} />
+                    </>
+                )}
             </Routes>
         </BrowserRouter>
     );

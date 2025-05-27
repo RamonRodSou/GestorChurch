@@ -22,6 +22,8 @@ import { ManagerContext } from "@context/ManagerContext";
 import { Admin } from "@domain/user";
 import { PermissionContext } from "@context/PermissionContext";
 import  logo from  "@assets/logo-iaf.webp";
+import { signOut } from "firebase/auth";
+import { auth } from "@service/firebase";
 
 export default function Dashboard() {
     const navigate = useNavigate();
@@ -45,9 +47,15 @@ export default function Dashboard() {
     }
 
     function logout() {
-        navigate(`/login}`);
+        signOut(auth)
+            .then(() => {
+                navigate('/login');
+            })
+            .catch((error) => {
+                console.error('Erro ao fazer logout:', error);
+            });
     }
-    
+
     const isActive = (path: string) => location.pathname === `/dashboard/${userId}/${path}`;
     const mobileMarginTop = isMobile ? 55 : 0;
     
