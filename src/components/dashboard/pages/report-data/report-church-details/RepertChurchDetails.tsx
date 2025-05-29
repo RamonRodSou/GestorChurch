@@ -11,7 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function ReportChurchDetails() {
     const [report, setReport] = useState<ReportChurch>(new ReportChurch());
     const [worship, setWorship ] = useState<WorshipType>(WorshipType.SUNDAY);
-    const [timePeriod, setTimePeriod ] = useState<TimePeriod>(TimePeriod.MORNING);
+    const [timePeriod, setTimePeriod ] = useState<TimePeriod>(TimePeriod.EVENING);
 
     const { userId } = useParams();
     const navigate = useNavigate();
