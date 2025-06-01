@@ -42,7 +42,7 @@ export default function CardData() {
                 {permission >= 10 && (
                     <>
                         <Paper className="home-card" elevation={3} sx={{ flex: '1 1 220px', p: 2, textAlign: 'center' }}>
-                            <Typography className='title-secondary' variant="h6">Saldo Atual</Typography>
+                            <Typography className='title-secondary' variant="h6">Saldo do Mês</Typography>
                             <Typography variant="h4">R$ {currentCash.toFixed(2)}</Typography>
                         </Paper>
                         <Paper className="home-card" elevation={3} sx={{ flex: '1 1 220px', p: 2, textAlign: 'center' }}>
