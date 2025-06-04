@@ -10,6 +10,7 @@ import {
     StickyNote2TwoTone,
     Person2Rounded,
     Home,
+    AssignmentInd,
 } from '@mui/icons-material';
 
 export interface IMenu {
@@ -33,6 +34,7 @@ export const getMenuItems = (permission: number | null): IMenu[] => {
         { path: 'new-report-group', label: 'Novo Relatório GC', icon: <StickyNote2TwoTone />, visible: level == 3 },
         { path: 'report-group', label: 'Relatório GC', icon: <StickyNote2TwoTone />, visible: level >= 5 },
         { path: 'financial', label: 'Finanças', icon: <Assessment />, visible: level >= 8 },
+        { path: 'user', label: 'Usuarios', icon: <AssignmentInd />, visible: level >= 10 },
         { path: 'preferences', label: 'Configurações', icon: <Settings />, visible: true },
     ];
 

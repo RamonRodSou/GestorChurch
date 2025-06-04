@@ -8,7 +8,6 @@ export class Admin {
         public phone: string = EMPTY,
         public email: string = EMPTY,
         public password: string = EMPTY,
-        public readonly permissions: string[] = []
     ) { }
 
     static fromJson(json: any): Admin {
@@ -18,7 +17,6 @@ export class Admin {
             json.phone,
             json.email,
             json.password,
-            json.permissions || []
         );
     }
 
@@ -29,18 +27,14 @@ export class Admin {
             phone: this.phone,
             email: this.email,
             password: this.password,
-            permissions: this.permissions
         };
-    }
-
-    hasPermission(permission: string): boolean {
-        return this.permissions.includes(permission);
     }
 }
 
 export class AdminSummary {
     constructor(
         public readonly id: string = uuidv4(),
+        public name: string = EMPTY,
         public email: string = EMPTY,
         public password: string = EMPTY,
         public permission?: number | null
@@ -49,6 +43,7 @@ export class AdminSummary {
     static fromJson(json: any): AdminSummary {
         return new AdminSummary(
             json.id,
+            json.name,
             json.email,
             json.password,
             json.permission ?? null

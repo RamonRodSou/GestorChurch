@@ -24,6 +24,7 @@ import { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@service/firebase';
 import { User } from 'firebase/auth'; 
+import UserData from '@components/dashboard/pages/userData/UserData';
 
 function AppRouter() {
     const [loading, setLoading] = useState(true);
@@ -51,6 +52,8 @@ function AppRouter() {
                     <>
                         <Route path="/dashboard/:userId" element={<ProtectedRoute><Dashboard/></ProtectedRoute>}>
                             <Route path="home" element={<Home/>}/>
+                            <Route path="user" element={<UserData/>}/>
+                            {/* <Route path="new-user" element={<MemberDetails/>}/> */}
                             <Route path="visitor" element={<VisitorData/>}/>
                             <Route path="new-visitor" element={<VisitorDetails/>}/>
                             <Route path="/dashboard/:userId/edit-visitor/:visitorId" element={<VisitorDetails/>}/>
