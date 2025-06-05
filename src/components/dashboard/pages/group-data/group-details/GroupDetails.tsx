@@ -118,31 +118,6 @@ export default function GroupDetails() {
                                 fullWidth
                             />
                         </Box>
-                        {/* <Autocomplete
-                            multiple
-                            value={group.leaders}
-                            onChange={(_, newValue) => {
-                                const normalized = newValue.map(val => {
-                                    const match = allMembers.find(m => m?.id === val.id);
-                                    return match || val;
-                                });
-                                handleChange("leaders", normalized);
-                            }}
-                            options={allMembers}
-                            getOptionLabel={(option) =>
-                                typeof option === 'string' ? option : option.name
-                            }
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Líderes do Grupo"
-                                    fullWidth
-                                    helperText={errors.leaderName}
-                                />
-                            )}
-                            isOptionEqualToValue={(option, value) => option.id === value.id}
-                            noOptionsText="Nenhum membro encontrado"
-                        /> */}
                     </Box>
                     <Box mb={2}>
                         <TextField

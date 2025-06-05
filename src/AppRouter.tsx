@@ -25,6 +25,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '@service/firebase';
 import { User } from 'firebase/auth'; 
 import UserData from '@components/dashboard/pages/userData/UserData';
+import UserDetails from '@components/dashboard/pages/userData/user-details/UserDetails';
+import UserInvited from '@components/dashboard/pages/userData/user-invited/UserInvited';
 
 function AppRouter() {
     const [loading, setLoading] = useState(true);
@@ -43,6 +45,7 @@ function AppRouter() {
     return (  
         <BrowserRouter>
             <Routes>
+                    <Route path="new-user" element={<UserDetails/>}/>
                 {!user ? (
                     <>
                         <Route path="/login" element={<Login/>}/>
@@ -53,7 +56,8 @@ function AppRouter() {
                         <Route path="/dashboard/:userId" element={<ProtectedRoute><Dashboard/></ProtectedRoute>}>
                             <Route path="home" element={<Home/>}/>
                             <Route path="user" element={<UserData/>}/>
-                            {/* <Route path="new-user" element={<MemberDetails/>}/> */}
+                            <Route path="user/invited" element={<UserInvited/>}/>
+                            <Route path="new-user" element={<UserDetails/>}/>
                             <Route path="visitor" element={<VisitorData/>}/>
                             <Route path="new-visitor" element={<VisitorDetails/>}/>
                             <Route path="/dashboard/:userId/edit-visitor/:visitorId" element={<VisitorDetails/>}/>

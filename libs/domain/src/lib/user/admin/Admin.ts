@@ -1,4 +1,6 @@
+import { PermissionLevel } from "@domain/enums";
 import { EMPTY } from "@domain/utils/string-utils";
+import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from 'uuid';
 
 export class Admin {
@@ -36,8 +38,8 @@ export class AdminSummary {
         public readonly id: string = uuidv4(),
         public name: string = EMPTY,
         public email: string = EMPTY,
-        public password: string = EMPTY,
-        public permission?: number | null
+        public permission: PermissionLevel = PermissionLevel.VOLUNTARIO,
+        public password: string = EMPTY
     ) { }
 
     static fromJson(json: any): AdminSummary {
@@ -45,17 +47,21 @@ export class AdminSummary {
             json.id,
             json.name,
             json.email,
-            json.password,
-            json.permission ?? null
+            json.permission,
+            json.password ?? EMPTY
         );
     }
 
-    toJSON(): object {
+    async toJSON(): Promise<object> {
         return {
             id: this.id,
             email: this.email,
-            password: this.password,
-            permission: this.permission ?? null
+            password: await this.getPasswordHash(),
+            permission: this.permission
         };
     }
+
+    async getPasswordHash(): Promise<string> {
+        return bcrypt.hash(this.password, 10);
+    } 
 }

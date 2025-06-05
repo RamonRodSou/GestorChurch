@@ -10,6 +10,11 @@ export default function UserData() {
     const [data, setData] = useState<AdminSummary[]>([]);
     const [filtered, setFiltered] = useState<AdminSummary[]>([]);
 
+    function handleOpenDetails(it: AdminSummary): void {
+        throw new Error( it + "Function not implemented.");
+    }
+
+
     useEffect(() => {
         findAllAdmins()
             .then((it) => {
@@ -19,12 +24,8 @@ export default function UserData() {
             .catch(console.error);
     }, []);
 
-    function handleOpenDetails(it: AdminSummary): void {
-        throw new Error( it + "Function not implemented.");
-    }
-
     return (
-        <Layout total={data?.length} title="Usuarios" path="new-user" message="Usuario criado com sucesso!">
+        <Layout total={data?.length} title="Usuarios" path="user/invited" message="Usuario criado com sucesso!">
             <Search<AdminSummary> 
                 data={data} 
                 onFilter={setFiltered} 
