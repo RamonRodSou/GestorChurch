@@ -56,7 +56,7 @@ export default function ReportGroupDetails() {
     };
 
     async function fetchVisitors(): Promise<void>  {
-        const response = await findAllVisitorsGroup(); 
+        const response = await findAllVisitorsGroup();  
         setVisitors(response)
     };
     

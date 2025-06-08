@@ -46,7 +46,10 @@ async function saveReportToDatabase(it: ServiceSchedule, userId: string) {
         date: it.date ? it.date.toJSON() : null,
         weekDay: it.weekDay,
         timePeriod: it.timePeriod,
-        leader: (it.leader?.id, it.leader?.name),
+        leader: {
+            id: it.leader?.id,
+            name: it.leader?.name,
+        },
         members: it.members.map((member) => ({
             id: member.id,
             name: member.name,

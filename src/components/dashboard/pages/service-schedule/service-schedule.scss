@@ -1,0 +1,16 @@
+:root {
+    .serviceSchedule {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        padding: 1rem;
+        justify-content: flex-start;
+        align-items: center;
+
+        .card {
+            width: 100%;
+            padding: 1rem;
+            background-color: rgba(4, 49, 112, 0.089);
+        }
+    }
+}
