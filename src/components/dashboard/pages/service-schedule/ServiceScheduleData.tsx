@@ -60,7 +60,7 @@ export default function ServiceScheduleData() {
                  .map(([_, { title, items }]) => (
                     
                 <>
-                    <Typography variant="h6" className="title">{title}</Typography>
+                    <Typography variant="h6" className="title-secondary">{title}</Typography>
                     <Box key={title} className="serviceSchedule">
                         {items
                             .sort((a, b) => a.timePeriod.localeCompare(b.timePeriod))    
