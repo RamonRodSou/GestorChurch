@@ -1,5 +1,4 @@
 import { useLocation } from 'react-router-dom';
-import './report-data.scss'
 import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from 'react';
 import { Info } from '@mui/icons-material';
