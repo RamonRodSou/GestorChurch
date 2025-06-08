@@ -27,6 +27,8 @@ import { User } from 'firebase/auth';
 import UserData from '@components/dashboard/pages/userData/UserData';
 import UserDetails from '@components/dashboard/pages/userData/user-details/UserDetails';
 import UserInvited from '@components/dashboard/pages/userData/user-invited/UserInvited';
+import ServiceScheduleData from '@components/dashboard/pages/service-schedule/ServiceScheduleData';
+import ServiceScheduleDetails from '@components/dashboard/pages/service-schedule/service-schedule-details/ServiceScheduleDetails';
 
 function AppRouter() {
     const [loading, setLoading] = useState(true);
@@ -51,8 +53,8 @@ function AppRouter() {
                         <Route path="/login" element={<Login/>}/>
                         <Route path="*" element={<Navigate to="/login" replace />} />
                     </>
-                ) : (
-                    <>
+                ) : ( 
+                    <> 
                         <Route path="/dashboard/:userId" element={<ProtectedRoute><Dashboard/></ProtectedRoute>}>
                             <Route path="home" element={<Home/>}/>
                             <Route path="user" element={<UserData/>}/>
@@ -67,6 +69,8 @@ function AppRouter() {
                             <Route path="children" element={<ChildrenData/>}/>
                             <Route path="new-children" element={<ChildrenDetails/>}/>
                             <Route path="/dashboard/:userId/edit-children/:childId" element={<ChildrenDetails/>}/>
+                            <Route path="service-schedule" element={<ServiceScheduleData/>}/>
+                            <Route path="new-service-schedule" element={<ServiceScheduleDetails/>}/>
                             <Route path="group" element={<GroupData/>}/>
                             <Route path="new-group" element={<GroupDetails/>}/>
                             <Route path="/dashboard/:userId/edit-group/:groupId" element={<GroupDetails/>}/>
