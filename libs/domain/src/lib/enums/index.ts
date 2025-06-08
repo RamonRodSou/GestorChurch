@@ -8,3 +8,4 @@ export * from './TimePeriod';
 export * from './YesOrNot';
 export * from './WeekDay';
 export * from './PermissionLevel';
+export * from './Departament';
