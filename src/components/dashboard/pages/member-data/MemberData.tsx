@@ -1,16 +1,16 @@
 import { Info } from "@mui/icons-material";
 import {
     Box,
-  Button,
-  IconButton,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
+    Button,
+    IconButton,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
 } from "@mui/material";
 import { useEffect, useState } from 'react';
 import Search from '@components/search/Search';
@@ -29,10 +29,10 @@ export default function MemberData() {
     const [filter, setFilter] = useState<Role | string>('all');
     const [selectedMember, setSelectedMember] = useState<Member | null>(null);
     const [openData, setOpenData] = useState(false);
-    const [groupData, setGroupData] = useState<GroupSummary | null>(null); 
+    const [groupData, setGroupData] = useState<GroupSummary | null>(null);
 
     const roleEntries = Object.entries(Role)
-    
+
     function handleOpenDetails(member: Member) {
         if (member.groupId) {
             findGroupSummaryToById(member.groupId)
@@ -43,7 +43,7 @@ export default function MemberData() {
         } else {
             setGroupData(null)
         }
-        setSelectedMember(member); 
+        setSelectedMember(member);
         setOpenData(true);
     }
 
@@ -62,14 +62,14 @@ export default function MemberData() {
     }, []);
 
     return (
-        <Layout total={data?.length} title="Membros" path="new-member" message="Membro criado com sucesso!">
-            <Search<Member> 
-                data={data} 
-                onFilter={setFiltered} 
+        <Layout total={data.filter((it => it.isActive)).length} title="Membros" path="new-member" message="Membro criado com sucesso!">
+            <Search<Member>
+                data={data}
+                onFilter={setFiltered}
                 label={'Buscar Membro'}
                 searchBy={(item, term) =>
                     item.name.toLowerCase().includes(term.toLowerCase()) ||
-                    item.phone.includes(term) 
+                    item.phone.includes(term)
                 }
             />
             <Box className="boxFilter">
@@ -95,46 +95,46 @@ export default function MemberData() {
             {filteredMembers
                 .sort
                 ?.length > 0 ? (
-                    <TableContainer component={Paper}>
+                <TableContainer component={Paper}>
                     <Table size="small">
                         <TableHead>
-                        <TableRow>
-                            <TableCell className='title-secondary'>Nome</TableCell>
-                            <TableCell className='title-secondary'>Telefone</TableCell>
-                            <TableCell className='title-secondary'>Status</TableCell>
-                            <TableCell className='title-secondary'>Info</TableCell>
+                            <TableRow>
+                                <TableCell className='title-secondary'>Nome</TableCell>
+                                <TableCell className='title-secondary'>Telefone</TableCell>
+                                <TableCell className='title-secondary'>Status</TableCell>
+                                <TableCell className='title-secondary'>Info</TableCell>
 
-                        </TableRow>
+                            </TableRow>
                         </TableHead>
                         <TableBody>
-                        {filteredMembers
-                        .filter((it) => it.isActive)
-                            .map((it) => (
-                                <TableRow key={it.id}>
-                                    <TableCell className='data-text'>{it.name.split(" ").at(0)}</TableCell>
-                                    <TableCell 
-                                        className='data-text onClick' 
-                                        onClick={() => whatzapp(it.name, it.phone)}
-                                    >
-                                    {it.phone}
-                                </TableCell>
-                                    <TableCell className='data-text'>{it.role}</TableCell>
-                                    <TableCell className='data-text'>                                   
-                                        <IconButton onClick={() => handleOpenDetails(it)}>
-                                            <Info/>
-                                        </IconButton> 
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                            {filteredMembers
+                                .filter((it) => it.isActive)
+                                .map((it) => (
+                                    <TableRow key={it.id}>
+                                        <TableCell className='data-text'>{it.name.split(" ").at(0)}</TableCell>
+                                        <TableCell
+                                            className='data-text onClick'
+                                            onClick={() => whatzapp(it.name, it.phone)}
+                                        >
+                                            {it.phone}
+                                        </TableCell>
+                                        <TableCell className='data-text'>{it.role}</TableCell>
+                                        <TableCell className='data-text'>
+                                            <IconButton onClick={() => handleOpenDetails(it)}>
+                                                <Info />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
                         </TableBody>
                     </Table>
-                    </TableContainer>
+                </TableContainer>
             ) : (
                 <Typography variant="body1" sx={{ color: 'var(--primary-title)' }}>
                     Nenhum membro encontrado.
                 </Typography>
             )}
-        <MemberDataModal
+            <MemberDataModal
                 groupData={groupData}
                 open={openData}
                 onClose={() => setOpenData(false)}

@@ -1,21 +1,25 @@
 import { Member, MemberSummary } from "@domain/user";
-import { auth, db } from "./firebase";
-import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { db } from "./firebase";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { Batism } from "@domain/batism";
 import { EMPTY } from "@domain/utils/string-utils";
 import { ensureMemberSummary } from "@domain/utils";
 import { findGroupToById, groupUpdate } from "./GroupService";
+import { Crud } from "@domain/GenericCrud";
+
+const collectionName = 'members';
 
 export async function memberAdd(member: Member) {
     try {
-        const user = getAuthenticatedUser();
+        const user = Crud.getAuthenticatedUser();
         const passwordHash = await member.getPasswordHash();
 
-        const memberRef = await saveMemberToDatabase(member, user.uid, passwordHash);
+        const saveData = await saveMemberToDatabase(member, user.uid, passwordHash)
+        const entity = Crud.add(collectionName, saveData)
+        if (member.groupId != null) await addMemberToGroup(member, entity);
 
-        if(member.groupId != null) await addMemberToGroup(member, memberRef);
-
-        await updateSpouseReferences(member, memberRef.id);
+        if (member?.spouse?.id != null) await updateSpouseReferences(member, member.spouse.id);
+        console.log('Id do espooso', member?.spouse?.id)
 
     } catch (error) {
         alert('Erro ao adicionar membro: ' + error);
@@ -23,69 +27,36 @@ export async function memberAdd(member: Member) {
     }
 }
 
-export async function findAllMembers(): Promise<Member[]> {
-    try {
-        getAuthenticatedUser();
-
-        const snapshot = await getDocs(collection(db, 'members'));
-        return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Member));
-    } catch (error) {
-        alert('Erro ao listar membros: ' + error);
-        throw error;
-    }
-}
-
-export async function findAllMembersSummary(): Promise<MemberSummary[]> {
-    try {
-        getAuthenticatedUser();
-
-        const snapshot = await getDocs(collection(db, 'members'));
-        return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as MemberSummary));
-    } catch (error) {
-        alert('Erro ao listar membro: ' + error);
-        throw error;
-    }
-}
-
-export async function findMemberToById(id: string): Promise<Member | null> {
-    try {
-        const ref = doc(db, 'members', id);
-        const snapshot = await getDoc(ref);
-
-        if (!snapshot.exists()) return null;
-
-        return { id: snapshot.id, ...snapshot.data() } as Member;
-    } catch (error) {
-        alert('Erro ao buscar membro: ' + error);
-        throw error;
-    }
-}
-
 export async function memberUpdate(id: string, data: Partial<Member>): Promise<void> {
     try {
-        const ref = doc(db, 'members', id);
-
         const batism = data.batism ? Batism.fromJson(data.batism).toJSON() : null;
-
-        const plainData: any = {
+        const spouse = data.spouse ? getSpouseSummary(data.spouse) : null;
+        const children = data.children ?? (await getDoc(doc(db, collectionName, id))).data()?.children ?? [];
+        const entity: any = {
             ...data,
             batism,
-            spouse: data.spouse ? getSpouseSummary(data.spouse) : null,
-            children: data.children ?? (await getDoc(ref)).data()?.child ?? []
+            spouse,
+            children
         };
 
-        await updateDoc(ref, plainData);
+        await Crud.update<Member>(collectionName, id, entity);
     } catch (error) {
         alert('Erro ao atualizar membro: ' + error);
         throw error;
     }
 }
 
-function getAuthenticatedUser() {
-    const user = auth.currentUser;
-    if (!user) throw new Error("Usuário não autenticado.");
-    return user;
+export function findAllMembers(): Promise<Member[]> {
+    return Crud.findAllSummary<Member>(collectionName)
 }
+
+export function findAllMembersSummary(): Promise<MemberSummary[]> {
+    return Crud.findAllSummary<MemberSummary>(collectionName)
+}
+
+export function findMemberToById(id: string): Promise<(Member & { id: string }) | null> {
+    return Crud.findById<Member>(id, collectionName);
+};
 
 function getSpouseSummary(spouse: any) {
     return spouse !== null &&
@@ -116,16 +87,16 @@ async function saveMemberToDatabase(member: Member, userId: string, passwordHash
         children: member.children.map((child) =>
             typeof child === "string" ? child : child?.toJSON?.() ?? null
         ),
-         role: member.role,
+        role: member.role,
         isActive: member.isActive,
         isImageAuthorized: member.isImageAuthorized,
         createdAt: member.createdAt,
         passwordHash,
     };
 
-    return await addDoc(collection(db, 'members'), memberData);
+    return await memberData;
 }
- 
+
 async function addMemberToGroup(member: Member, memberRef: any) {
     const memberSummary = new MemberSummary(
         memberRef.id,
@@ -143,13 +114,19 @@ async function addMemberToGroup(member: Member, memberRef: any) {
 }
 
 async function updateSpouseReferences(member: Member, memberId: string) {
-    
-    const membersQuery = query(
-        collection(db, 'members'),
-        where('spouse.id', '==', member.id)
-    );
-    
-    const spouseSnapshot = await getDocs(membersQuery);
+
+    if (!member.spouse?.id) return;
+
+    const spouseId = member.spouse.id;
+    const spouseDocRef = doc(db, collectionName, spouseId);
+    const spouseSnapshot = await getDoc(spouseDocRef);
+
+    if (!spouseSnapshot.exists()) {
+        console.warn('Spouse not found with ID:', spouseId);
+        return;
+    }
+
+    const spouseData = spouseSnapshot.data();
 
     const thisMemberSummary = {
         id: memberId,
@@ -157,19 +134,15 @@ async function updateSpouseReferences(member: Member, memberId: string) {
         email: member.email,
     };
 
-    for (const spouseDoc of spouseSnapshot.docs) {
-        const spouseId = spouseDoc.id;
-        const spouseData = spouseDoc.data();
+    const spouseSummary = {
+        id: spouseId,
+        name: spouseData.name,
+        email: spouseData.email,
+    };
 
-        const spouseSummary = {
-            id: spouseId,
-            name: spouseData.name,
-            email: spouseData.email,
-        };
+    await Promise.all([
+        updateDoc(doc(db, collectionName, memberId), { spouse: spouseSummary }),
+        updateDoc(doc(db, collectionName, spouseId), { spouse: thisMemberSummary }),
+    ]);
 
-        await Promise.all([
-            updateDoc(doc(db, 'members', spouseId), { spouse: thisMemberSummary }),
-            updateDoc(doc(db, 'members', memberId), { spouse: spouseSummary }),
-        ]);
-    }
 }
