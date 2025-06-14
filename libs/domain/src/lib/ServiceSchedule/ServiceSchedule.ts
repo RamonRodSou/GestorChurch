@@ -12,6 +12,7 @@ export class ServiceSchedule {
         public leader: MemberSummary | null = null,
         public members: MemberSummary[] = [],
         public childrens: ChildSummary[] = [],
+        public observation: string | null = null,
         public isActive: boolean = true,
         public createdAt: string = new Date().toISOString() 
     ) {}
@@ -26,6 +27,7 @@ export class ServiceSchedule {
             json.leader,
             json.members || [],
             json.childrens || [],
+            json.observation,
             json.isActive,
             json.createdAt
         );
@@ -41,6 +43,7 @@ export class ServiceSchedule {
             leader: this.leader,
             members: this.members, 
             childrens: this.childrens, 
+            observation: this.observation,
             isActive: this.isActive,
             createdAt: this.createdAt,
         };

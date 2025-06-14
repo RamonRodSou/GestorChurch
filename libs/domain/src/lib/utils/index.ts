@@ -6,3 +6,4 @@ export * from './validateCEP';
 export * from './validateGroupForm';
 export * from './validateMemberForm';
 export * from './whatszappAPI';
+export * from './fetch';

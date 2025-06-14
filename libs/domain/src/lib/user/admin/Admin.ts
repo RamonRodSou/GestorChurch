@@ -39,6 +39,7 @@ export class AdminSummary {
         public name: string = EMPTY,
         public email: string = EMPTY,
         public permission: PermissionLevel = PermissionLevel.VOLUNTARIO,
+        public isActive: boolean = true,
         public password: string = EMPTY
     ) { }
 
@@ -48,6 +49,7 @@ export class AdminSummary {
             json.name,
             json.email,
             json.permission,
+            json.isActive,
             json.password ?? EMPTY
         );
     }
@@ -57,11 +59,12 @@ export class AdminSummary {
             id: this.id,
             email: this.email,
             password: await this.getPasswordHash(),
+            isActive: this.isActive,
             permission: this.permission
         };
     }
 
     async getPasswordHash(): Promise<string> {
         return bcrypt.hash(this.password, 10);
-    } 
+    }
 }
