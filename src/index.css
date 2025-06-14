@@ -12,16 +12,20 @@
     --secondary-hover: #dd8c0a;
     --secondary-active: #6c3a00;
 
-
     --secondary-title: rgb(0, 58, 120);
     --secondary-active: #006c1d;
 
     --whatsapp-color: #2f8e03;
     --delete-color: rgb(199, 21, 18);
 
+    --active-color: #2f8e03;
+    --inactive-color: rgb(199, 21, 18);
+
     --cancel-color: rgb(199, 94, 18);
 
     --logo-color: rgb(199, 94, 18);
+
+    --birthday-color: rgb(196, 83, 13);
 
 
     font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -30,14 +34,16 @@
     color: rgba(255, 255, 255, 0.87);
     background-color: #242424;
 
-    h2, .title {
+    h2,
+    .title {
         color: var(--primary-title);
         font-size: 1.5rem;
         font-weight: 500;
         padding: 1rem;
     }
 
-    h3, .subTitle {
+    h3,
+    .subTitle {
         color: var(--primary-title);
         font-size: 1rem;
         font-weight: 500;
@@ -45,14 +51,18 @@
     }
 
     .textInfo {
-        color: var( --primary-title);
+        color: var(--primary-title);
         font-size: 1rem;
         font-weight: 500;
-        margin-left: 1rem; 
+        margin-left: 1rem;
     }
 
     .subTextInfo {
         color: var(--secondary-title);
+    }
+
+    .birthday {
+        color: var(--birthday-color);
     }
 
     .title-secondary {
@@ -62,6 +72,14 @@
 
     .data-text {
         color: var(--secondary-title);
+    }
+
+    .active {
+        color: var(--active-color);
+    }
+
+    .inactive {
+        color: var(--inactive-color);
     }
 
     .dialog {
@@ -92,6 +110,7 @@
                 &:hover {
                     background-color: var(--secondary-background-hover);
                 }
+
                 &:active {
                     background-color: var(--secondary-background-active);
                 }
@@ -111,7 +130,7 @@
             justify-content: flex-end;
 
             .deleteBtn {
-                background-color: var( --delete-color);
+                background-color: var(--delete-color);
                 color: var(--primary-color);
             }
         }
@@ -119,19 +138,21 @@
 
     .onClick {
         cursor: pointer;
-            &:hover {
-                color: var(--secondary-hover);
-            }
-            &:active {
-                color: var(--secondary-active);
-            }
+
+        &:hover {
+            color: var(--secondary-hover);
+        }
+
+        &:active {
+            color: var(--secondary-active);
+        }
     }
 
     .boxAutoComplete {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin: 1rem 0 ;
+        margin: 1rem 0;
 
         .autoComplete {
             flex-grow: 1;
@@ -156,9 +177,11 @@
         color: #213547;
         background-color: #ffffff;
     }
+
     a:hover {
-       color: #747bff;
+        color: #747bff;
     }
+
     button {
         background-color: #f9f9f9;
     }
