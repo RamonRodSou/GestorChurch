@@ -1,37 +1,21 @@
-import { Member } from "@domain/user";
+import BirthdayList from "@components/birthdayList/BirthdayList";
+import { Child, Member } from "@domain/user";
 import { DateUtil } from "@domain/utils";
 import { Box, Typography } from "@mui/material";
+import { findAllChildrens } from "@service/ChildrenService";
 import { findAllMembers } from "@service/MemberService";
 import { useEffect, useState } from "react";
 
 export default function BirthdayMonth() {
-    const [todayBirthdays, setTodayBirthdays] = useState<Member[]>([]);
-    const [upcomingBirthdays, setUpcomingBirthdays] = useState<Member[]>([]);
+    const [todayBirthdays, setTodayBirthdays] = useState<(Member | Child)[]>([]);
+    const [upcomingBirthdays, setUpcomingBirthdays] = useState<any[]>([]);
+    const today = new Date();
 
-    useEffect(() => {
-        findAllMembers()
-            .then((members) => {
-                checkBirthdays(members);
-            })
-            .catch(console.error);
-    }, []);
-
-    function calculateAge(birthdate: Date, today: Date): number {
-        const birth = new Date(birthdate);
-        let age = today.getFullYear() - birth.getFullYear();
-
-        const hasBirthdayPassed =
-            today.getMonth() > birth.getMonth() ||
-            (today.getMonth() === birth.getMonth() && today.getDate() >= birth.getDate());
-
-        if (!hasBirthdayPassed) {
-            age--;
-        }
-
-        return age + 1;
+    function age(data: Date): number {
+        return DateUtil.calculateAge(new Date(data), today);
     }
 
-    function checkBirthdays(members: Member[]) {
+    function checkBirthdays(data: (Member | Child)[]) {
         const today = new Date();
         const todayDay = today.getDate();
         const todayMonth = today.getMonth();
@@ -39,13 +23,13 @@ export default function BirthdayMonth() {
         const inTenDays = new Date();
         inTenDays.setDate(today.getDate() + 10);
 
-        const todayList = members.filter(member => {
-            const birth = new Date(member.birthdate);
+        const todayList = data.filter(it => {
+            const birth = new Date(it.birthdate);
             return birth.getDate() === todayDay && birth.getMonth() === todayMonth;
         });
 
-        const upcomingList = members.filter(member => {
-            const birth = new Date(member.birthdate);
+        const upcomingList = data.filter(it => {
+            const birth = new Date(it.birthdate);
             const birthdayThisYear = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
 
             return birthdayThisYear > today && birthdayThisYear <= inTenDays;
@@ -55,37 +39,46 @@ export default function BirthdayMonth() {
         setUpcomingBirthdays(upcomingList);
     };
 
-    const today = new Date();
+    useEffect(() => {
+        Promise.all([findAllMembers(), findAllChildrens()])
+            .then(([members, children]) => {
+                const allPeople = [...members, ...children];
+                checkBirthdays(allPeople);
+            })
+            .catch(console.error);
+    }, []);
 
     return (
         <Box>
-            {todayBirthdays.length > 0 && (
-                <Box>
-                    <Typography variant="subtitle1" className="textInfo">🎉 Hoje é aniversário de:</Typography>
-                    {todayBirthdays.map(member => {
-                        const age = calculateAge(new Date(member.birthdate), today);
-                        return (
-                            <Typography className="textInfo" key={member.id}>
-                                {member.name} - {age} anos
-                            </Typography>
-                        );
-                    })}
-                </Box>
-            )}
+            <BirthdayList
+                title='🎉 HOJE É ANIVERSÁRIO DE:'
+                data={todayBirthdays}
+                renderItem={(it) => (
+                    <>
+                        {DateUtil.dateFormatedDayAndMonth(it.birthdate)} -
+                        <span className="birthday"> {it.name} </span> -
+                        COMPLETANDO {age(it.birthdate) - 1} ANOS -
+                        MEMBRO: {it.isActive
+                            ? <span className="active">ATIVO</span>
+                            : <span className="inactive">INATIVO</span>} DA IAF
+                    </>
+                )}
+            />
 
-            {upcomingBirthdays.length > 0 && (
-                <Box sx={{ mt: 2 }}>
-                    <Typography className="textInfo" variant="subtitle1">📅 Próximos aniversários (10 dias):</Typography>
-                    {upcomingBirthdays.map(member => {
-                        const age = calculateAge(new Date(member.birthdate), today);
-                        return (
-                            <Typography key={member.id} className="textInfo">
-                                {member.name} - Faz: {age}, anos no dia {DateUtil.dateFormatedDayAndMonth(member.birthdate)} 
-                            </Typography>
-                        );
-                    })}
-                </Box>
-            )}
+            <BirthdayList
+                title='📅 NOS PRÓXIMOS (10 dias):'
+                data={upcomingBirthdays}
+                renderItem={(it) => (
+                    <>
+                        {DateUtil.dateFormatedDayAndMonth(it.birthdate)} -
+                        <span className="birthday"> {it.name} </span> -
+                        COMPLETA: {age(it.birthdate)} ANOS.
+                        MEMBRO: {it.isActive
+                            ? <span className="active">ATIVO</span>
+                            : <span className="inactive">INATIVO</span>} DA IAF
+                    </>
+                )}
+            />
 
             {todayBirthdays.length === 0 && upcomingBirthdays.length === 0 && (
                 <Typography className="textInfo" variant="body2" sx={{ mt: 2 }}>
