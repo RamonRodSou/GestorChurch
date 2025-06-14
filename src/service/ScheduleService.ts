@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import { ServiceSchedule } from "@domain/ServiceSchedule/ServiceSchedule";
 
@@ -39,6 +39,31 @@ export async function findServiceScheduleToById(groupId: string): Promise<Servic
     }
 }
 
+export async function schedulesUpdate(id: string, data: Partial<ServiceSchedule>): Promise<void> {
+    try {
+        const ref = doc(db, 'schedules', id);
+        const currentDoc = await getDoc(ref);
+
+        if (!currentDoc.exists()) {
+            throw new Error(`Documento com id ${id} não encontrado`);
+        }
+
+        const currentData = currentDoc.data();
+
+        const plainData: any = {
+            ...currentData,
+            ...data,
+            children: data.childrens ?? (await getDoc(ref)).data()?.child ?? [],
+            members: data.members ?? (await getDoc(ref)).data()?.child ?? []
+        };
+
+        await updateDoc(ref, plainData);
+    } catch (error) {
+        alert('Erro ao atualizar membro: ' + error);
+        throw error;
+    }
+}
+
 async function saveReportToDatabase(it: ServiceSchedule, userId: string) {
     const data = {
         userId,
@@ -58,6 +83,7 @@ async function saveReportToDatabase(it: ServiceSchedule, userId: string) {
             id: child.id,
             name: child.name, 
         })),
+        observation: it.observation,
         isActive: it.isActive,
         createdAt: it.createdAt,
     };

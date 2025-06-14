@@ -177,6 +177,17 @@ export default function ServiceScheduleDetails() {
                             fullWidth
                         />
                     </Box>       
+                    <Box mb={2}> 
+                        <TextField
+                            label="Observação"
+                            value={data.observation}
+                            onChange={(e) => 
+                                handleChange("observation", e.target.value.toUpperCase())
+                            }
+                            fullWidth
+                            required
+                        />
+                    </Box>
 
                     <Button type="submit" variant="contained" color="primary" fullWidth>
                         Salvar usuário
