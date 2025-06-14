@@ -5,4 +5,5 @@ export * from './enums';
 export * from './group';
 export * from './interface';
 export * from './utils';
+export * from './GenericCrud';
 
