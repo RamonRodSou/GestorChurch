@@ -11,9 +11,8 @@ export default function UserData() {
     const [filtered, setFiltered] = useState<AdminSummary[]>([]);
 
     function handleOpenDetails(it: AdminSummary): void {
-        throw new Error( it + "Function not implemented.");
+        throw new Error(it + "Function not implemented.");
     }
-
 
     useEffect(() => {
         findAllAdmins()
@@ -25,10 +24,10 @@ export default function UserData() {
     }, []);
 
     return (
-        <Layout total={data?.length} title="Usuarios" path="user/invited" message="Usuario criado com sucesso!">
-            <Search<AdminSummary> 
-                data={data} 
-                onFilter={setFiltered} 
+        <Layout total={data.filter((it => it.isActive)).length} title="Usuarios" path="user/invited" message="Usuario criado com sucesso!">
+            <Search<AdminSummary>
+                data={data}
+                onFilter={setFiltered}
                 label={'Buscar Membro'}
                 searchBy={(item, term) =>
                     item.name.toLowerCase().includes(term.toLowerCase()) ||
@@ -38,32 +37,32 @@ export default function UserData() {
 
             {filtered
                 .sort((a, b) => (b.permission ?? 0) - (a.permission ?? 0))
-                  ?.length > 0 ? (
-                    <TableContainer component={Paper}>
+                ?.length > 0 ? (
+                <TableContainer component={Paper}>
                     <Table size="small">
                         <TableHead>
-                        <TableRow>
-                            <TableCell className='title-secondary'>Nome</TableCell>
-                            <TableCell className='title-secondary'>Permissão</TableCell>
-                            <TableCell className='title-secondary'>Info</TableCell>
-                        </TableRow>
+                            <TableRow>
+                                <TableCell className='title-secondary'>Nome</TableCell>
+                                <TableCell className='title-secondary'>Permissão</TableCell>
+                                <TableCell className='title-secondary'>Info</TableCell>
+                            </TableRow>
                         </TableHead>
                         <TableBody>
-                        {filtered
-                            .map((it) => (
-                                <TableRow key={it.id}>
-                                    <TableCell className='data-text'>{it.name.split(" ").at(0)}</TableCell>
-                                    <TableCell className='data-text'>{it.permission}</TableCell>
-                                    <TableCell className='data-text'>                                   
-                                        <IconButton onClick={() => handleOpenDetails(it)}>
-                                            <Info/>
-                                        </IconButton> 
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                            {filtered
+                                .map((it) => (
+                                    <TableRow key={it.id}>
+                                        <TableCell className='data-text'>{it.name.split(" ").at(0)}</TableCell>
+                                        <TableCell className='data-text'>{it.permission}</TableCell>
+                                        <TableCell className='data-text'>
+                                            <IconButton onClick={() => handleOpenDetails(it)}>
+                                                <Info />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
                         </TableBody>
                     </Table>
-                    </TableContainer>
+                </TableContainer>
             ) : (
                 <Typography variant="body1" sx={{ color: 'var(--primary-title)' }}>
                     Nenhum usuario encontrado.

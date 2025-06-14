@@ -29,10 +29,10 @@ export default function ChildrenData() {
     const [filter, setFilter] = useState<AgeGroup | string>('all');
     const [selectedChild, setSelectedChild] = useState<Child | null>(null);
     const [openData, setOpenData] = useState(false);
-    const [groupData, setGroupData] = useState<GroupSummary | null>(null); 
+    const [groupData, setGroupData] = useState<GroupSummary | null>(null);
 
     const roleEntries = Object.entries(AgeGroup)
-    
+
     function handleOpenDetails(children: Child) {
         if (children.groupId) {
             findGroupSummaryToById(children.groupId)
@@ -43,7 +43,7 @@ export default function ChildrenData() {
         } else {
             setGroupData(null)
         }
-        setSelectedChild(children); 
+        setSelectedChild(children);
         setOpenData(true);
     }
 
@@ -62,17 +62,17 @@ export default function ChildrenData() {
     }, []);
 
     return (
-        <Layout total={data?.length} title="Menores de idade" path="new-children" message="Crainça criado com sucesso!">
-            <Search<Child> 
-                data={data} 
-                onFilter={setFiltered} 
+        <Layout total={data.filter((it => it.isActive)).length} title="Menores de idade" path="new-children" message="Crainça criado com sucesso!">
+            <Search<Child>
+                data={data}
+                onFilter={setFiltered}
                 label={'Buscar Criança'}
                 searchBy={(item, term) =>
                     item.name.toLowerCase().includes(term.toLowerCase()) ||
-                    item.phone.includes(term) 
+                    item.phone.includes(term)
                 }
             />
-            
+
             <Box className="boxFilter">
                 <Button
                     variant={filter === 'all' ? 'contained' : 'outlined'}
@@ -96,45 +96,45 @@ export default function ChildrenData() {
             {filteredMembers
                 .sort
                 ?.length > 0 ? (
-                    <TableContainer component={Paper}>
+                <TableContainer component={Paper}>
                     <Table size="small">
                         <TableHead>
-                        <TableRow>
-                            <TableCell className='title-secondary'>Nome</TableCell>
-                            <TableCell className='title-secondary'>Telefone</TableCell>
-                            <TableCell className='title-secondary'>Faixa Etária</TableCell>
-                            <TableCell className='title-secondary'>Info</TableCell>
-                        </TableRow>
+                            <TableRow>
+                                <TableCell className='title-secondary'>Nome</TableCell>
+                                <TableCell className='title-secondary'>Telefone</TableCell>
+                                <TableCell className='title-secondary'>Faixa Etária</TableCell>
+                                <TableCell className='title-secondary'>Info</TableCell>
+                            </TableRow>
                         </TableHead>
                         <TableBody>
-                        {filteredMembers
-                        .filter((it) => it.isActive)
-                            .map((it) => (
-                                <TableRow key={it.id}>
-                                    <TableCell className='data-text'>{it.name.split(" ").at(0)}</TableCell>
-                                    <TableCell 
-                                        className='data-text onClick' 
-                                        onClick={() => whatzapp(it.name, it.phone)}
-                                    >
-                                    {it.phone ? it.phone : NOT_REGISTER}
-                                </TableCell>
-                                    <TableCell className='data-text'>{it.ageGroup}</TableCell>
-                                    <TableCell className='data-text'>                                   
-                                        <IconButton onClick={() => handleOpenDetails(it)}>
-                                            <Info/>
-                                        </IconButton> 
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                            {filteredMembers
+                                .filter((it) => it.isActive)
+                                .map((it) => (
+                                    <TableRow key={it.id}>
+                                        <TableCell className='data-text'>{it.name.split(" ").at(0)}</TableCell>
+                                        <TableCell
+                                            className='data-text onClick'
+                                            onClick={() => whatzapp(it.name, it.phone)}
+                                        >
+                                            {it.phone ? it.phone : NOT_REGISTER}
+                                        </TableCell>
+                                        <TableCell className='data-text'>{it.ageGroup}</TableCell>
+                                        <TableCell className='data-text'>
+                                            <IconButton onClick={() => handleOpenDetails(it)}>
+                                                <Info />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
                         </TableBody>
                     </Table>
-                    </TableContainer>
+                </TableContainer>
             ) : (
                 <Typography variant="body1" sx={{ color: 'var(--primary-title)' }}>
                     Nenhuma criança encontrada.
                 </Typography>
             )}
-        <ChildrenDataModal
+            <ChildrenDataModal
                 groupData={groupData}
                 open={openData}
                 onClose={() => setOpenData(false)}

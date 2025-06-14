@@ -1,11 +1,11 @@
 import {
     Typography,
-    Table, 
-    TableBody, 
-    TableCell, 
-    TableContainer, 
-    TableHead, 
-    TableRow, 
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
     Paper,
 } from "@mui/material";
 import { useEffect, useState } from 'react';
@@ -56,10 +56,10 @@ export default function VisitorGroupData() {
     }, []);
 
     return (
-        <Layout total={data?.length} title="Visitantes dos GCs" path="new-visitor-group" message="Visitante criado com sucesso!">
-            <Search<VisitorGroup> 
-                data={data} 
-                onFilter={setFiltered} 
+        <Layout total={data.filter((it => it.isActive)).length} title="Visitantes dos GCs" path="new-visitor-group" message="Visitante criado com sucesso!">
+            <Search<VisitorGroup>
+                data={data}
+                onFilter={setFiltered}
                 label={'Buscar Visitante'}
                 searchBy={(item, term) =>
                     item.name.toLowerCase().includes(term.toLowerCase()) ||
@@ -68,33 +68,33 @@ export default function VisitorGroupData() {
             />
             {filtered?.length > 0 ? (
                 <TableContainer component={Paper}>
-                <Table size="small">
-                    <TableHead>
-                    <TableRow>
-                        <TableCell className='title-secondary'>Nome</TableCell>
-                        <TableCell className='title-secondary'>Telefone</TableCell>
-                        <TableCell className='title-secondary'>GC</TableCell>
-                    </TableRow>
-                    </TableHead>
-                    <TableBody>
-                    {filtered
-                        .filter((it) => it.isActive)
-                        .sort((a, b) => organizedGcName(a, b))
-                        .map((it) => (
-                            <TableRow key={it.id}>
-                                <TableCell className='data-text'>{it.name}</TableCell>
-                                <TableCell 
-                                    className='data-text onClick' 
-                                    onClick={() => whatzapp(it.name, it.phone)}
-                                >
-                                    {it.phone}
-                                </TableCell>
-                                <TableCell className='data-text'>{it.groupId ? visitorGroupMap.get(it.groupId)?.name : 'Sem Grupo'}</TableCell>
+                    <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell className='title-secondary'>Nome</TableCell>
+                                <TableCell className='title-secondary'>Telefone</TableCell>
+                                <TableCell className='title-secondary'>GC</TableCell>
                             </TableRow>
-                        ))
-                    }
-                    </TableBody>
-                </Table>
+                        </TableHead>
+                        <TableBody>
+                            {filtered
+                                .filter((it) => it.isActive)
+                                .sort((a, b) => organizedGcName(a, b))
+                                .map((it) => (
+                                    <TableRow key={it.id}>
+                                        <TableCell className='data-text'>{it.name}</TableCell>
+                                        <TableCell
+                                            className='data-text onClick'
+                                            onClick={() => whatzapp(it.name, it.phone)}
+                                        >
+                                            {it.phone}
+                                        </TableCell>
+                                        <TableCell className='data-text'>{it.groupId ? visitorGroupMap.get(it.groupId)?.name : 'Sem Grupo'}</TableCell>
+                                    </TableRow>
+                                ))
+                            }
+                        </TableBody>
+                    </Table>
                 </TableContainer>
             ) : (
                 <Typography variant="body1" sx={{ color: 'var(--primary-title)' }}>
