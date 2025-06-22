@@ -19,19 +19,19 @@ export class DateUtil {
     }
 
     static dateFormatedDayAndMonth(date: Date | string) {
-        const data = new Date(date);
+        const currentYear = dayjs().year()
+        const data = dayjs(date).year(currentYear).toDate();
         const formatter = new Intl.DateTimeFormat('pt-BR', {
             timeZone: 'America/Sao_Paulo',
             weekday: 'long',
             month: '2-digit',
             day: '2-digit',
-
         })
 
         const formatted = formatter.format(data);
+        console.log(formatted)
         return formatted.toUpperCase();
     }
-
 
     static isDateInCurrentWeek(dateStr: string) {
         const date = new Date(dateStr);
