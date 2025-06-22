@@ -1,7 +1,7 @@
 import './service-schedule.scss';
 import Layout from "@components/layout/Layout";
 import { ServiceSchedule } from "@domain/ServiceSchedule/ServiceSchedule";
-import { DateUtil } from "@domain/utils";
+import { DateUtil, NOT_REGISTER } from "@domain/utils";
 import { Box, Card, Typography } from "@mui/material";
 import { findAllSchedule } from "@service/ScheduleService";
 import { useEffect, useState } from "react";
@@ -15,7 +15,11 @@ export default function ServiceScheduleData() {
     }
 
     function extractFirstName<T extends { name: string }>(entities: T[]): string {
-        return entities.map(it => it?.name.split(' ')[0]).join(' / ');
+        if (!entities || entities.length === 0) {
+            return NOT_REGISTER;
+        }
+        return entities
+            .map(it => it?.name.split(' ')[0]).join(' / ');
     }
 
     function groupByWeekDayAndPeriod(data: ServiceSchedule[]) {
@@ -38,53 +42,34 @@ export default function ServiceScheduleData() {
         return grouped;
     }
 
-    function isFutureDate(date: string): boolean {
+    function isFutureDate(date: Date | string): boolean {
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
         const scheduleDate = new Date(date);
-        return DateUtil.dateFormated(today) <= DateUtil.dateFormated(scheduleDate);
+        scheduleDate.setHours(0, 0, 0, 0);
+        return scheduleDate >= today;
     }
 
-    // Tentando colocar uma funcao para removeer Escalas que ja passaram da data
-
-    // async function removeExpiredSchedules(groupedData: Record<string, { title: string, items: ServiceSchedule[] }>) {
-    //     for (const [dateKey, { items }] of Object.entries(groupedData)) {
-    //         items.forEach(async (schedule) => {
-    //             const scheduleDate = DateUtil.dateFormated(schedule.date);
-    //             if (new Date(scheduleDate) < new Date()) {
-    //                 schedule.isActive = false;
-    //                 await schedulesUpdate(schedule.id, { isActive: false });
-    //             }
-    //         });
-    //     }
-    // }
-
     const groupedData = groupByWeekDayAndPeriod(
-        data.filter((it) => isFutureDate(DateUtil.dateFormated(it.date)))
+        data
+            .filter((it) => isFutureDate(it.date))
+            .sort((a, b) => new Date(a.date).getTime() + new Date(b.date).getTime())
     );
 
     useEffect(() => {
         fetchData();
     }, [])
 
-    useEffect(() => {
-        if (data.length > 0) {
-            const groupedData = groupByWeekDayAndPeriod(
-                data.filter((it) => isFutureDate(DateUtil.dateFormated(it.date)))
-            );
-            // removeExpiredSchedules(groupedData);
-        }
-    }, [data]);
-
     return (
         <Layout
-            total={data.filter((it) => isFutureDate(DateUtil.dateFormated(it.date))).length}
+            total={data.filter((it) => isFutureDate(it.date)).length}
             title="Escala de Serviço"
             path="new-service-schedule"
             message="Escala criada com sucesso!"
         >
             {Object.entries(groupedData)
-                .filter(([items]) => items.length > 0)
-                .sort(([dateA], [dateB]) => new Date(dateA).getTime() - new Date(dateB).getTime())
+                .filter(([_, { items }]) => items.length > 0)
+                .sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime())
                 .map(([_, { title, items }]) => (
                     <>
                         <Typography variant="h6" className="title-secondary">{title}</Typography>
@@ -98,10 +83,16 @@ export default function ServiceScheduleData() {
                                         <Typography className='textInfo'> <span className='subTextInfo'>Responsável: </span>{it.leader?.name?.split(' ')[0]}</Typography>
                                         <Typography className='textInfo'> <span className='subTextInfo'>Data: </span>{DateUtil.dateFormated(it.date)}</Typography>
                                         <Typography className='textInfo'> <span className='subTextInfo'>Dia: </span>{it.weekDay} - {it.timePeriod}</Typography>
-                                        <Typography className='textInfo'> <span className='subTextInfo'>Membros: </span>{extractFirstName(it.members)}</Typography>
-                                        <Typography className='textInfo'> <span className='subTextInfo'>Menores: </span>{extractFirstName(it.childrens)}</Typography>
-                                        <Typography className='textInfo'> <span className='subTextInfo'>Observação: </span>{it.observation}</Typography>
-
+                                        <Typography className='textInfo'> <span className='subTextInfo' key={it.id}>Membros: </span>{extractFirstName(it.members)}</Typography>
+                                        <Typography className='textInfo'>
+                                            <span
+                                                className='subTextInfo'
+                                                key={it?.childrens.filter((it) => it?.id) && null}
+                                            >
+                                                Menores:
+                                            </span> {extractFirstName(it.childrens)}
+                                        </Typography>
+                                        <Typography className='textInfo'> <span className='subTextInfo'>Observação: </span>{it.observation ?? NOT_REGISTER}</Typography>
                                     </Card>
                                 ))}
                         </Box>

@@ -24,7 +24,7 @@ export default function ServiceScheduleDetails() {
     const [selectedMembers, setSelectedMembers] = useState<MemberSummary[]>([]);
     const [selectedChildrens, setSelectedChildrens] = useState<ChildSummary[]>([]);
 
-    const { userId} = useParams();
+    const { userId } = useParams();
 
     function handleChange(field: keyof ServiceSchedule, value: any) {
         setData(prev => ServiceSchedule.fromJson({ ...prev, [field]: value }));
@@ -33,16 +33,16 @@ export default function ServiceScheduleDetails() {
     function navToServiceSchedule() {
         navigate(`/dashboard/${userId}/service-schedule`, {
             state: { showSnackbar: true }
-        }); 
+        });
     }
 
-    async function fetchMembers(): Promise<void>  {
-        const response = await findAllMembers(); 
+    async function fetchMembers(): Promise<void> {
+        const response = await findAllMembers();
         setMembers(response)
     };
 
-    async function fetchChildrens(): Promise<void>  {
-        const response = await findAllChildrens(); 
+    async function fetchChildrens(): Promise<void> {
+        const response = await findAllChildrens();
         setChildrens(response)
     };
 
@@ -55,27 +55,27 @@ export default function ServiceScheduleDetails() {
         data.timePeriod = period;
         data.childrens = selectedChildrens;
         data.members = selectedMembers;
-        
-        if(data.departament === Departament.EMPTY) return
-                
+
+        if (data.departament === Departament.EMPTY) return
+
         await scheduleAdd(data);
 
         setData(new ServiceSchedule());
 
         navToServiceSchedule();
     }
-    
+
     useEffect(() => {
         async function load() {
             fetchMembers();
             fetchChildrens();
         }
         load();
-    }, []); 
-    
+    }, []);
+
     return (
         <>
-            <BackButton path={'service-schedule'}/>
+            <BackButton path={'service-schedule'} />
             <Container className='details-container'>
                 <form onSubmit={handleSubmit} className="details-form">
                     <h2>Cadastrar Escala</h2>
@@ -98,16 +98,16 @@ export default function ServiceScheduleDetails() {
                     <Box mb={2}>
                         <DatePicker
                             label="Data"
-                              value={data.date ? dayjs(data.date) : null}
-                                onChange={(it) => {
-                                    handleChange("date", it?.toDate() ?? null);
-                                }}
+                            value={data.date ? dayjs(data.date) : null}
+                            onChange={(it) => {
+                                handleChange("date", it?.toDate() ?? null);
+                            }}
                             format="DD/MM/YYYY"
                             slotProps={{
                                 textField: {
                                     fullWidth: true,
                                 },
-                            }}                        
+                            }}
                         />
                     </Box>
                     <Box mb={2}>
@@ -176,16 +176,15 @@ export default function ServiceScheduleDetails() {
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             fullWidth
                         />
-                    </Box>       
-                    <Box mb={2}> 
+                    </Box>
+                    <Box mb={2}>
                         <TextField
                             label="Observação"
                             value={data.observation}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("observation", e.target.value.toUpperCase())
                             }
                             fullWidth
-                            required
                         />
                     </Box>
 
