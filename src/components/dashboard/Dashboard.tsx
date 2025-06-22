@@ -16,12 +16,12 @@ import {
     Typography
 } from "@mui/material";
 import { useContext, useState } from "react";
-import { getMenuItems  } from "./Menu";
+import { getMenuItems } from "./Menu";
 import { AuthContext } from "@context/AuthContext";
 import { ManagerContext } from "@context/ManagerContext";
 import { Admin } from "@domain/user";
 import { PermissionContext } from "@context/PermissionContext";
-import  logo from  "@assets/logo-iaf.webp";
+import logo from "@assets/logo.webp";
 import { signOut } from "firebase/auth";
 import { auth } from "@service/firebase";
 
@@ -36,7 +36,7 @@ export default function Dashboard() {
     const { isMobile } = useContext(ManagerContext);
     const { permission } = useContext(PermissionContext) ?? { permission: null };
 
-    const menuItems = getMenuItems (permission);        
+    const menuItems = getMenuItems(permission);
     const admin = location.state?.admin as Admin;
 
     const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
@@ -58,14 +58,14 @@ export default function Dashboard() {
 
     const isActive = (path: string) => location.pathname === `/dashboard/${userId}/${path}`;
     const mobileMarginTop = isMobile ? 55 : 0;
-    
+
     const drawerContent = (
         <div className="dashboard-menu-content">
             <Box className="logo">
-                <img alt="Logo Igreja IAF" src={logo} width={50}/>
-                <Typography className="titleLogo">IGREJA IAF</Typography>
+                <img alt="Logo Dashboard" src={logo} width={50} />
+                <Typography className="titleLogo">Admin Church</Typography>
             </Box>
-            <List> 
+            <List>
                 {menuItems.map((item) => (
                     <ListItem key={item.path} disablePadding>
                         <ListItemButton
@@ -74,7 +74,7 @@ export default function Dashboard() {
                             sx={{ color: "white" }}
                         >
                             <ListItemIcon sx={{ color: "white" }}>{item.icon}</ListItemIcon>
-                            <ListItemText primary={item.label}/>
+                            <ListItemText primary={item.label} />
                         </ListItemButton>
                     </ListItem>
                 ))}
@@ -82,7 +82,7 @@ export default function Dashboard() {
             <div className="dashboard-data">
                 <Tooltip className="data-button" title="Click to logout">
                     <IconButton onClick={logout}>
-                        <Logout/>
+                        <Logout />
                     </IconButton>
                 </Tooltip>
                 <Typography variant="caption">
@@ -104,7 +104,7 @@ export default function Dashboard() {
                             onClick={handleDrawerToggle}
                             sx={{ mr: 2 }}
                         >
-                            <MenuIcon/>
+                            <MenuIcon />
                         </IconButton>
                         <Typography variant="h6" noWrap>
                             Painel de Controle
@@ -121,11 +121,11 @@ export default function Dashboard() {
                 sx={{
                     "& .MuiDrawer-paper": {
                         width: 240,
-                        backgroundColor:'var(--primary-background)',
+                        backgroundColor: 'var(--primary-background)',
                         color: 'var(--primary-color)',
                         boxSizing: "border-box",
-                        },
-                    }}
+                    },
+                }}
             >
                 {drawerContent}
             </Drawer>
