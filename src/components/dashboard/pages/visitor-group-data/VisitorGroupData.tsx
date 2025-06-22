@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from 'react';
 import Search from '@components/search/Search';
-import { EMPTY, whatzapp } from '@domain/utils';
+import { EMPTY, sendWhatsappMessage, whatAppMessageMember } from '@domain/utils';
 import Layout from '@components/layout/Layout';
 import { VisitorGroup } from "@domain/user/visitor/VisitorGroup";
 import { findAllVisitorsGroup } from "@service/VisitorGroupService";
@@ -22,7 +22,6 @@ export default function VisitorGroupData() {
     const [filtered, setFiltered] = useState<VisitorGroup[]>([]);
     const [_, setGroups] = useState<GroupSummary[]>([]);
     const [visitorGroupMap, setVisitorGroupMap] = useState<Map<string, GroupSummary>>(new Map());
-
 
     function organizedGcName(a: VisitorGroup, b: VisitorGroup) {
         const nameA = visitorGroupMap.get(a.groupId || EMPTY)?.name ?? 'Sem Grupo';
@@ -85,7 +84,7 @@ export default function VisitorGroupData() {
                                         <TableCell className='data-text'>{it.name}</TableCell>
                                         <TableCell
                                             className='data-text onClick'
-                                            onClick={() => whatzapp(it.name, it.phone)}
+                                            onClick={() => sendWhatsappMessage(it.name, it.phone, whatAppMessageMember)}
                                         >
                                             {it.phone}
                                         </TableCell>

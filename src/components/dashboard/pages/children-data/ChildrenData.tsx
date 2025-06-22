@@ -17,7 +17,7 @@ import Search from '@components/search/Search';
 import { Child } from '@domain/user';
 import { findGroupSummaryToById } from "@service/GroupService";
 import { GroupSummary } from "@domain/group";
-import { NOT_REGISTER, whatzapp } from "@domain/utils";
+import { NOT_REGISTER, sendWhatsappMessage, whatAppMessageChild } from "@domain/utils";
 import Layout from "@components/layout/Layout";
 import { findAllChildrens } from "@service/ChildrenService";
 import ChildrenDataModal from "./children-data-modal/ChildrenDataModa";
@@ -114,7 +114,7 @@ export default function ChildrenData() {
                                         <TableCell className='data-text'>{it.name.split(" ").at(0)}</TableCell>
                                         <TableCell
                                             className='data-text onClick'
-                                            onClick={() => whatzapp(it.name, it.phone)}
+                                            onClick={() => sendWhatsappMessage(it.name, it.phone, whatAppMessageChild)}
                                         >
                                             {it.phone ? it.phone : NOT_REGISTER}
                                         </TableCell>

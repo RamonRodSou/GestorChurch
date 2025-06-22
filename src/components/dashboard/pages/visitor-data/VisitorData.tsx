@@ -16,9 +16,9 @@ import Search from '@components/search/Search';
 import { Visitor } from '@domain/user/visitor/Visitor';
 import { findAllVisitors } from '@service/VisitorService';
 import VisitorDataModal from './visitor-data-modal/VisitorDataModal';
-import { whatzapp } from '@domain/utils';
 import Layout from '@components/layout/Layout';
 import dayjs from "dayjs";
+import { sendWhatsappMessage, whatAppMessageVisitor } from "@domain/utils";
 
 export default function VisitorData() {
     const [data, setData] = useState<Visitor[]>([]);
@@ -87,7 +87,7 @@ export default function VisitorData() {
                                         <TableCell className='data-text'>{it.name}</TableCell>
                                         <TableCell
                                             className='data-text onClick'
-                                            onClick={() => whatzapp(it.name, it.phone)}
+                                            onClick={() => sendWhatsappMessage(it.name, it.phone, whatAppMessageVisitor)}
                                         >
                                             {it.phone}
                                         </TableCell>

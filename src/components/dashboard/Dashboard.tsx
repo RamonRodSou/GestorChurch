@@ -1,5 +1,5 @@
 import "./dashboard.scss";
-import { Logout, Menu as MenuIcon } from "@mui/icons-material";
+import { HelpCenter, Logout, Menu as MenuIcon } from "@mui/icons-material";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
     AppBar,
@@ -24,8 +24,12 @@ import { PermissionContext } from "@context/PermissionContext";
 import logo from "@assets/logo.webp";
 import { signOut } from "firebase/auth";
 import { auth } from "@service/firebase";
+import { sendWhatsappMessage, whatAppMessageSupport } from "@domain/utils";
 
 export default function Dashboard() {
+    const supportName = import.meta.env.VITE_SUPPORT_NAME
+    const supportPhone = import.meta.env.VITE_SUPPORT_PHONE
+
     const navigate = useNavigate();
     const location = useLocation();
     const currentUser = useContext(AuthContext);
@@ -80,6 +84,9 @@ export default function Dashboard() {
                 ))}
             </List>
             <div className="dashboard-data">
+                <Box className="support" onClick={() => sendWhatsappMessage(supportName, supportPhone, whatAppMessageSupport)}>
+                    <HelpCenter /><Typography className="">Suporte Técnico</Typography>
+                </Box>
                 <Tooltip className="data-button" title="Click to logout">
                     <IconButton onClick={logout}>
                         <Logout />
@@ -142,3 +149,5 @@ export default function Dashboard() {
         </div>
     );
 }
+
+

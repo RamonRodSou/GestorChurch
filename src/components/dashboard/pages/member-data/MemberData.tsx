@@ -19,7 +19,7 @@ import { findAllMembers } from "@service/MemberService";
 import MemberDataModal from "./member-data-modal/MemberDataModa";
 import { findGroupSummaryToById } from "@service/GroupService";
 import { GroupSummary } from "@domain/group";
-import { whatzapp } from "@domain/utils";
+import { sendWhatsappMessage, whatAppMessageMember } from "@domain/utils";
 import { Role } from "@domain/enums";
 import Layout from "@components/layout/Layout";
 
@@ -32,6 +32,7 @@ export default function MemberData() {
     const [groupData, setGroupData] = useState<GroupSummary | null>(null);
 
     const roleEntries = Object.entries(Role)
+
 
     function handleOpenDetails(member: Member) {
         if (member.groupId) {
@@ -114,7 +115,7 @@ export default function MemberData() {
                                         <TableCell className='data-text'>{it.name.split(" ").at(0)}</TableCell>
                                         <TableCell
                                             className='data-text onClick'
-                                            onClick={() => whatzapp(it.name, it.phone)}
+                                            onClick={() => sendWhatsappMessage(it.name, it.phone, whatAppMessageMember)}
                                         >
                                             {it.phone}
                                         </TableCell>
