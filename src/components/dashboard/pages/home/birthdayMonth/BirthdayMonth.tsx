@@ -1,3 +1,4 @@
+import './birthday.css'
 import BirthdayList from "@components/birthdayList/BirthdayList";
 import { Child, Member } from "@domain/user";
 import { DateUtil } from "@domain/utils";
@@ -20,7 +21,7 @@ export default function BirthdayMonth() {
         const todayDay = today.getDate();
         const todayMonth = today.getMonth();
 
-        const inTenDays = new Date();
+        const inTenDays = new Date(today);
         inTenDays.setDate(today.getDate() + 10);
 
         const todayList = data.filter(it => {
@@ -28,16 +29,19 @@ export default function BirthdayMonth() {
             return birth.getDate() === todayDay && birth.getMonth() === todayMonth;
         });
 
-        const upcomingList = data.filter(it => {
-            const birth = new Date(it.birthdate);
-            const birthdayThisYear = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
-
-            return birthdayThisYear > today && birthdayThisYear <= inTenDays;
-        });
+        const upcomingList = data
+            .map(it => {
+                const birth = new Date(it.birthdate);
+                const birthdayThisYear = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
+                return { ...it, birthdayThisYear };
+            })
+            .filter(it => it.birthdayThisYear > today && it.birthdayThisYear <= inTenDays)
+            .sort((a, b) => a.birthdayThisYear.getTime() - b.birthdayThisYear.getTime());
 
         setTodayBirthdays(todayList);
         setUpcomingBirthdays(upcomingList);
-    };
+    }
+
 
     useEffect(() => {
         Promise.all([findAllMembers(), findAllChildrens()])
@@ -54,14 +58,26 @@ export default function BirthdayMonth() {
                 title='🎉 HOJE É ANIVERSÁRIO DE:'
                 data={todayBirthdays}
                 renderItem={(it) => (
-                    <>
-                        {DateUtil.dateFormatedDayAndMonth(it.birthdate)} -
-                        <span className="birthday"> {it.name} </span> -
-                        COMPLETANDO {age(it.birthdate) - 1} ANOS -
-                        MEMBRO: {it.isActive
-                            ? <span className="active">ATIVO</span>
-                            : <span className="inactive">INATIVO</span>} DA IAF
-                    </>
+                    <Box
+                        className='container'
+                    >
+                        <span>{DateUtil.dateFormatedDayAndMonth(it.birthdate)}</span>
+                        <span className='name'
+                        >
+                            {it.name}
+                        </span>
+                        <Box className='birthdate'>
+                            <span>({age(it.birthdate)} anos) </span>
+                            <span
+                                style={{
+                                    color: it.isActive ? 'green' : 'red',
+                                    fontWeight: 'bold',
+                                }}
+                            >
+                                {it.isActive ? 'ATIVO' : 'INATIVO'}
+                            </span>
+                        </Box>
+                    </Box>
                 )}
             />
 
@@ -69,14 +85,26 @@ export default function BirthdayMonth() {
                 title='📅 NOS PRÓXIMOS (10 dias):'
                 data={upcomingBirthdays}
                 renderItem={(it) => (
-                    <>
-                        {DateUtil.dateFormatedDayAndMonth(it.birthdate)} -
-                        <span className="birthday"> {it.name} </span> -
-                        COMPLETA: {age(it.birthdate)} ANOS.
-                        MEMBRO: {it.isActive
-                            ? <span className="active">ATIVO</span>
-                            : <span className="inactive">INATIVO</span>} DA IAF
-                    </>
+                    <Box
+                        className='container'
+                    >
+                        <span>{DateUtil.dateFormatedDayAndMonth(it.birthdate)}</span>
+                        <span className='name'
+                        >
+                            {it.name}
+                        </span>
+                        <Box className='birthdate'>
+                            <span>({age(it.birthdate)} anos) </span>
+                            <span
+                                style={{
+                                    color: it.isActive ? 'green' : 'red',
+                                    fontWeight: 'bold',
+                                }}
+                            >
+                                {it.isActive ? 'ATIVO' : 'INATIVO'}
+                            </span>
+                        </Box>
+                    </Box>
                 )}
             />
 

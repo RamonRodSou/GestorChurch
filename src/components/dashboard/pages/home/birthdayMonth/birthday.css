@@ -1,0 +1,29 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.9rem;
+    align-items: flex-start;
+    flex-direction: column;
+    font-size: .8rem;
+
+    .name {
+        color: var(--birthday-color);
+        font-size: .8rem;
+    }
+
+    .birthdate {
+        display: 'flex';
+        gap: 1;
+        flex-wrap: 'nowrap',
+    }
+}
+
+@media (min-width: 600px) {
+    .container {
+        flex-direction: row;
+        align-items: center;
+    }
+}

@@ -25,6 +25,9 @@
         position: fixed;
         flex-direction: column;
         height: calc(100% - 4.5rem);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+
 
         .dashboard-data {
             margin-top: auto;

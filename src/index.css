@@ -61,10 +61,6 @@
         color: var(--secondary-title);
     }
 
-    .birthday {
-        color: var(--birthday-color);
-    }
-
     .title-secondary {
         color: var(--primary-title);
         margin-bottom: 1rem;
