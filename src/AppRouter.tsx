@@ -94,7 +94,7 @@ function AppRouter() {
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
     if (!AuthService.isAuthenticated()) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/gestor" replace />;
     }
     return children;
 }
