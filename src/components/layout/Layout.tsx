@@ -13,7 +13,7 @@ interface Data {
     children: ReactNode
 }
 
-export default function Layout({total, title, message, path, children}: Data) {
+export default function Layout({ total, title, message, path, children }: Data) {
     const { openSnackbar, setOpenSnackbar } = useContext(ManagerContext);
     const { userId } = useParams();
     const navigate = useNavigate();
@@ -21,10 +21,10 @@ export default function Layout({total, title, message, path, children}: Data) {
     function navToNewForm() {
         return navigate(`/dashboard/${userId}/${path}`);
     }
-    
+
     return (
         <Container>
-            <Box mb={3}>
+            <Box mb={1}>
                 <Typography variant="h4" component="h1" className='title'>
                     {total + ' - ' + title}
                 </Typography>
@@ -32,10 +32,10 @@ export default function Layout({total, title, message, path, children}: Data) {
             <main>
                 {children}
             </main>
-            <NewBtn navTo={() => navToNewForm()}/>
-            <SnackBarMessage 
-                message={message} 
-                openSnackbar={openSnackbar} 
+            <NewBtn navTo={() => navToNewForm()} />
+            <SnackBarMessage
+                message={message}
+                openSnackbar={openSnackbar}
                 setOpenSnackbar={setOpenSnackbar}
             />
         </Container>
