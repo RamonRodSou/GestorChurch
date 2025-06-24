@@ -64,10 +64,18 @@
     .title-secondary {
         color: var(--primary-title);
         margin-bottom: 1rem;
+        font-size: .7rem;
     }
 
     .data-text {
         color: var(--secondary-title);
+        font-size: .7rem;
+    }
+
+    .data-table {
+        &:hover {
+            background-color: rgba(216, 213, 213, 0.359);
+        }
     }
 
     .active {
@@ -163,6 +171,11 @@
         .title {
             font-size: 2.5rem;
             padding: 0;
+        }
+
+        .title-secondary,
+        .data-text {
+            font-size: 1rem;
         }
     }
 }

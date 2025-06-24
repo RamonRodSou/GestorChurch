@@ -14,6 +14,14 @@
         font-size: .8rem;
     }
 
+    .msg {
+        cursor: pointer;
+
+        &:hover {
+            color: rgb(23, 216, 6);
+        }
+    }
+
     .birthdate {
         display: 'flex';
         gap: 1;
