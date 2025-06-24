@@ -1,59 +1,65 @@
 import './financial-data.scss'
 import { useEffect, useState } from 'react';
 import {
-  Typography,
-  Paper,
-  Container,
+    Typography,
+    Paper,
+    Container,
 } from '@mui/material';
 import { Financial } from '@domain/financial';
-import { financialAdd, findAllFinancials } from '@service/FinancialService';
+import { financialAdd } from '@service/FinancialService';
 import FinancialModal from './financial-modal/FinancialModal';
 import SnackBarMessage from '@components/snackBarMessage/SnackBarMessage';
 import FinancialCard from './financial-card/FinancialCard';
 import { MoneyMovement } from '@domain/enums';
 import NewBtn from '@components/newBtn/NewBtn';
+import { fetchFinancial } from '@domain/utils';
 
 export default function FinancialData() {
     const [balance, setBalance] = useState<number>(0);
     const [expense, setExpense] = useState<number>(0);
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
+    const [financials, setFinancials] = useState<Financial[]>([]);
 
     const isColorRed = balance >= 0 ? '#e8f5e9' : '#ffebee';
-    
+
     function newFinancial() {
         return setOpenModal(true);
     }
 
     async function handleConfirmFinancial(financial: Financial) {
         await financialAdd(financial);
-        await load();
+        loadFinancialData()
         setOpenModal(false);
         setOpenSnackbar(true)
     }
 
-        async function load() {
-            const data: Financial[] = await findAllFinancials();
+    async function load(data: Financial[]) {
+        let totalBalance = 0;
+        let totalExpense = 0;
 
-            let totalBalance = 0;
-            let totalExpense = 0;
+        data.forEach((item) => {
+            if (item.type === MoneyMovement.INCOME) {
+                totalBalance += item.value;
+            } else {
+                totalBalance -= item.value;
+                totalExpense += item.value;
+            }
+        });
 
-            data.forEach((item) => {
-                if (item.type === MoneyMovement.INCOME) {
-                    totalBalance += item.value;
-                } else {
-                    totalBalance -= item.value;
-                    totalExpense += item.value;
-                }
-            });
+        setBalance(totalBalance);
+        setExpense(totalExpense);
+    }
 
-            setBalance(totalBalance);
-            setExpense(totalExpense);
-        }
- 
+    async function loadFinancialData() {
+        const data = await fetchFinancial();
+        setFinancials(data)
+        load(data)
+    }
+
     useEffect(() => {
-        load();
-    }, []); 
+        loadFinancialData();
+    }, []);
 
     return (
         <>
@@ -77,20 +83,20 @@ export default function FinancialData() {
                         R$ {expense.toFixed(2)}
                     </Typography>
                 </Paper>
-                <FinancialCard/>
+                <FinancialCard financials={financials} />
                 <FinancialModal
                     title='Nova movimentação'
                     open={openModal}
                     onClose={() => setOpenModal(false)}
                     onConfirm={handleConfirmFinancial}
                 />
-                <SnackBarMessage 
-                    message={"Movimentação cadastrada com sucesso!"} 
-                    openSnackbar={openSnackbar} 
+                <SnackBarMessage
+                    message={"Movimentação cadastrada com sucesso!"}
+                    openSnackbar={openSnackbar}
                     setOpenSnackbar={setOpenSnackbar}
-                />  
+                />
             </Container>
-            <NewBtn navTo={() => newFinancial()}/>
+            <NewBtn navTo={() => newFinancial()} />
         </>
     );
 }

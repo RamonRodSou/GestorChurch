@@ -1,7 +1,7 @@
 import './birthday.css'
 import BirthdayList from "@components/birthdayList/BirthdayList";
 import { Child, Member } from "@domain/user";
-import { DateUtil } from "@domain/utils";
+import { DateUtil, sendWhatsappMessage, whatAppMessageBirthday } from "@domain/utils";
 import { Box, Typography } from "@mui/material";
 import { findAllChildrens } from "@service/ChildrenService";
 import { findAllMembers } from "@service/MemberService";
@@ -62,7 +62,8 @@ export default function BirthdayMonth() {
                         className='container'
                     >
                         <span>{DateUtil.dateFormatedDayAndMonth(it.birthdate)}</span>
-                        <span className='name'
+                        <span className='name msg'
+                            onClick={() => sendWhatsappMessage(it.name, it.phone, whatAppMessageBirthday)}
                         >
                             {it.name}
                         </span>

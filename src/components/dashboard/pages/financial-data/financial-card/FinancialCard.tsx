@@ -1,27 +1,18 @@
 import './financial-card.scss'
 import { Financial } from "@domain/financial";
 import { Box, Paper, Typography, Button } from "@mui/material";
-import { findAllFinancials } from "@service/FinancialService";
 import { useEffect, useState } from "react";
-import { MoneyMovement } from '@domain/enums';
-import { DateUtil } from "@domain/utils";
+import { MoneyMovement, Period } from '@domain/enums';
+import { DateUtil, fetchFinancial } from "@domain/utils";
 
-enum Period {
-    ALL = 'TODOS',
-    CURRENT_MONTH = 'ESTE MÊS',
-    LAST_MONTH = 'ÚLTIMO MÊS',
-    CURRENT_WEEK = 'ESTA SEMANA'
-}
-
-export default function FinancialCard() {
-    const [financials, setFinancials] = useState<Financial[]>([]);
+export default function FinancialCard({ financials }: { financials: Financial[] }) {
+    const [_, setFinancials] = useState<Financial[]>([]);
     const [filter, setFilter] = useState<Period>(Period.ALL);
 
-    useEffect(() => {
-        findAllFinancials()
-        .then(setFinancials)
-        .catch(console.error);
-    }, []);
+    async function loadFinancialData() {
+        const data = await fetchFinancial();
+        setFinancials(data)
+    }
 
     const filtered = financials.filter(item => {
         if (filter === Period.ALL)
@@ -30,14 +21,18 @@ export default function FinancialCard() {
         if (filter === Period.CURRENT_WEEK)
             return DateUtil.isDateInCurrentWeek(item.createdAt);
 
-        if (filter === Period.CURRENT_MONTH) 
+        if (filter === Period.CURRENT_MONTH)
             return DateUtil.isDateInCurrentMonth(item.createdAt);
 
-        if (filter ===  Period.LAST_MONTH)
+        if (filter === Period.LAST_MONTH)
             return DateUtil.isDateInLastMonth(item.createdAt);
-        
+
         return true;
     });
+
+    useEffect(() => {
+        loadFinancialData()
+    }, []);
 
     return (
         <Box>
@@ -49,7 +44,7 @@ export default function FinancialCard() {
                     {Period.CURRENT_WEEK}
                 </Button>
                 <Button variant={filter === Period.CURRENT_MONTH ? 'contained' : 'outlined'} onClick={() => setFilter(Period.CURRENT_MONTH)}>
-                   {Period.CURRENT_MONTH}
+                    {Period.CURRENT_MONTH}
                 </Button>
                 <Button variant={filter === Period.LAST_MONTH ? 'contained' : 'outlined'} onClick={() => setFilter(Period.LAST_MONTH)}>
                     {Period.LAST_MONTH}
@@ -64,27 +59,31 @@ export default function FinancialCard() {
 
                     return (
                         <Paper
-                        key={item.id}
-                        elevation={3}
-                        className="order-card"
-                        sx={{
-                            backgroundColor: cardColor,
-                            borderLeft: `5px solid ${borderColor}`,
-                            padding: 2,
-                            marginBottom: 2
-                        }}
+                            key={item.id}
+                            elevation={3}
+                            className="order-card"
+                            sx={{
+                                backgroundColor: cardColor,
+                                borderLeft: `5px solid ${borderColor}`,
+                                padding: 2,
+                                marginBottom: 2
+                            }}
                         >
-                        <Typography variant="h6" color={borderColor}>
-                            {isIncome ? 'Entrada' : 'Saída'}
-                        </Typography>
+                            <Typography variant="h6" color={borderColor}>
+                                {isIncome ? 'Entrada' : 'Saída'}
+                            </Typography>
 
-                        <Typography variant="body1" fontWeight="bold">
-                            R$ {item.value.toFixed(2)}
-                        </Typography>
+                            <Typography variant="body2">
+                                {item.description}
+                            </Typography>
 
-                        <Typography variant="caption" display="block" mt={1}>
-                            Criado em: {new Date(item.createdAt).toLocaleDateString()}
-                        </Typography>
+                            <Typography variant="body1" fontWeight="bold">
+                                R$ {item.value.toFixed(2)}
+                            </Typography>
+
+                            <Typography variant="caption" display="block" mt={1}>
+                                Criado em: {new Date(item.createdAt).toLocaleDateString()}
+                            </Typography>
                         </Paper>
                     );
                 })}
