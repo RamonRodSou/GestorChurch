@@ -7,10 +7,11 @@ import {
     TableHead,
     TableRow,
     Paper,
+    TablePagination,
 } from "@mui/material";
 import { useEffect, useState } from 'react';
 import Search from '@components/search/Search';
-import { EMPTY, sendWhatsappMessage, whatAppMessageMember } from '@domain/utils';
+import { EMPTY, filterAndPaginate, paginatedActive, rowsPerPage, sendWhatsappMessage, whatAppMessageMember } from '@domain/utils';
 import Layout from '@components/layout/Layout';
 import { VisitorGroup } from "@domain/user/visitor/VisitorGroup";
 import { findAllVisitorsGroup } from "@service/VisitorGroupService";
@@ -22,6 +23,10 @@ export default function VisitorGroupData() {
     const [filtered, setFiltered] = useState<VisitorGroup[]>([]);
     const [_, setGroups] = useState<GroupSummary[]>([]);
     const [visitorGroupMap, setVisitorGroupMap] = useState<Map<string, GroupSummary>>(new Map());
+    const [page, setPage] = useState<number>(0);
+
+    const activeEntities = paginatedActive(filtered)
+    const entities = filterAndPaginate({ data: activeEntities, page })
 
     function organizedGcName(a: VisitorGroup, b: VisitorGroup) {
         const nameA = visitorGroupMap.get(a.groupId || EMPTY)?.name ?? 'Sem Grupo';
@@ -65,36 +70,51 @@ export default function VisitorGroupData() {
                     item.phone.includes(term)
                 }
             />
-            {filtered?.length > 0 ? (
-                <TableContainer component={Paper}>
-                    <Table size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell className='title-secondary'>Nome</TableCell>
-                                <TableCell className='title-secondary'>Telefone</TableCell>
-                                <TableCell className='title-secondary'>GC</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {filtered
-                                .filter((it) => it.isActive)
-                                .sort((a, b) => organizedGcName(a, b))
-                                .map((it) => (
-                                    <TableRow key={it.id}>
-                                        <TableCell className='data-text'>{it.name}</TableCell>
-                                        <TableCell
-                                            className='data-text onClick'
-                                            onClick={() => sendWhatsappMessage(it.name, it.phone, whatAppMessageMember)}
-                                        >
-                                            {it.phone}
-                                        </TableCell>
-                                        <TableCell className='data-text'>{it.groupId ? visitorGroupMap.get(it.groupId)?.name : 'Sem Grupo'}</TableCell>
-                                    </TableRow>
-                                ))
-                            }
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+            {activeEntities?.length > 0 ? (
+                <>
+                    <TableContainer component={Paper}>
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell className='title-secondary'>Nome</TableCell>
+                                    <TableCell className='title-secondary'>Telefone</TableCell>
+                                    <TableCell className='title-secondary'>GC</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {entities
+                                    .sort((a, b) => organizedGcName(a, b))
+                                    .map((it) => (
+                                        <TableRow key={it.id} className='data-table'>
+                                            <TableCell className='data-text'>{it.name}</TableCell>
+                                            <TableCell
+                                                className='data-text onClick'
+                                                onClick={() => sendWhatsappMessage(it.name, it.phone, whatAppMessageMember)}
+                                            >
+                                                {it.phone}
+                                            </TableCell>
+                                            <TableCell className='data-text'>{it.groupId ? visitorGroupMap.get(it.groupId)?.name : 'Sem Grupo'}</TableCell>
+                                        </TableRow>
+                                    ))
+                                }
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    {activeEntities.length > rowsPerPage &&
+                        (
+                            <TablePagination
+                                component='div'
+                                count={activeEntities.length}
+                                page={page}
+                                onPageChange={(_, newPage) => setPage(newPage)}
+                                rowsPerPage={rowsPerPage}
+                                rowsPerPageOptions={[rowsPerPage]}
+                                sx={{ display: 'flex', justifyContent: 'flex-start' }}
+
+                            />
+                        )
+                    }
+                </>
             ) : (
                 <Typography variant="body1" sx={{ color: 'var(--primary-title)' }}>
                     Nenhum visitante encontrado.

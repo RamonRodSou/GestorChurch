@@ -9,6 +9,7 @@ import {
     TableHead,
     TableRow,
     Paper,
+    TablePagination,
 } from "@mui/material";
 import { useContext, useEffect, useState } from 'react';
 import { ManagerContext } from '@context/ManagerContext';
@@ -18,18 +19,33 @@ import { findAllVisitors } from '@service/VisitorService';
 import VisitorDataModal from './visitor-data-modal/VisitorDataModal';
 import Layout from '@components/layout/Layout';
 import dayjs from "dayjs";
-import { sendWhatsappMessage, whatAppMessageVisitor } from "@domain/utils";
+import { rowsPerPage, sendWhatsappMessage, whatAppMessageVisitor } from "@domain/utils";
+import { filterAndPaginate, paginatedActive } from "@domain/utils/filterEntities";
 
 export default function VisitorData() {
     const [data, setData] = useState<Visitor[]>([]);
     const [filtered, setFiltered] = useState<Visitor[]>([]);
     const [openData, setOpenData] = useState(false);
     const [selectedVisitor, setSelectedVisitor] = useState<Visitor | null>(null);
+    const [page, setPage] = useState<number>(0);
+
+    const activeEntities = paginatedActive(filtered)
+    const entities = filterAndPaginate({ data: activeEntities, page })
+
     const { isMobile } = useContext(ManagerContext);
 
     function handleOpenDetails(visitor: Visitor) {
         setSelectedVisitor(visitor);
         setOpenData(true);
+    }
+
+    function organizedToLastDate(a: Visitor, b: Visitor): number {
+        const lastVisitA = a.visitHistory?.[a.visitHistory.length - 1]?.split(', ')[1];
+        const lastVisitB = b.visitHistory?.[b.visitHistory.length - 1]?.split(', ')[1];
+        const dateA = lastVisitA ? dayjs(lastVisitA, 'DD/MM/YYYY').valueOf() : 0;
+        const dateB = lastVisitB ? dayjs(lastVisitB, 'DD/MM/YYYY').valueOf() : 0;
+
+        return dateB - dateA;
     }
 
     useEffect(() => {
@@ -41,17 +57,8 @@ export default function VisitorData() {
             .catch(console.error);
     }, []);
 
-    function organizedToLastDate(a: Visitor, b: Visitor): number {
-        const lastVisitA = a.visitHistory?.[a.visitHistory.length - 1]?.split(', ')[1];
-        const lastVisitB = b.visitHistory?.[b.visitHistory.length - 1]?.split(', ')[1];
-        const dateA = lastVisitA ? dayjs(lastVisitA, 'DD/MM/YYYY').valueOf() : 0;
-        const dateB = lastVisitB ? dayjs(lastVisitB, 'DD/MM/YYYY').valueOf() : 0;
-
-        return dateB - dateA;
-    }
-
     return (
-        <Layout total={data.filter((it => it.isActive)).length} title="Visitantes" path="new-visitor" message="Visitante criado com sucesso!">
+        <Layout total={activeEntities.length} title="Visitantes" path="new-visitor" message="Visitante criado com sucesso!">
             <Search<Visitor>
                 data={data}
                 onFilter={setFiltered}
@@ -61,51 +68,66 @@ export default function VisitorData() {
                     item.phone.includes(term)
                 }
             />
-            {filtered?.length > 0 ? (
-                <TableContainer component={Paper}>
-                    <Table size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell className='title-secondary'>Nome</TableCell>
-                                <TableCell className='title-secondary'>Telefone</TableCell>
+            {activeEntities?.length > 0 ? (
+                <>
+                    <TableContainer component={Paper}>
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell className='title-secondary'>Nome</TableCell>
+                                    <TableCell className='title-secondary'>Telefone</TableCell>
 
-                                {!isMobile && (
-                                    <>
-                                        <TableCell className='title-secondary'>Visitas</TableCell>
-                                    </>
-                                )}
+                                    {!isMobile && (
+                                        <>
+                                            <TableCell className='title-secondary'>Visitas</TableCell>
+                                        </>
+                                    )}
 
-                                <TableCell className='title-secondary'>Info</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {filtered
-                                .filter((it) => it.isActive)
-                                .sort((a, b) => organizedToLastDate(a, b))
-                                .map((it) => (
-                                    <TableRow key={it.id}>
-                                        <TableCell className='data-text'>{it.name}</TableCell>
-                                        <TableCell
-                                            className='data-text onClick'
-                                            onClick={() => sendWhatsappMessage(it.name, it.phone, whatAppMessageVisitor)}
-                                        >
-                                            {it.phone}
-                                        </TableCell>
-                                        {!isMobile && (
-                                            <>
-                                                <TableCell className='data-text'>{it.visitHistory.at(0)}</TableCell>
-                                            </>
-                                        )}
-                                        <TableCell className='data-text'>
-                                            <IconButton onClick={() => handleOpenDetails(it)}>
-                                                <Info />
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                    <TableCell className='title-secondary'>Info</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {entities
+                                    .sort((a, b) => organizedToLastDate(a, b))
+                                    .map((it) => (
+                                        <TableRow key={it.id} className='data-table'>
+                                            <TableCell className='data-text'>{it.name}</TableCell>
+                                            <TableCell
+                                                className='data-text onClick'
+                                                onClick={() => sendWhatsappMessage(it.name, it.phone, whatAppMessageVisitor)}
+                                            >
+                                                {it.phone}
+                                            </TableCell>
+                                            {!isMobile && (
+                                                <>
+                                                    <TableCell className='data-text'>{it.visitHistory.at(0)}</TableCell>
+                                                </>
+                                            )}
+                                            <TableCell className='data-text'>
+                                                <IconButton onClick={() => handleOpenDetails(it)}>
+                                                    <Info />
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    {activeEntities.length > rowsPerPage &&
+                        (
+                            <TablePagination
+                                component='div'
+                                count={activeEntities.length}
+                                page={page}
+                                onPageChange={(_, newPage) => setPage(newPage)}
+                                rowsPerPage={rowsPerPage}
+                                rowsPerPageOptions={[rowsPerPage]}
+                                sx={{ display: 'flex', justifyContent: 'flex-start' }}
+
+                            />
+                        )
+                    }
+                </>
             ) : (
                 <Typography variant="body1" sx={{ color: 'var(--primary-title)' }}>
                     Nenhum visitante encontrado.

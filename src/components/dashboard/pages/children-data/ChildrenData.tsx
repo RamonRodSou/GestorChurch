@@ -9,6 +9,7 @@ import {
     TableCell,
     TableContainer,
     TableHead,
+    TablePagination,
     TableRow,
     Typography,
 } from "@mui/material";
@@ -17,7 +18,7 @@ import Search from '@components/search/Search';
 import { Child } from '@domain/user';
 import { findGroupSummaryToById } from "@service/GroupService";
 import { GroupSummary } from "@domain/group";
-import { NOT_REGISTER, sendWhatsappMessage, whatAppMessageChild } from "@domain/utils";
+import { filterAndPaginate, NOT_REGISTER, paginatedActive, rowsPerPage, sendWhatsappMessage, whatAppMessageChild } from "@domain/utils";
 import Layout from "@components/layout/Layout";
 import { findAllChildrens } from "@service/ChildrenService";
 import ChildrenDataModal from "./children-data-modal/ChildrenDataModa";
@@ -30,6 +31,15 @@ export default function ChildrenData() {
     const [selectedChild, setSelectedChild] = useState<Child | null>(null);
     const [openData, setOpenData] = useState(false);
     const [groupData, setGroupData] = useState<GroupSummary | null>(null);
+    const [page, setPage] = useState<number>(0);
+
+    const filteredChild = filtered.filter(item => {
+        if (filter === 'all') return true;
+        return item.ageGroup === AgeGroup[filter.toUpperCase() as keyof typeof AgeGroup];
+    });
+
+    const activeEntities = paginatedActive(filteredChild)
+    const entities = filterAndPaginate({ data: activeEntities, page })
 
     const roleEntries = Object.entries(AgeGroup)
 
@@ -46,11 +56,6 @@ export default function ChildrenData() {
         setSelectedChild(children);
         setOpenData(true);
     }
-
-    const filteredMembers = filtered.filter(item => {
-        if (filter === 'all') return true;
-        return item.ageGroup === AgeGroup[filter.toUpperCase() as keyof typeof AgeGroup];
-    });
 
     useEffect(() => {
         findAllChildrens()
@@ -93,42 +98,57 @@ export default function ChildrenData() {
                 ))}
             </Box>
 
-            {filteredMembers
+            {activeEntities
                 .sort
                 ?.length > 0 ? (
-                <TableContainer component={Paper}>
-                    <Table size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell className='title-secondary'>Nome</TableCell>
-                                <TableCell className='title-secondary'>Telefone</TableCell>
-                                <TableCell className='title-secondary'>Faixa Etária</TableCell>
-                                <TableCell className='title-secondary'>Info</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {filteredMembers
-                                .filter((it) => it.isActive)
-                                .map((it) => (
-                                    <TableRow key={it.id}>
-                                        <TableCell className='data-text'>{it.name.split(" ").at(0)}</TableCell>
-                                        <TableCell
-                                            className='data-text onClick'
-                                            onClick={() => sendWhatsappMessage(it.name, it.phone, whatAppMessageChild)}
-                                        >
-                                            {it.phone ? it.phone : NOT_REGISTER}
-                                        </TableCell>
-                                        <TableCell className='data-text'>{it.ageGroup}</TableCell>
-                                        <TableCell className='data-text'>
-                                            <IconButton onClick={() => handleOpenDetails(it)}>
-                                                <Info />
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <>
+                    <TableContainer component={Paper}>
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell className='title-secondary'>Nome</TableCell>
+                                    <TableCell className='title-secondary'>Telefone</TableCell>
+                                    <TableCell className='title-secondary'>Faixa Etária</TableCell>
+                                    <TableCell className='title-secondary'>Info</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {entities
+                                    .map((it) => (
+                                        <TableRow key={it.id} className='data-table'>
+                                            <TableCell className='data-text'>{it.name.split(" ").at(0)}</TableCell>
+                                            <TableCell
+                                                className='data-text onClick'
+                                                onClick={() => sendWhatsappMessage(it.name, it.phone, whatAppMessageChild)}
+                                            >
+                                                {it.phone ? it.phone : NOT_REGISTER}
+                                            </TableCell>
+                                            <TableCell className='data-text'>{it.ageGroup}</TableCell>
+                                            <TableCell className='data-text'>
+                                                <IconButton onClick={() => handleOpenDetails(it)}>
+                                                    <Info />
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    {activeEntities.length > rowsPerPage &&
+                        (
+                            <TablePagination
+                                component='div'
+                                count={activeEntities.length}
+                                page={page}
+                                onPageChange={(_, newPage) => setPage(newPage)}
+                                rowsPerPage={rowsPerPage}
+                                rowsPerPageOptions={[rowsPerPage]}
+                                sx={{ display: 'flex', justifyContent: 'flex-start' }}
+
+                            />
+                        )
+                    }
+                </>
             ) : (
                 <Typography variant="body1" sx={{ color: 'var(--primary-title)' }}>
                     Nenhuma criança encontrada.

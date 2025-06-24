@@ -9,6 +9,7 @@ import {
     TableCell,
     TableContainer,
     TableHead,
+    TablePagination,
     TableRow,
     Typography,
 } from "@mui/material";
@@ -19,9 +20,10 @@ import { findAllMembers } from "@service/MemberService";
 import MemberDataModal from "./member-data-modal/MemberDataModa";
 import { findGroupSummaryToById } from "@service/GroupService";
 import { GroupSummary } from "@domain/group";
-import { sendWhatsappMessage, whatAppMessageMember } from "@domain/utils";
+import { rowsPerPage, sendWhatsappMessage, whatAppMessageMember } from "@domain/utils";
 import { Role } from "@domain/enums";
 import Layout from "@components/layout/Layout";
+import { filterAndPaginate, paginatedActive } from "@domain/utils/filterEntities";
 
 export default function MemberData() {
     const [data, setData] = useState<Member[]>([]);
@@ -30,9 +32,17 @@ export default function MemberData() {
     const [selectedMember, setSelectedMember] = useState<Member | null>(null);
     const [openData, setOpenData] = useState(false);
     const [groupData, setGroupData] = useState<GroupSummary | null>(null);
+    const [page, setPage] = useState<number>(0);
+
+    const filteredMembers = filtered.filter(item => {
+        if (filter === 'all') return true;
+        return item.role === Role[filter.toUpperCase() as keyof typeof Role];
+    });
+
+    const activeEntities = paginatedActive(filtered)
+    const entities = filterAndPaginate({ data: activeEntities, page })
 
     const roleEntries = Object.entries(Role)
-
 
     function handleOpenDetails(member: Member) {
         if (member.groupId) {
@@ -48,11 +58,6 @@ export default function MemberData() {
         setOpenData(true);
     }
 
-    const filteredMembers = filtered.filter(item => {
-        if (filter === 'all') return true;
-        return item.role === Role[filter.toUpperCase() as keyof typeof Role];
-    });
-
     useEffect(() => {
         findAllMembers()
             .then((it) => {
@@ -62,8 +67,12 @@ export default function MemberData() {
             .catch(console.error);
     }, []);
 
+    useEffect(() => {
+        setPage(0);
+    }, [filtered, filter])
+
     return (
-        <Layout total={data.filter((it => it.isActive)).length} title="Membros" path="new-member" message="Membro criado com sucesso!">
+        <Layout total={activeEntities.length} title="Membros" path="new-member" message="Membro criado com sucesso!">
             <Search<Member>
                 data={data}
                 onFilter={setFiltered}
@@ -93,43 +102,59 @@ export default function MemberData() {
                 ))}
             </Box>
 
-            {filteredMembers
+            {activeEntities
                 .sort
                 ?.length > 0 ? (
-                <TableContainer component={Paper}>
-                    <Table size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell className='title-secondary'>Nome</TableCell>
-                                <TableCell className='title-secondary'>Telefone</TableCell>
-                                <TableCell className='title-secondary'>Status</TableCell>
-                                <TableCell className='title-secondary'>Info</TableCell>
+                <>
+                    <TableContainer component={Paper} className='tableContainer'>
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell className='title-secondary'>Nome</TableCell>
+                                    <TableCell className='title-secondary'>Telefone</TableCell>
+                                    <TableCell className='title-secondary'>Status</TableCell>
+                                    <TableCell className='title-secondary'>Info</TableCell>
 
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {filteredMembers
-                                .filter((it) => it.isActive)
-                                .map((it) => (
-                                    <TableRow key={it.id}>
-                                        <TableCell className='data-text'>{it.name.split(" ").at(0)}</TableCell>
-                                        <TableCell
-                                            className='data-text onClick'
-                                            onClick={() => sendWhatsappMessage(it.name, it.phone, whatAppMessageMember)}
-                                        >
-                                            {it.phone}
-                                        </TableCell>
-                                        <TableCell className='data-text'>{it.role}</TableCell>
-                                        <TableCell className='data-text'>
-                                            <IconButton onClick={() => handleOpenDetails(it)}>
-                                                <Info />
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {entities
+                                    .map((it) => (
+                                        <TableRow key={it.id} className='data-table'>
+                                            <TableCell className='data-text'>{it.name.split(" ").at(0)}</TableCell>
+                                            <TableCell
+                                                className='data-text onClick'
+                                                onClick={() => sendWhatsappMessage(it.name, it.phone, whatAppMessageMember)}
+                                            >
+                                                {it.phone}
+                                            </TableCell>
+                                            <TableCell className='data-text'>{it.role}</TableCell>
+                                            <TableCell className='data-text'>
+                                                <IconButton onClick={() => handleOpenDetails(it)}>
+                                                    <Info />
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    {activeEntities.length > rowsPerPage &&
+                        (
+                            <TablePagination
+                                component='div'
+                                count={activeEntities.length}
+                                page={page}
+                                onPageChange={(_, newPage) => setPage(newPage)}
+                                rowsPerPage={rowsPerPage}
+                                rowsPerPageOptions={[rowsPerPage]}
+                                sx={{ display: 'flex', justifyContent: 'flex-start' }}
+
+                            />
+                        )
+                    }
+                </>
+
             ) : (
                 <Typography variant="body1" sx={{ color: 'var(--primary-title)' }}>
                     Nenhum membro encontrado.
