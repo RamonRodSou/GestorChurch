@@ -106,10 +106,10 @@ export default function ChildrenData() {
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell className='title-secondary'>Nome</TableCell>
-                                    <TableCell className='title-secondary'>Telefone</TableCell>
-                                    <TableCell className='title-secondary'>Faixa Etária</TableCell>
-                                    <TableCell className='title-secondary'>Info</TableCell>
+                                    <TableCell className='title-secondary table'>Nome</TableCell>
+                                    <TableCell className='title-secondary table'>Telefone</TableCell>
+                                    <TableCell className='title-secondary table'>Faixa Etária</TableCell>
+                                    <TableCell className='title-secondary table'>Info</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

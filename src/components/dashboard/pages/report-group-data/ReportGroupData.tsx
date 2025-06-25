@@ -12,7 +12,7 @@ import ReportGroupDataModal from './report-group-data-modal/ReportGroupDataModa'
 import { DateUtil, filterAndPaginate, paginatedActive } from '@domain/utils';
 
 export default function ReportGroupData() {
-    const [data, setData] = useState<ReportGroup[]>([]);
+    const [_, setData] = useState<ReportGroup[]>([]);
     const [filtered, setFiltered] = useState<ReportGroup[]>([]);
     const [openData, setOpenData] = useState(false);
     const [selectedReport, setSelectedReport] = useState<ReportGroup | null>(null);
@@ -79,10 +79,10 @@ export default function ReportGroupData() {
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell className='title-secondary'>GC</TableCell>
-                                    <TableCell className='title-secondary'>DIA</TableCell>
-                                    <TableCell className='title-secondary'>ENVIO</TableCell>
-                                    <TableCell className='title-secondary'>Info</TableCell>
+                                    <TableCell className='title-secondary table'>GC</TableCell>
+                                    <TableCell className='title-secondary table'>DIA</TableCell>
+                                    <TableCell className='title-secondary table'>ENVIO</TableCell>
+                                    <TableCell className='title-secondary table'>Info</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

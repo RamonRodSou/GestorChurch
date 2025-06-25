@@ -64,6 +64,9 @@
     .title-secondary {
         color: var(--primary-title);
         margin-bottom: 1rem;
+    }
+
+    .title-table {
         font-size: .7rem;
     }
 

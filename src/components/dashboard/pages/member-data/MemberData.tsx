@@ -39,7 +39,7 @@ export default function MemberData() {
         return item.role === Role[filter.toUpperCase() as keyof typeof Role];
     });
 
-    const activeEntities = paginatedActive(filtered)
+    const activeEntities = paginatedActive(filteredMembers)
     const entities = filterAndPaginate({ data: activeEntities, page })
 
     const roleEntries = Object.entries(Role)
@@ -110,10 +110,10 @@ export default function MemberData() {
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell className='title-secondary'>Nome</TableCell>
-                                    <TableCell className='title-secondary'>Telefone</TableCell>
-                                    <TableCell className='title-secondary'>Status</TableCell>
-                                    <TableCell className='title-secondary'>Info</TableCell>
+                                    <TableCell className='title-secondary table'>Nome</TableCell>
+                                    <TableCell className='title-secondary table'>Telefone</TableCell>
+                                    <TableCell className='title-secondary table'>Status</TableCell>
+                                    <TableCell className='title-secondary table'>Info</TableCell>
 
                                 </TableRow>
                             </TableHead>

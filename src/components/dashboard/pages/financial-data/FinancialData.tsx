@@ -8,7 +8,7 @@ import {
 import { Financial } from '@domain/financial';
 import { financialAdd } from '@service/FinancialService';
 import FinancialModal from './financial-modal/FinancialModal';
-import SnackBarMessage from '@components/snackBarMessage/SnackBarMessage';
+import SnackBarMessage from '@components/snack-bar-message/SnackBarMessage';
 import FinancialCard from './financial-card/FinancialCard';
 import { MoneyMovement } from '@domain/enums';
 import NewBtn from '@components/newBtn/NewBtn';

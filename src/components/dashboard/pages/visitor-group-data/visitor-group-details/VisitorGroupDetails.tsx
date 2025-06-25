@@ -26,10 +26,10 @@ export default function VisitorGroupDetails() {
             const updated = { ...prev, [field]: value };
             return VisitorGroup.fromJson(updated);
         });
-    }; 
+    };
 
-    async function fetchGroups(): Promise<void>  {
-        const response = await findAllGroupsSummary(); 
+    async function fetchGroups(): Promise<void> {
+        const response = await findAllGroupsSummary();
         setGroups(response)
     };
 
@@ -55,7 +55,7 @@ export default function VisitorGroupDetails() {
 
     return (
         <>
-            <BackButton path={'visitor'}/>
+            <BackButton path={'visitor'} />
             <Container className='details-container'>
                 <form onSubmit={handleSubmit} className="details-form">
                     <h2>{isEditOrNew}</h2>
@@ -80,7 +80,7 @@ export default function VisitorGroupDetails() {
                     </Box>
                     <Box mb={2}>
                         <Autocomplete
-                            value={selectedGroup} 
+                            value={selectedGroup}
                             onChange={(_, newValue) => {
                                 setData(prev => {
                                     const update = { ...prev, groupId: newValue?.id ?? null };
@@ -96,7 +96,7 @@ export default function VisitorGroupDetails() {
                                     fullWidth
                                 />
                             )}
-                            isOptionEqualToValue={(option, value) => option.id === value?.id} 
+                            isOptionEqualToValue={(option, value) => option.id === value?.id}
                             filterOptions={(options, state) => {
                                 return options.filter(option =>
                                     option.name.toLowerCase().includes(state.inputValue.toLowerCase())
@@ -106,7 +106,7 @@ export default function VisitorGroupDetails() {
                         />
                     </Box>
                     <Button type="submit" variant="contained" color="primary" fullWidth>
-                        Salvar Cliente
+                        Salvar Visitante
                     </Button>
                 </form>
             </Container>

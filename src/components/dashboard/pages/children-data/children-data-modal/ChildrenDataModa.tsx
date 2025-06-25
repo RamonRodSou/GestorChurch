@@ -2,7 +2,7 @@ import { Dialog, DialogContent, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Child } from '@domain/user';
 import { GroupSummary } from '@domain/group';
-import ModalBtns from '@components/modalBtns/ModalBtns';
+import ModalBtns from '@components/modal-btns/ModalBtns';
 import ConfirmModal from '@components/confirm-modal/ConfirmModal';
 import { useState } from 'react';
 import { DateUtil, NOT_REGISTER, sendWhatsappMessage, whatAppMessageChild } from '@domain/utils';

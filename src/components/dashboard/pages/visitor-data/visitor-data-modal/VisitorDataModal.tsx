@@ -2,7 +2,7 @@ import './visitor-data-modal.scss';
 import { Dialog, DialogContent, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Visitor } from '@domain/user/visitor/Visitor';
-import ModalBtns from '@components/modalBtns/ModalBtns';
+import ModalBtns from '@components/modal-btns/ModalBtns';
 import { useState } from 'react';
 import { updateVisitor } from '@service/VisitorService';
 import ConfirmModal from '@components/confirm-modal/ConfirmModal';

@@ -5,7 +5,7 @@ import BackButton from '@components/back-button/BackButton';
 import { ChildSummary, Member, MemberSummary } from '@domain/user';
 import { findMemberToById, memberAdd, memberUpdate } from '@service/MemberService';
 import { EMPTY } from "@domain/utils/string-utils";
-import SnackBarMessage from "@components/snackBarMessage/SnackBarMessage";
+import SnackBarMessage from "@components/snack-bar-message/SnackBarMessage";
 import { CivilStatus, Role, YesOrNot } from "@domain/enums";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Batism } from "@domain/batism";
@@ -18,7 +18,7 @@ import { useParams } from 'react-router-dom';
 import { useCredentials } from '@context/CredentialsContext';
 import { GroupSummary } from "@domain/group";
 import { fetchChildrensSummary, fetchGroupsSummary, fetchMembersSummary } from "@domain/utils/fetch";
-import InputSelect from "@components/inputSelect/inputSelect";
+import InputSelect from "@components/input-select/inputSelect";
 import { useNavigateToDashboardWithSnackbar } from "@hooks/useNatigateTo";
 
 export default function MemberDetails() {

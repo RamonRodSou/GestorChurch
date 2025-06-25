@@ -76,9 +76,9 @@ export default function VisitorGroupData() {
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell className='title-secondary'>Nome</TableCell>
-                                    <TableCell className='title-secondary'>Telefone</TableCell>
-                                    <TableCell className='title-secondary'>GC</TableCell>
+                                    <TableCell className='title-secondary table'>Nome</TableCell>
+                                    <TableCell className='title-secondary table'>Telefone</TableCell>
+                                    <TableCell className='title-secondary table'>GC</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

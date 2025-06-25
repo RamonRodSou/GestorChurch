@@ -21,7 +21,7 @@ import { AuthContext } from "@context/AuthContext";
 import { ManagerContext } from "@context/ManagerContext";
 import { Admin } from "@domain/user";
 import { PermissionContext } from "@context/PermissionContext";
-import logo from "@assets/logo-iaf.webp";
+import logo from "@assets/logo.webp";
 import { signOut } from "firebase/auth";
 import { auth } from "@service/firebase";
 import { sendWhatsappMessage, whatAppMessageSupport } from "@domain/utils";
@@ -29,6 +29,8 @@ import { sendWhatsappMessage, whatAppMessageSupport } from "@domain/utils";
 export default function Dashboard() {
     const supportName = import.meta.env.VITE_SUPPORT_NAME
     const supportPhone = import.meta.env.VITE_SUPPORT_PHONE
+    const nameApp = import.meta.env.VITE_NAME_APP
+
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -67,7 +69,7 @@ export default function Dashboard() {
         <div className="dashboard-menu-content">
             <Box className="logo">
                 <img alt="Logo Dashboard" src={logo} width={50} />
-                <Typography className="titleLogo">IGREJA IAF</Typography>
+                <Typography className="titleLogo">{nameApp}</Typography>
             </Box>
             <List>
                 {menuItems.map((item) => (

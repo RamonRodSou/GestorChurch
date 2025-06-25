@@ -21,7 +21,7 @@ export default function VisitorDetails() {
             const updated = { ...prev, [field]: value };
             return Visitor.fromJson(updated);
         });
-    }; 
+    };
 
     function handleAddVisit() {
         const today = new Date();
@@ -61,7 +61,7 @@ export default function VisitorDetails() {
             newVisitor.name = data.name;
             newVisitor.phone = data.phone;
             newVisitor.visitHistory = [firstVisit];
-            
+
             await visitorAdd(newVisitor);
             setData(new Visitor());
         }
@@ -83,7 +83,7 @@ export default function VisitorDetails() {
 
     return (
         <>
-            <BackButton path={'visitor'}/>
+            <BackButton path={'visitor'} />
             <Container className='details-container'>
                 <form onSubmit={handleSubmit} className="details-form">
                     <h2>{isEditOrNew}</h2>
@@ -116,9 +116,9 @@ export default function VisitorDetails() {
                             </ul>
                         </Box>
                     )}
-                    <Button 
-                        variant="outlined" 
-                        color="secondary" 
+                    <Button
+                        variant="outlined"
+                        color="secondary"
                         onClick={() => handleAddVisit()}
                         style={{ margin: '1rem 0' }}
                     >
@@ -126,7 +126,7 @@ export default function VisitorDetails() {
                     </Button>
 
                     <Button type="submit" variant="contained" color="primary" fullWidth>
-                        Salvar Cliente
+                        Salvar Visitante
                     </Button>
                 </form>
             </Container>

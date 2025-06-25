@@ -4,7 +4,7 @@ import { Autocomplete, Box, Button, Container, TextField } from "@mui/material";
 import BackButton from '@components/back-button/BackButton';
 import { Child, MemberSummary } from '@domain/user';
 import { EMPTY } from "@domain/utils/string-utils";
-import SnackBarMessage from "@components/snackBarMessage/SnackBarMessage";
+import SnackBarMessage from "@components/snack-bar-message/SnackBarMessage";
 import { ChildRole, YesOrNot } from "@domain/enums";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Batism } from "@domain/batism";
@@ -17,7 +17,7 @@ import { childAdd, childUpdate, findChildToById } from "@service/ChildrenService
 import { AgeGroup } from "@domain/enums/AgeGroup";
 
 export default function ChildDetails() {
-    const [data, setData] = useState<Child>(new Child());    
+    const [data, setData] = useState<Child>(new Child());
     const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
     const [role, setRole] = useState<ChildRole>(ChildRole.EMPTY);
     const [age, setAge] = useState<AgeGroup>(AgeGroup.CHILD);
@@ -34,10 +34,10 @@ export default function ChildDetails() {
 
     const selectedGroup = groups.find(group => group.id === data.groupId) ?? null;
 
-    function navToChild() { 
+    function navToChild() {
         navigate(`/dashboard/${childId}/children`, {
             state: { showSnackbar: true }
-        }); 
+        });
     }
 
     function handleChange(field: keyof Child, value: any) {
@@ -67,7 +67,7 @@ export default function ChildDetails() {
     function handleParentChange(index: number, value: MemberSummary | string) {
         const updated = [...parentInputs];
         updated[index] = ensureMemberSummary(value);
-        const cleanedParents: MemberSummary[] = updated.map(ensureMemberSummary); 
+        const cleanedParents: MemberSummary[] = updated.map(ensureMemberSummary);
         setParentInputs(cleanedParents);
 
         setData(prev => {
@@ -77,18 +77,18 @@ export default function ChildDetails() {
     };
 
     function editOrNewMessage() {
-        return isEditing 
+        return isEditing
             ? 'Criança atualizada com sucesso!'
             : 'Criança criada com sucesso!'
     }
 
-    async function  fetchMembers(): Promise<void> {
+    async function fetchMembers(): Promise<void> {
         const response = await findAllMembers();
         setAllParent(response);
     };
 
-    async function fetchGroups(): Promise<void>  {
-        const response = await findAllGroups(); 
+    async function fetchGroups(): Promise<void> {
+        const response = await findAllGroups();
         setGroups(response)
     };
 
@@ -103,11 +103,11 @@ export default function ChildDetails() {
 
         if (isEditing) {
             const update = Child.fromJson(base);
-            await childUpdate(data.id, update.toJSON());       
+            await childUpdate(data.id, update.toJSON());
         } else {
             const newChild = Child.fromJson(base);
             newChild.ageGroup = age;
-            await childAdd(newChild); 
+            await childAdd(newChild);
             clearCredentials();
             setOpenSnackbar(true);
             setData(new Child());
@@ -135,18 +135,18 @@ export default function ChildDetails() {
         }
         load();
     }, [childId]);
-    
+
     return (
         <>
-            <BackButton path={'children'}/>
+            <BackButton path={'children'} />
             <Container className='details-container'>
                 <form onSubmit={handleSubmit} className="details-form">
                     <h2>{isEditOrNew}</h2>
-                    <Box mb={2}> 
+                    <Box mb={2}>
                         <TextField
                             label="Nome"
                             value={data.name}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("name", e.target.value.toUpperCase())
                             }
                             error={!!errors.name}
@@ -158,10 +158,10 @@ export default function ChildDetails() {
                     <Box mb={2}>
                         <DatePicker
                             label="Data de nascimento"
-                              value={data.birthdate ? dayjs(data.birthdate) : null}
-                                onChange={(date) => {
-                                    handleChange("birthdate", date?.toDate() ?? null);
-                                }}
+                            value={data.birthdate ? dayjs(data.birthdate) : null}
+                            onChange={(date) => {
+                                handleChange("birthdate", date?.toDate() ?? null);
+                            }}
                             format="DD/MM/YYYY"
                             slotProps={{
                                 textField: {
@@ -169,7 +169,7 @@ export default function ChildDetails() {
                                     error: !!errors.birthDate,
                                     helperText: errors.birthDate,
                                 },
-                            }}                        
+                            }}
                         />
                     </Box>
                     <Box mb={2}>
@@ -195,11 +195,11 @@ export default function ChildDetails() {
                                     label="Telefone"
                                     type='number'
                                     value={data.phone}
-                                    onChange={(e) => 
+                                    onChange={(e) =>
                                         handleChange("phone", e.target.value)
                                     }
                                     error={!!errors.phone}
-                                    helperText={errors.phone}      
+                                    helperText={errors.phone}
                                     fullWidth
                                 />
                             </Box>
@@ -209,8 +209,8 @@ export default function ChildDetails() {
                                     type="email"
                                     value={data.email}
                                     // error={!!errors.email}
-                                    helperText={errors.email}                       
-                                    onChange={(e) => 
+                                    helperText={errors.email}
+                                    onChange={(e) =>
                                         handleChange("email", e.target.value.toUpperCase())
                                     }
                                     fullWidth
@@ -218,7 +218,7 @@ export default function ChildDetails() {
                             </Box>
                             <Box mb={2}>
                                 <Autocomplete
-                                    value={selectedGroup} 
+                                    value={selectedGroup}
                                     onChange={(_, newValue) => {
                                         setData(prev => {
                                             const updatedchildren = { ...prev, groupId: newValue?.id ?? null };
@@ -234,12 +234,12 @@ export default function ChildDetails() {
                                             fullWidth
                                         />
                                     )}
-                                    isOptionEqualToValue={(option, value) => option.id === value?.id} 
+                                    isOptionEqualToValue={(option, value) => option.id === value?.id}
                                     filterOptions={(options, state) => {
                                         return options.filter(option =>
                                             option.name.toLowerCase().includes(state.inputValue.toLowerCase())
                                         );
-                                    }}  
+                                    }}
                                     noOptionsText="Nenhum grupo encontrado"
                                 />
                             </Box>
@@ -276,14 +276,14 @@ export default function ChildDetails() {
                                 </TextField>
                             </Box>
 
-                            {yesOrNot == YesOrNot.YES &&(
+                            {yesOrNot == YesOrNot.YES && (
                                 <span>
                                     <h3>Batismo</h3>
                                     <Box mb={2}>
                                         <TextField
                                             label="Nome da Igreja"
                                             value={data.batism?.churchName}
-                                            onChange={(e) => 
+                                            onChange={(e) =>
                                                 handleBatismChange("churchName", e.target.value.toUpperCase())
                                             }
                                             fullWidth
@@ -293,7 +293,7 @@ export default function ChildDetails() {
                                         <TextField
                                             label="Nome do Lider que batizou"
                                             value={data.batism?.leaderName}
-                                            onChange={(e) => 
+                                            onChange={(e) =>
                                                 handleBatismChange("leaderName", e.target.value.toUpperCase())
                                             }
                                             fullWidth
@@ -305,7 +305,7 @@ export default function ChildDetails() {
                                             value={data.batism?.baptismDate ? dayjs(data.batism?.baptismDate) : null}
                                             onChange={(date) =>
                                                 handleBatismChange("baptismDate", date?.toDate() ?? null)
-                                                
+
                                             }
                                             format="DD/MM/YYYY"
                                             slotProps={{ textField: { fullWidth: true } }}
@@ -320,9 +320,9 @@ export default function ChildDetails() {
                             select
                             label="Autoriza o uso de imagem?"
                             value={yesOrNot === YesOrNot.YES ? "true" : "false"}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("isImageAuthorized", e.target.value)
-                            }                            
+                            }
                             fullWidth
                             SelectProps={{ native: true }}
                         >
@@ -338,7 +338,7 @@ export default function ChildDetails() {
                             label="Usa alguma medicação? Qual?"
                             value={data.medication}
                             InputLabelProps={{ shrink: true }}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("medication", e.target.value.toUpperCase())
                             }
                             fullWidth
@@ -349,7 +349,7 @@ export default function ChildDetails() {
                             label="Alguma necessidade especial? Qual?"
                             InputLabelProps={{ shrink: true }}
                             value={data.specialNeed}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("specialNeed", e.target.value.toUpperCase())
                             }
                             fullWidth
@@ -360,7 +360,7 @@ export default function ChildDetails() {
                             label="Alguma alergia? Qual?"
                             InputLabelProps={{ shrink: true }}
                             value={data.allergy}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("allergy", e.target.value.toUpperCase())
                             }
                             fullWidth
@@ -369,7 +369,7 @@ export default function ChildDetails() {
                     <Box mb={2}>
                         <h3>Família</h3>
                         {parentInputs.map((child, index) => (
-                            <Box key={index}  className='boxAutoComplete'>
+                            <Box key={index} className='boxAutoComplete'>
                                 <Autocomplete
                                     freeSolo
                                     className='autoComplete'
@@ -397,12 +397,12 @@ export default function ChildDetails() {
                                         return options.filter(option =>
                                             option.name.toLowerCase().includes(state.inputValue.toLowerCase())
                                         );
-                                    }}  
+                                    }}
                                     noOptionsText="Nenhum membro encontrado"
                                 />
-                                <Button 
-                                    variant="outlined" 
-                                    onClick={() => handleRemoveChildField(index)} 
+                                <Button
+                                    variant="outlined"
+                                    onClick={() => handleRemoveChildField(index)}
                                     color="secondary"
                                     style={{ marginLeft: '10px' }}
                                 >
@@ -413,14 +413,14 @@ export default function ChildDetails() {
                         <Button variant="outlined" onClick={handleAddChildField}>
                             Adicionar Responsável
                         </Button>
-                    </Box>      
+                    </Box>
                     <Button type="submit" variant="contained" color="primary" fullWidth>
                         Salvar Criança
                     </Button>
                 </form>
-                <SnackBarMessage 
-                    message={editOrNewMessage()} 
-                    openSnackbar={openSnackbar} 
+                <SnackBarMessage
+                    message={editOrNewMessage()}
+                    openSnackbar={openSnackbar}
                     setOpenSnackbar={setOpenSnackbar}
                 />
             </Container>

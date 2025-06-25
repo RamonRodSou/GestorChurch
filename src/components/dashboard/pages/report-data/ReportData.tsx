@@ -40,9 +40,9 @@ export default function ReportData() {
                     <Table size="small">
                         <TableHead>
                             <TableRow>
-                                <TableCell className='title-secondary'>Culto</TableCell>
-                                <TableCell className='title-secondary'>Horário</TableCell>
-                                <TableCell className='title-secondary'>Info</TableCell>
+                                <TableCell className='title-secondary table'>Culto</TableCell>
+                                <TableCell className='title-secondary table'>Horário</TableCell>
+                                <TableCell className='title-secondary table'>Info</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>

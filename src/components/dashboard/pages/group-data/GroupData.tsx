@@ -60,9 +60,9 @@ export default function GroupData() {
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell className='title-secondary'>Nome</TableCell>
-                                    <TableCell className='title-secondary'>Lideres</TableCell>
-                                    <TableCell className='title-secondary'>Info</TableCell>
+                                    <TableCell className='title-secondary table'>Nome</TableCell>
+                                    <TableCell className='title-secondary table'>Lideres</TableCell>
+                                    <TableCell className='title-secondary table'>Info</TableCell>
 
                                 </TableRow>
                             </TableHead>

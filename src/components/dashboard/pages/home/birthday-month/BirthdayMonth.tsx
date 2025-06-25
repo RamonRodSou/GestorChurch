@@ -1,5 +1,5 @@
 import './birthday.css'
-import BirthdayList from "@components/birthdayList/BirthdayList";
+import BirthdayList from "@components/birthday-list/BirthdayList";
 import { Child, Member } from "@domain/user";
 import { DateUtil, sendWhatsappMessage, whatAppMessageBirthday } from "@domain/utils";
 import { Box, Typography } from "@mui/material";
@@ -68,7 +68,7 @@ export default function BirthdayMonth() {
                             {it.name}
                         </span>
                         <Box className='birthdate'>
-                            <span>({age(it.birthdate)} anos) </span>
+                            <span>({age(it.birthdate) - 1} anos) </span>
                             <span
                                 style={{
                                     color: it.isActive ? 'green' : 'red',

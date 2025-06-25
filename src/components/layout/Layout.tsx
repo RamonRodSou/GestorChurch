@@ -1,5 +1,5 @@
 import NewBtn from '@components/newBtn/NewBtn';
-import SnackBarMessage from "@components/snackBarMessage/SnackBarMessage";
+import SnackBarMessage from "@components/snack-bar-message/SnackBarMessage";
 import { ManagerContext } from "@context/ManagerContext";
 import { Box, Container, Typography } from "@mui/material";
 import { ReactNode, useContext } from "react";
