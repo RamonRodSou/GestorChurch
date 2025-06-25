@@ -12,7 +12,7 @@ export default function BirthdayList<T>({ title, data, renderItem }: BirthdayLis
 
     return (
         <Box sx={{ mt: 2 }}>
-            <Typography variant="subtitle1" className="textInfo">
+            <Typography variant="h5" className="title-secondary">
                 {title}
             </Typography>
             {data
