@@ -1,0 +1,28 @@
+.invalid-token-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+
+    .invalid-token-box {
+        text-align: center;
+        padding: 2rem;
+        border-radius: 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(6px);
+
+        .invalid-token-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--cancel-color);
+            margin-bottom: 1rem;
+        }
+
+        .invalid-token-message {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+    }
+}
