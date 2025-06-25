@@ -29,6 +29,7 @@ import UserDetails from '@components/dashboard/pages/userData/user-details/UserD
 import UserInvited from '@components/dashboard/pages/userData/user-invited/UserInvited';
 import ServiceScheduleData from '@components/dashboard/pages/service-schedule/ServiceScheduleData';
 import ServiceScheduleDetails from '@components/dashboard/pages/service-schedule/service-schedule-details/ServiceScheduleDetails';
+import Loading from '@components/loading/Loading';
 
 function AppRouter() {
     const [loading, setLoading] = useState(true);
@@ -43,7 +44,7 @@ function AppRouter() {
         return () => unsubscribe();
     }, []);
 
-    if (loading) return <p>Carregando...</p>;
+    if (loading) return <Loading />
     return (
         <BrowserRouter basename="/gestor">
             <Routes>
