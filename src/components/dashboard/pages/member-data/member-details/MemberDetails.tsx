@@ -11,15 +11,15 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Batism } from "@domain/batism";
 import { ensureChildSummary, ensureMemberSummary } from '@domain/utils/EnsuredSummary';
 import ICepData from '@domain/interface/ICepData';
-import { validateMemberForm } from '@domain/utils/validateMemberForm';
-import validateCEP from '@domain/utils/validateCEP';
 import { checkCEP } from '@domain/utils/checkCEP';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useCredentials } from '@context/CredentialsContext';
 import { GroupSummary } from "@domain/group";
 import { fetchChildrensSummary, fetchGroupsSummary, fetchMembersSummary } from "@domain/utils/fetch";
 import InputSelect from "@components/input-select/inputSelect";
-import { useNavigateToDashboardWithSnackbar } from "@hooks/useNatigateTo";
+import { Validate } from "@domain/utils";
+import { ValidationForm } from "@domain/validate/validateForm";
+import { memberValidate } from "@domain/validate/validateEntities";
 
 export default function MemberDetails() {
     const [member, setMember] = useState<Member>(new Member());
@@ -36,8 +36,15 @@ export default function MemberDetails() {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const isEditOrNew = isEditing ? `Editar membro: ${member.name}` : 'Novo Membro'
     const { memberId } = useParams();
+    const { userId } = useParams();
     const { clearCredentials } = useCredentials();
-    const navigateToDashboard = useNavigateToDashboardWithSnackbar();
+    const navigate = useNavigate()
+
+    function navToGroup() {
+        navigate(`/dashboard/${userId}/member`, {
+            state: { showSnackbar: true }
+        });
+    }
 
     const selectedGroup = groups.find(group => group.id === member.groupId) ?? null;
 
@@ -86,7 +93,7 @@ export default function MemberDetails() {
     }
     async function handleSubmit(e: React.FormEvent): Promise<void> {
         e.preventDefault();
-        if (!validateMemberForm({ member, setErrors })) return;
+        if (!ValidationForm({ data: member, setErrors, entity: memberValidate() })) return;
 
         const isImageAuthorized = yesOrNot === YesOrNot.YES ? true : false;
 
@@ -112,7 +119,7 @@ export default function MemberDetails() {
             setCepData(null);
             setChildrenInputs([]);
         }
-        navigateToDashboard(memberId, 'member');
+        navToGroup()
     }
 
     useEffect(() => {
@@ -143,7 +150,7 @@ export default function MemberDetails() {
 
     useEffect(() => {
         if (cepData) {
-            validateCEP({ cepData, setData: setMember });
+            Validate.CEP({ cepData, setData: setMember, data: Member })
         }
     }, [cepData]);
 
@@ -191,8 +198,8 @@ export default function MemberDetails() {
                             slotProps={{
                                 textField: {
                                     fullWidth: true,
-                                    error: !!errors.birthDate,
-                                    helperText: errors.birthDate,
+                                    error: !!errors.birthdate,
+                                    helperText: errors.birthdate,
                                 },
                             }}
                         />
@@ -403,7 +410,6 @@ export default function MemberDetails() {
                                             label="Cônjuge"
                                             onChange={(e) => handleChange("spouse", e.target.value.toUpperCase())}
                                             fullWidth
-                                            required
                                         />
                                     )}
                                     isOptionEqualToValue={(option, value) => option.id === value.id}

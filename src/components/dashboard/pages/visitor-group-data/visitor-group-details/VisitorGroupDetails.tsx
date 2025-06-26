@@ -8,6 +8,7 @@ import { findByVisitorGroupId, visitorGroupAdd } from '@service/VisitorGroupServ
 import { VisitorGroup } from '@domain/user/visitor/VisitorGroup';
 import { GroupSummary } from '@domain/group';
 import { findAllGroupsSummary } from '@service/GroupService';
+import { ValidationForm, visitorGroupValidate } from '@domain/validate';
 
 export default function VisitorGroupDetails() {
     const { visitorId, userId } = useParams();
@@ -16,6 +17,7 @@ export default function VisitorGroupDetails() {
     const [data, setData] = useState<VisitorGroup>(new VisitorGroup());
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [groups, setGroups] = useState<GroupSummary[]>([]);
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
     const selectedGroup = groups.find(group => group.id === data.groupId) ?? null;
 
@@ -35,7 +37,9 @@ export default function VisitorGroupDetails() {
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+        if (!ValidationForm({ data: data, setErrors, entity: visitorGroupValidate() })) return;
         await visitorGroupAdd(data);
+
         setData(new VisitorGroup());
         navigate(`/dashboard/${userId}/visitor-group`);
         setOpenSnackbar(true);
@@ -64,6 +68,8 @@ export default function VisitorGroupDetails() {
                             label="Nome"
                             value={data.name}
                             onChange={(e) => handleChange("name", e.target.value.toUpperCase())}
+                            error={!!errors.name}
+                            helperText={errors.name}
                             fullWidth
                             required
                         />
@@ -74,6 +80,8 @@ export default function VisitorGroupDetails() {
                             type='number'
                             value={data.phone}
                             onChange={(e) => handleChange("phone", e.target.value)}
+                            error={!!errors.phone}
+                            helperText={errors.phone}
                             fullWidth
                             required
                         />
@@ -93,6 +101,8 @@ export default function VisitorGroupDetails() {
                                 <TextField
                                     {...params}
                                     label="GC"
+                                    error={!!errors.groupId}
+                                    helperText={errors.groupId}
                                     fullWidth
                                 />
                             )}

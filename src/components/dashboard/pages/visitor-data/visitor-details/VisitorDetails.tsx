@@ -6,6 +6,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ManagerContext } from '@context/ManagerContext';
 import { Visitor } from '@domain/user/visitor/Visitor';
 import { findByVisitorId, updateVisitor, visitorAdd } from '@service/VisitorService';
+import { ValidationForm } from '@domain/validate/validateForm';
+import { visitorValidate } from '@domain/validate/validateEntities';
 
 export default function VisitorDetails() {
     const { visitorId, userId } = useParams();
@@ -13,6 +15,7 @@ export default function VisitorDetails() {
     const { setOpenSnackbar } = useContext(ManagerContext);
     const [data, setData] = useState<Visitor>(new Visitor());
     const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
     const isEditOrNew = isEditing ? `Editar visitante: ${data.name}` : 'Novo Visitante'
 
@@ -42,6 +45,7 @@ export default function VisitorDetails() {
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+        if (!ValidationForm({ data: data, setErrors, entity: visitorValidate() })) return;
 
         if (isEditing) {
             await updateVisitor(data.id, data.toJSON());
@@ -92,6 +96,8 @@ export default function VisitorDetails() {
                             label="Nome"
                             value={data.name}
                             onChange={(e) => handleChange("name", e.target.value.toUpperCase())}
+                            error={!!errors.name}
+                            helperText={errors.name}
                             fullWidth
                             required
                         />
@@ -102,6 +108,8 @@ export default function VisitorDetails() {
                             type='number'
                             value={data.phone}
                             onChange={(e) => handleChange("phone", e.target.value)}
+                            error={!!errors.phone}
+                            helperText={errors.phone}
                             fullWidth
                             required
                         />

@@ -15,6 +15,7 @@ import { useCredentials } from '@context/CredentialsContext';
 import { findAllMembers } from "@service/MemberService";
 import { childAdd, childUpdate, findChildToById } from "@service/ChildrenService";
 import { AgeGroup } from "@domain/enums/AgeGroup";
+import { ValidationForm, visitorChiildValidate } from "@domain/validate";
 
 export default function ChildDetails() {
     const [data, setData] = useState<Child>(new Child());
@@ -24,7 +25,7 @@ export default function ChildDetails() {
     const [yesOrNot, setYesOrNot] = useState<YesOrNot>(YesOrNot.NOT);
     const [allParent, setAllParent] = useState<MemberSummary[]>([]);
     const [parentInputs, setParentInputs] = useState<(MemberSummary | string)[]>([]);
-    const [errors, _] = useState<{ [key: string]: string }>({});
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const isEditOrNew = isEditing ? `Editar menor de idade: ${data.name}` : 'Novo menor de idade'
@@ -94,6 +95,8 @@ export default function ChildDetails() {
 
     async function handleSubmit(e: React.FormEvent): Promise<void> {
         e.preventDefault();
+        if (!ValidationForm({ data: data, setErrors, entity: visitorChiildValidate() })) return;
+
         const base = {
             ...data,
             role,
@@ -166,8 +169,8 @@ export default function ChildDetails() {
                             slotProps={{
                                 textField: {
                                     fullWidth: true,
-                                    error: !!errors.birthDate,
-                                    helperText: errors.birthDate,
+                                    error: !!errors.birthdate,
+                                    helperText: errors.birthdate,
                                 },
                             }}
                         />
@@ -208,7 +211,7 @@ export default function ChildDetails() {
                                     label="Email"
                                     type="email"
                                     value={data.email}
-                                    // error={!!errors.email}
+                                    error={!!errors.email}
                                     helperText={errors.email}
                                     onChange={(e) =>
                                         handleChange("email", e.target.value.toUpperCase())

@@ -19,7 +19,7 @@ export default function GroupDataModal({ open, onClose, group }: GroupDataModalP
     // function navToGroupUpdate(groupId: String) {
     //     return navigate(`/dashboard/${userId}/edit-group/${groupId}`);
     // }
-         
+
     return (
         <Dialog open={open} onClose={onClose} fullWidth>
             <DialogContent dividers className='dialog'>
@@ -29,7 +29,7 @@ export default function GroupDataModal({ open, onClose, group }: GroupDataModalP
                         <Edit/>
                     </IconButton> */}
                 </Box>
-                <Typography className='subTitle'> <span className='subTextInfo'>LIDERES: </span>{group.leaders.map(it => it.name.split(" ")[0]).join(" / ")}</Typography>         
+                <Typography className='subTitle'> <span className='subTextInfo'>LIDERES: </span>{group?.leaders?.map(it => it?.name.split(" ")[0]).join(" / ")}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>DIA: </span>{group.weekDay}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>RUA: </span>{group.street}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>N: </span>{group.houseNumber}</Typography>
@@ -37,7 +37,7 @@ export default function GroupDataModal({ open, onClose, group }: GroupDataModalP
                 <Typography className='textInfo'> <span className='subTextInfo'>CIDADE: </span>{group.city}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>ESTADO: </span>{group.state}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>CEP: </span>{group.zipCode}</Typography>
-                <h3 className='subTextInfo'> {group.members.slice(2).length} Membros:</h3>
+                <h3 className='subTextInfo'> {group?.members?.slice(2).length} Membros:</h3>
                 <Typography className='textInfo'>
                     {group.members.slice(2).map(m => m.name.split(" ")[0]).join(" / ")}
                 </Typography>

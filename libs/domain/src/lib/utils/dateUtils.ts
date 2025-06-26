@@ -29,7 +29,6 @@ export class DateUtil {
         })
 
         const formatted = formatter.format(data);
-        console.log(formatted)
         return formatted.toUpperCase();
     }
 

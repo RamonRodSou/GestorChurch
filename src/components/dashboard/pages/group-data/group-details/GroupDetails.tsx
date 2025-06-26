@@ -7,12 +7,12 @@ import { EMPTY } from "@domain/utils/string-utils";
 import { ensureMemberSummary } from '@domain/utils/EnsuredSummary';
 import { Group } from '@domain/group/Group';
 import { groupAdd } from '@service/GroupService';
-import validateCEP from '@domain/utils/validateCEP';
 import CepData from '@domain/interface/ICepData';
 import { checkCEP } from '@domain/utils/checkCEP';
 import { validateGroupForm } from '@domain/utils/validateGroupForm';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Role, WeekDays } from "@domain/enums";
+import { Validate } from "@domain/utils";
 
 export default function GroupDetails() {
     const [group, setGroup] = useState<Group>(new Group());
@@ -31,14 +31,14 @@ export default function GroupDetails() {
     };
 
     function handleAddMemberField() {
-        setMembersInputs([...membersInputs, EMPTY]); 
+        setMembersInputs([...membersInputs, EMPTY]);
     };
 
     function handleRemoveChildField(index: number) {
         setMembersInputs(membersInputs.filter((_, i) => i !== index));
     };
 
-    async function fetchLeaders(): Promise<void>  {
+    async function fetchLeaders(): Promise<void> {
         const response = await findAllMembers();
         setLeaders(response.filter((it) => it.role === Role.LEADER));
     };
@@ -68,7 +68,7 @@ export default function GroupDetails() {
         e.preventDefault();
         if (!validateGroupForm({ group, setErrors })) return;
 
-        const updatedGroup = Group.fromJson({...group });
+        const updatedGroup = Group.fromJson({ ...group });
         updatedGroup.weekDay = day;
         updatedGroup.leaders = selectLeader;
 
@@ -83,7 +83,7 @@ export default function GroupDetails() {
         fetchMembers();
         fetchLeaders();
         if (cepData) {
-            validateCEP({ cepData: cepData, setData: setGroup })
+            Validate.CEP({ cepData: cepData, setData: setGroup, data: Group })
         }
     }, [cepData]);
 
@@ -97,11 +97,12 @@ export default function GroupDetails() {
                         <TextField
                             label="Nome do Grupo"
                             value={group.name}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("name", e.target.value.toUpperCase())
                             }
                             fullWidth
-                            helperText={errors.name}
+                            error={!!errors.nome}
+                            helperText={errors.nome}
                             required
                         />
                     </Box>
@@ -141,9 +142,11 @@ export default function GroupDetails() {
                             onBlur={(e) => checkCEP({ it: e.target.value, setCepData })}
                             value={group.zipCode}
 
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("zipCode", e.target.value)
                             }
+                            error={!!errors.zipCode}
+                            helperText={errors.zipCode}
                             fullWidth
                             required
                         />
@@ -153,7 +156,7 @@ export default function GroupDetails() {
                             label="Rua"
                             value={cepData?.logradouro.toUpperCase()}
                             InputLabelProps={{ shrink: true }}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("street", e.target.value.toUpperCase())
                             }
                             fullWidth
@@ -166,7 +169,7 @@ export default function GroupDetails() {
                             value={group.houseNumber ?? EMPTY}
                             error={!!errors.houseNumber}
                             helperText={errors.houseNumber}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("houseNumber", e.target.value.toUpperCase())
                             }
                             fullWidth
@@ -178,7 +181,7 @@ export default function GroupDetails() {
                             label="Bairro"
                             value={cepData?.bairro.toUpperCase()}
                             InputLabelProps={{ shrink: true }}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("neighborhood", e.target.value.toUpperCase())
                             }
                             fullWidth
@@ -189,7 +192,7 @@ export default function GroupDetails() {
                         <TextField
                             label="Cidade"
                             value={cepData?.localidade.toUpperCase()}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("city", e.target.value.toUpperCase())
                             }
                             InputLabelProps={{ shrink: true }}
@@ -201,14 +204,14 @@ export default function GroupDetails() {
                         <TextField
                             label="Estado"
                             value={cepData?.uf.toUpperCase()}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("state", e.target.value.toUpperCase())
                             }
                             InputLabelProps={{ shrink: true }}
                             fullWidth
                             required
                         />
-                    </Box>                        
+                    </Box>
                     <h3>Membros do Grupo</h3>
                     {membersInputs.map((member, index) => (
                         <Box key={index} className='boxAutoComplete'>
@@ -225,7 +228,7 @@ export default function GroupDetails() {
                                     <TextField
                                         {...params}
                                         label={`Membro ${index + 1}`}
-                                        onChange={(e) => 
+                                        onChange={(e) =>
                                             handleMemberChange(index, e.target.value.toUpperCase())
                                         }
                                         fullWidth
@@ -244,14 +247,14 @@ export default function GroupDetails() {
                                 }}
                                 noOptionsText="Nenhum membro encontrado"
                             />
-                                <Button 
-                                    variant="outlined" 
-                                    onClick={() => handleRemoveChildField(index)} 
-                                    color="secondary"
-                                    style={{ marginLeft: '10px' }}
-                                >
-                                    X
-                                </Button>
+                            <Button
+                                variant="outlined"
+                                onClick={() => handleRemoveChildField(index)}
+                                color="secondary"
+                                style={{ marginLeft: '10px' }}
+                            >
+                                X
+                            </Button>
                         </Box>
                     ))}
                     <Box mb={2}>
@@ -259,11 +262,11 @@ export default function GroupDetails() {
                             Adicionar Membro
                         </Button>
                     </Box>
-                    <Button type="submit" variant="contained" color="primary" fullWidth> 
+                    <Button type="submit" variant="contained" color="primary" fullWidth>
                         Salvar Grupo
                     </Button>
                 </form>
-            </Container>   
+            </Container>
         </>
     );
 }

@@ -39,7 +39,6 @@ export default function UserDetails() {
         try {
             const docRef = doc(db, "invites", token);
             const tokenDoc = await getDoc(docRef);
-            console.log(tokenDoc)
 
             if (tokenDoc.exists()) {
                 const inviteData = tokenDoc.data();

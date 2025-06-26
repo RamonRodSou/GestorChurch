@@ -6,4 +6,7 @@ export * from './group';
 export * from './interface';
 export * from './utils';
 export * from './GenericCrud';
+export * from './validate';
+
+
 

@@ -2,9 +2,8 @@ export * from './EnsuredSummary';
 export * from './checkCEP';
 export * from './dateUtils';
 export * from './string-utils';
-export * from './validateCEP';
 export * from './validateGroupForm';
-export * from './validateMemberForm';
+export * from '../validate/Validate';
 export * from './whatszappAPI';
 export * from './fetch';
 export * from './filterEntities'

@@ -19,7 +19,6 @@ export async function memberAdd(member: Member) {
         if (member.groupId != null) await addMemberToGroup(member, entity);
 
         if (member?.spouse?.id != null) await updateSpouseReferences(member, member.spouse.id);
-        console.log('Id do espooso', member?.spouse?.id)
 
     } catch (error) {
         alert('Erro ao adicionar membro: ' + error);

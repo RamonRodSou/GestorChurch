@@ -71,7 +71,7 @@ export default function GroupData() {
                                     <TableRow key={it.id} className='data-table'>
                                         <TableCell className='data-text'>{it.name}</TableCell>
                                         <TableCell className='data-text'>
-                                            {it.leaders.map(it => it.name.split(" ")[0]).join(" / ")}
+                                            {it?.leaders?.map(it => it?.name.split(" ")[0]).join(" / ")}
                                         </TableCell>
                                         <TableCell className='data-text'>
                                             <IconButton onClick={() => handleOpenDetails(it)}>

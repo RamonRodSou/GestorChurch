@@ -17,15 +17,11 @@ export async function groupAdd(group: Group) {
             state: group.state,
             zipCode: group.zipCode,
             neighborhood: group.neighborhood,
-            leaders: group.leaders.map((it) => 
-                typeof it === "string"
-                ? it
-                : it?.toJSON?.() ?? null
+            leaders: group.leaders.map((it) =>
+                typeof it === "string" ? it : { id: it.id, name: it.name }
             ),
-            members: group.leaders.map((it) => 
-                typeof it === "string"
-                ? it
-                : it?.toJSON?.() ?? null
+            members: group.leaders.map((it) =>
+                typeof it === "string" ? it : { id: it.id, name: it.name }
             ),
             isActive: group.isActive,
             createdAt: group.createdAt,
