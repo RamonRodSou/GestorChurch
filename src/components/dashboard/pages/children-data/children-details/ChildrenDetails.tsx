@@ -16,6 +16,7 @@ import { findAllMembers } from "@service/MemberService";
 import { childAdd, childUpdate, findChildToById } from "@service/ChildrenService";
 import { AgeGroup } from "@domain/enums/AgeGroup";
 import { ValidationForm, visitorChiildValidate } from "@domain/validate";
+import { activeFilter } from "@domain/utils";
 
 export default function ChildDetails() {
     const [data, setData] = useState<Child>(new Child());
@@ -34,6 +35,8 @@ export default function ChildDetails() {
     const { clearCredentials } = useCredentials();
 
     const selectedGroup = groups.find(group => group.id === data.groupId) ?? null;
+
+    const activeEntities = activeFilter(allParent)
 
     function navToChild() {
         navigate(`/dashboard/${childId}/children`, {
@@ -95,6 +98,7 @@ export default function ChildDetails() {
 
     async function handleSubmit(e: React.FormEvent): Promise<void> {
         e.preventDefault();
+
         if (!ValidationForm({ data: data, setErrors, entity: visitorChiildValidate() })) return;
 
         const base = {
@@ -116,6 +120,7 @@ export default function ChildDetails() {
             setData(new Child());
             setParentInputs([]);
         }
+
         navToChild();
     }
 
@@ -371,14 +376,14 @@ export default function ChildDetails() {
                     </Box>
                     <Box mb={2}>
                         <h3>Família</h3>
-                        {parentInputs.map((child, index) => (
+                        {parentInputs.map((it, index) => (
                             <Box key={index} className='boxAutoComplete'>
                                 <Autocomplete
                                     freeSolo
                                     className='autoComplete'
-                                    value={child}
+                                    value={it}
                                     onChange={(_, newValue) => handleParentChange(index, newValue ?? EMPTY)}
-                                    options={allParent}
+                                    options={activeEntities}
                                     getOptionLabel={(option) =>
                                         typeof option === 'string' ? option.toUpperCase() : option.name.toUpperCase()
                                     }

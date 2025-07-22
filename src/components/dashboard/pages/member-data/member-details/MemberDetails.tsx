@@ -17,7 +17,7 @@ import { useCredentials } from '@context/CredentialsContext';
 import { GroupSummary } from "@domain/group";
 import { fetchChildrensSummary, fetchGroupsSummary, fetchMembersSummary } from "@domain/utils/fetch";
 import InputSelect from "@components/input-select/inputSelect";
-import { Validate } from "@domain/utils";
+import { activeFilter, Validate } from "@domain/utils";
 import { ValidationForm } from "@domain/validate/validateForm";
 import { memberValidate } from "@domain/validate/validateEntities";
 
@@ -34,11 +34,17 @@ export default function MemberDetails() {
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [groups, setGroups] = useState<GroupSummary[]>([]);
     const [isEditing, setIsEditing] = useState<boolean>(false);
-    const isEditOrNew = isEditing ? `Editar membro: ${member.name}` : 'Novo Membro'
+
+    const isEditOrNew = isEditing ? `Editar membro: ${member.name}` : 'Novo Membro';
+
+    const activeMembers = activeFilter(allMembers);
+    const activeChildrens = activeFilter(allChidrens);
+    const activeGroups = activeFilter(groups);
+
     const { memberId } = useParams();
     const { userId } = useParams();
     const { clearCredentials } = useCredentials();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     function navToGroup() {
         navigate(`/dashboard/${userId}/member`, {
@@ -316,7 +322,7 @@ export default function MemberDetails() {
                                     return Member.fromJson(updatedMember);
                                 });
                             }}
-                            options={groups}
+                            options={activeGroups}
                             getOptionLabel={(option) => option.name}
                             renderInput={(params) => (
                                 <TextField
@@ -400,7 +406,7 @@ export default function MemberDetails() {
                                         const spouse = ensureMemberSummary(newValue);
                                         handleChange("spouse", spouse);
                                     }}
-                                    options={allMembers}
+                                    options={activeMembers}
                                     getOptionLabel={(option) =>
                                         typeof option === 'string' ? option : option.name
                                     }
@@ -429,7 +435,7 @@ export default function MemberDetails() {
                                     freeSolo
                                     value={child}
                                     onChange={(_, newValue) => handleChildrenChange(index, newValue ?? EMPTY)}
-                                    options={allChidrens}
+                                    options={activeChildrens}
                                     getOptionLabel={(option) =>
                                         typeof option === 'string' ? option.toUpperCase() : option.name.toUpperCase()
                                     }

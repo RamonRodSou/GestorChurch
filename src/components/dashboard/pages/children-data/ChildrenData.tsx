@@ -18,7 +18,7 @@ import Search from '@components/search/Search';
 import { Child } from '@domain/user';
 import { findGroupSummaryToById } from "@service/GroupService";
 import { GroupSummary } from "@domain/group";
-import { filterAndPaginate, NOT_REGISTER, paginatedActive, rowsPerPage, sendWhatsappMessage, whatAppMessageChild } from "@domain/utils";
+import { filterAndPaginate, NOT_REGISTER, activeFilter, rowsPerPage, sendWhatsappMessage, whatAppMessageChild } from "@domain/utils";
 import Layout from "@components/layout/Layout";
 import { findAllChildrens } from "@service/ChildrenService";
 import ChildrenDataModal from "./children-data-modal/ChildrenDataModa";
@@ -38,8 +38,8 @@ export default function ChildrenData() {
         return item.ageGroup === AgeGroup[filter.toUpperCase() as keyof typeof AgeGroup];
     });
 
-    const activeEntities = paginatedActive(filteredChild)
-    const entities = filterAndPaginate({ data: activeEntities, page })
+    const activeEntities = activeFilter(filteredChild)
+    const entities = filterAndPaginate({ entity: activeEntities, page })
 
     const roleEntries = Object.entries(AgeGroup)
 

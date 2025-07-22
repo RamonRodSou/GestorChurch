@@ -17,7 +17,7 @@ import { Group } from "@domain/group/Group";
 import { findAllGroups } from "@service/GroupService";
 import GroupDataModal from "./group-data-modal/groupDataModa";
 import Layout from "@components/layout/Layout";
-import { filterAndPaginate, paginatedActive, rowsPerPage } from "@domain/utils";
+import { filterAndPaginate, activeFilter, rowsPerPage } from "@domain/utils";
 
 export default function GroupData() {
     const [data, setData] = useState<Group[]>([]);
@@ -26,8 +26,8 @@ export default function GroupData() {
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
     const [page, setPage] = useState<number>(0);
 
-    const activeEntities = paginatedActive(filtered)
-    const entities = filterAndPaginate({ data: activeEntities, page })
+    const activeEntities = activeFilter(filtered)
+    const entities = filterAndPaginate({ entity: activeEntities, page })
 
     function handleOpenDetails(g: Group) {
         setSelectedGroup(g);

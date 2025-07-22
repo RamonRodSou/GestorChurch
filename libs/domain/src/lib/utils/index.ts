@@ -6,4 +6,4 @@ export * from './validateGroupForm';
 export * from '../validate/Validate';
 export * from './whatszappAPI';
 export * from './fetch';
-export * from './filterEntities'
+export * from './filterEntities';

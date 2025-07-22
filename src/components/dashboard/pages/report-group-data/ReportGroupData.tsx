@@ -9,7 +9,7 @@ import { findAllReportsGroup } from '@service/ReportGroupService';
 import { GroupSummary } from '@domain/group';
 import { findAllGroupsSummary, findGroupSummaryToById } from '@service/GroupService';
 import ReportGroupDataModal from './report-group-data-modal/ReportGroupDataModa';
-import { DateUtil, filterAndPaginate, paginatedActive } from '@domain/utils';
+import { DateUtil, filterAndPaginate, activeFilter } from '@domain/utils';
 
 export default function ReportGroupData() {
     const [_, setData] = useState<ReportGroup[]>([]);
@@ -55,8 +55,8 @@ export default function ReportGroupData() {
         }
     }
 
-    const activeEntities = paginatedActive(filtered)
-    const entities = filterAndPaginate({ data: activeEntities, page })
+    const activeEntities = activeFilter(filtered)
+    const entities = filterAndPaginate({ entity: activeEntities, page })
 
     useEffect(() => {
         if (location.state?.showSnackbar) {

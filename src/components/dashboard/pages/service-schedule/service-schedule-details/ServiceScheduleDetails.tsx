@@ -10,6 +10,7 @@ import { ChildSummary, MemberSummary } from "@domain/user";
 import { findAllMembers } from "@service/MemberService";
 import { findAllChildrens } from "@service/ChildrenService";
 import { scheduleAdd } from "@service/ScheduleService";
+import { activeFilter } from "@domain/utils";
 
 export default function ServiceScheduleDetails() {
     const navigate = useNavigate();
@@ -23,6 +24,9 @@ export default function ServiceScheduleDetails() {
     const [childrens, setChildrens] = useState<ChildSummary[]>([]);
     const [selectedMembers, setSelectedMembers] = useState<MemberSummary[]>([]);
     const [selectedChildrens, setSelectedChildrens] = useState<ChildSummary[]>([]);
+
+    const activeMembers = activeFilter(members);
+    const activeChildrens = activeFilter(childrens);
 
     const { userId } = useParams();
 
@@ -144,7 +148,7 @@ export default function ServiceScheduleDetails() {
                     </Box>
                     <Box mb={2}>
                         <Autocomplete
-                            options={members}
+                            options={activeMembers}
                             getOptionLabel={(option) => option.name}
                             value={selectedLeader}
                             onChange={(_, newValue) => setSelectedLeader(newValue)}
@@ -156,7 +160,7 @@ export default function ServiceScheduleDetails() {
                     <Box mb={2}>
                         <Autocomplete
                             multiple
-                            options={members}
+                            options={activeMembers}
                             getOptionLabel={(option) => option.name}
                             value={selectedMembers}
                             onChange={(_, newValue) => setSelectedMembers(newValue)}
@@ -168,7 +172,7 @@ export default function ServiceScheduleDetails() {
                     <Box mb={2}>
                         <Autocomplete
                             multiple
-                            options={childrens}
+                            options={activeChildrens}
                             getOptionLabel={(option) => option.name}
                             value={selectedChildrens}
                             onChange={(_, newValue) => setSelectedChildrens(newValue)}

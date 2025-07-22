@@ -7,8 +7,8 @@ import { ILocation } from '@domain/interface/ILocation';
 import bcrypt from 'bcryptjs';
 import { ChildSummary } from '../child/Child';
 
-export class Member extends User implements ILocation{
-  constructor(
+export class Member extends User implements ILocation {
+    constructor(
         public readonly id: string = uuidv4(),
         public name: string = EMPTY,
         public birthdate: Date = new Date(),
@@ -17,11 +17,11 @@ export class Member extends User implements ILocation{
         public phone: string = EMPTY,
         public groupId: string | null = null,
         public street: string = EMPTY,
-		public houseNumber: string = EMPTY,
-		public city: string = EMPTY,
-		public state: string = EMPTY,
-		public zipCode: string = EMPTY,
-		public neighborhood: string = EMPTY,
+        public houseNumber: string = EMPTY,
+        public city: string = EMPTY,
+        public state: string = EMPTY,
+        public zipCode: string = EMPTY,
+        public neighborhood: string = EMPTY,
         public batism: Batism = new Batism(),
         public civilStatus: CivilStatus = CivilStatus.SINGLE,
         public spouse: MemberSummary | null = null,
@@ -29,10 +29,10 @@ export class Member extends User implements ILocation{
         public role: Role = Role.MEMBER,
         public isActive: boolean = true,
         public isImageAuthorized: boolean = true,
-		public createdAt: string = new Date().toISOString(),
+        public createdAt: string = new Date().toISOString(),
         password: string = 'IgrejaIAF'
     ) {
-		super(id, name, phone, password, createdAt);
+        super(id, name, phone, password, createdAt);
     }
 
     static fromJson(json: any): Member {
@@ -48,7 +48,7 @@ export class Member extends User implements ILocation{
             json.houseNumber,
             json.city,
             json.state,
-            json.zipCode, 
+            json.zipCode,
             json.neighborhood,
             json.batism,
             json.civilStatus,
@@ -60,7 +60,7 @@ export class Member extends User implements ILocation{
             json.createdAt
         );
     }
- 
+
     toJSON(): object {
         return {
             id: this.id,
@@ -89,7 +89,7 @@ export class Member extends User implements ILocation{
 
     async getPasswordHash(): Promise<string> {
         return bcrypt.hash(this.password, 10);
-    }  
+    }
 }
 
 export class MemberSummary {
@@ -98,7 +98,7 @@ export class MemberSummary {
         public name: string = EMPTY,
         public email: string = EMPTY,
         public phone: string = EMPTY,
-
+        public isActive: boolean = true,
     ) { }
 
     static fromJson(json: any): MemberSummary {
@@ -107,6 +107,7 @@ export class MemberSummary {
             json.name ?? EMPTY,
             json.email ?? null,
             json.phone ?? null,
+            json.isActive,
         );
     }
 
@@ -116,6 +117,8 @@ export class MemberSummary {
             name: this.name,
             email: this.email,
             phone: this.phone,
+            isActive: this.isActive,
+
         };
-    }  
+    }
 }

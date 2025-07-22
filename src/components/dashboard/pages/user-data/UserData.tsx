@@ -16,7 +16,7 @@ export default function UserData() {
         throw new Error(it + "Function not implemented.");
     }
 
-    const entities = filterAndPaginate({ data: filtered, page })
+    const entities = filterAndPaginate({ entity: filtered, page })
 
     useEffect(() => {
         findAllAdmins()

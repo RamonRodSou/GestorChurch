@@ -9,6 +9,7 @@ import { VisitorGroup } from '@domain/user/visitor/VisitorGroup';
 import { GroupSummary } from '@domain/group';
 import { findAllGroupsSummary } from '@service/GroupService';
 import { ValidationForm, visitorGroupValidate } from '@domain/validate';
+import { activeFilter } from '@domain/utils';
 
 export default function VisitorGroupDetails() {
     const { visitorId, userId } = useParams();
@@ -19,7 +20,9 @@ export default function VisitorGroupDetails() {
     const [groups, setGroups] = useState<GroupSummary[]>([]);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-    const selectedGroup = groups.find(group => group.id === data.groupId) ?? null;
+    const activeGroups = activeFilter(groups);
+
+    const selectedGroup = activeGroups.find(group => group.id === data.groupId) ?? null;
 
     const isEditOrNew = isEditing ? `Editar visitante: ${data.name}` : 'Novo Visitante'
 
@@ -95,7 +98,7 @@ export default function VisitorGroupDetails() {
                                     return VisitorGroup.fromJson(update);
                                 });
                             }}
-                            options={groups}
+                            options={activeGroups}
                             getOptionLabel={(option) => option.name}
                             renderInput={(params) => (
                                 <TextField

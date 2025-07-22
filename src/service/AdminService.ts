@@ -5,7 +5,7 @@ import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from 'uuid';
 
 export async function adminAdd(admin: AdminSummary, passwordHash: string) {
-    try {  
+    try {
         const userCredential = await createUserWithEmailAndPassword(auth, admin.email, passwordHash);
         const createdUser = userCredential.user;
 
@@ -30,13 +30,13 @@ export async function invited(user: AdminSummary, url: string) {
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
 
     await setDoc(doc(db, 'invites', token), {
-            email: user.email,
-            permission: user.permission,
-            createdAt: new Date(),
-            expiresAt: expiresAt
+        email: user.email,
+        permission: user.permission,
+        createdAt: new Date(),
+        expiresAt: expiresAt
     });
 
-    return `${url}/new-user?token=${token}`;
+    return `${url}/gestor/new-user?token=${token}`;
 }
 
 export async function findAdminToById(id: string): Promise<AdminSummary | null> {

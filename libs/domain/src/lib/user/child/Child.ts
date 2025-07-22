@@ -8,7 +8,7 @@ import { MemberSummary } from '../member/Member';
 import { AgeGroup } from '@domain/enums/AgeGroup';
 
 export class Child extends User {
-  constructor(
+    constructor(
         public readonly id: string = uuidv4(),
         public name: string = EMPTY,
         public birthdate: Date = new Date(),
@@ -20,7 +20,7 @@ export class Child extends User {
         public role: ChildRole = ChildRole.EMPTY,
         public ageGroup: AgeGroup = AgeGroup.CHILD,
         public medication: string | null = null,
-        public specialNeed : string | null = null,
+        public specialNeed: string | null = null,
         public allergy: string | null = null,
         public isImageAuthorized: boolean = true,
         public isActive: boolean = true,
@@ -50,7 +50,7 @@ export class Child extends User {
             json.createdAt
         );
     }
- 
+
     toJSON(): object {
         return {
             id: this.id,
@@ -74,7 +74,7 @@ export class Child extends User {
 
     async getPasswordHash(): Promise<string> {
         return bcrypt.hash(this.password, 10);
-    }  
+    }
 }
 
 export class ChildSummary {
@@ -82,6 +82,7 @@ export class ChildSummary {
         public readonly id: string = uuidv4(),
         public name: string = EMPTY,
         public phone: string = EMPTY,
+        public isActive: boolean = true,
     ) { }
 
     static fromJson(json: any): ChildSummary {
@@ -89,6 +90,7 @@ export class ChildSummary {
             json.id,
             json.name ?? EMPTY,
             json.phone ?? null,
+            json.isActive,
         );
     }
 
@@ -97,6 +99,7 @@ export class ChildSummary {
             userId: this.id,
             name: this.name,
             phone: this.phone,
+            isActive: this.isActive,
         };
-    }  
+    }
 }

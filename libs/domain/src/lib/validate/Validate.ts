@@ -3,7 +3,6 @@ import { maxLength, minLength, required } from "./validateForm";
 import { cpf as cpfValidator } from 'cpf-cnpj-validator';
 import ICepData from "@domain/interface/ICepData";
 import { EMPTY } from "@domain/utils";
-import { Group } from "@domain/group";
 
 interface Props<T> {
     setData: React.Dispatch<React.SetStateAction<ILocation | any>>,

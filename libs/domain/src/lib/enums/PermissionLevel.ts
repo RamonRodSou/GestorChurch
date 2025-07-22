@@ -3,7 +3,7 @@ export enum PermissionLevel {
     OBREIRO = 2,
     LIDER = 3,
     LIDER_SUPERVISOR = 4,
-    TESOUREIRO = 5,
+    ADMINISTRACAO = 5,
     GESTOR = 6,
     ADMIN = 10
 }

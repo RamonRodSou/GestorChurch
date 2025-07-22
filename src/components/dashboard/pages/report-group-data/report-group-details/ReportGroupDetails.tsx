@@ -4,6 +4,7 @@ import { GroupSummary } from "@domain/group";
 import { ReportGroup } from "@domain/report";
 import { ChildSummary, MemberSummary } from "@domain/user";
 import { VisitorGroup } from "@domain/user/visitor/VisitorGroup";
+import { activeFilter } from "@domain/utils";
 import { Autocomplete, Box, Button, Container, TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { findAllChildrens } from "@service/ChildrenService";
@@ -27,46 +28,51 @@ export default function ReportGroupDetails() {
     const [selectedChildrens, setSelectedChildrens] = useState<ChildSummary[]>([]);
     const [selectedVisitors, setSelectedVisitors] = useState<VisitorGroup[]>([]);
 
+    const activeMembers = activeFilter(members);
+    const activeChildrens = activeFilter(childrens);
+    const activeVisitor = activeFilter(visitors);
+    const activeGroups = activeFilter(groups);
+
     const { userId } = useParams();
     const navigate = useNavigate();
 
     function handleChange(field: keyof ReportGroup, value: any) {
         setReport(prev => ReportGroup.fromJson({ ...prev, [field]: value }));
     };
-    
+
     function navToReport() {
         navigate(`/dashboard/${userId}/home`, {
             state: { showSnackbar: true }
-        }); 
+        });
     }
 
-    async function fetchGroups(): Promise<void>  {
-        const response = await findAllGroups(); 
+    async function fetchGroups(): Promise<void> {
+        const response = await findAllGroups();
         setGroups(response)
     };
 
-    async function fetchMembers(): Promise<void>  {
-        const response = await findAllMembers(); 
+    async function fetchMembers(): Promise<void> {
+        const response = await findAllMembers();
         setMembers(response)
     };
 
-    async function fetchChildrens(): Promise<void>  {
-        const response = await findAllChildrens(); 
+    async function fetchChildrens(): Promise<void> {
+        const response = await findAllChildrens();
         setChildrens(response)
     };
 
-    async function fetchVisitors(): Promise<void>  {
-        const response = await findAllVisitorsGroup();  
+    async function fetchVisitors(): Promise<void> {
+        const response = await findAllVisitorsGroup();
         setVisitors(response)
     };
-    
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         report.weekDay = day;
         report.childrens = selectedChildrens;
         report.members = selectedMembers;
         report.visitors = selectedVisitors;
-        
+
         await reportGroupAdd(report);
         setReport(new ReportGroup());
         navToReport();
@@ -90,15 +96,15 @@ export default function ReportGroupDetails() {
                     <h2>Novo Relatório do GC</h2>
                     <Box mb={2}>
                         <Autocomplete
-                            value={selectedGroup} 
+                            value={selectedGroup}
                             onChange={(_, newValue) => {
                                 setReport(prev => {
                                     const update = { ...prev, groupId: newValue?.id ?? null };
                                     return ReportGroup.fromJson(update);
                                 });
-                                setSelectedGroup(newValue); 
+                                setSelectedGroup(newValue);
                             }}
-                            options={groups}
+                            options={activeGroups}
                             getOptionLabel={(option) => option.name}
                             renderInput={(params) => (
                                 <TextField
@@ -108,12 +114,12 @@ export default function ReportGroupDetails() {
                                     required
                                 />
                             )}
-                            isOptionEqualToValue={(option, value) => option.id === value?.id} 
+                            isOptionEqualToValue={(option, value) => option.id === value?.id}
                             filterOptions={(options, state) => {
                                 return options.filter(option =>
                                     option.name.toLowerCase().includes(state.inputValue.toLowerCase())
                                 );
-                            }} 
+                            }}
                             noOptionsText="Nenhum grupo encontrado"
                         />
                     </Box>
@@ -139,7 +145,7 @@ export default function ReportGroupDetails() {
                             type="time"
                             label="Horário do GC: "
                             value={report.time}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("time", e.target.value)
                             }
                             fullWidth
@@ -149,16 +155,16 @@ export default function ReportGroupDetails() {
                     <Box mb={2}>
                         <DatePicker
                             label="Data do GC"
-                              value={report.date ? dayjs(report.date) : null}
-                                onChange={(date) => {
-                                    handleChange("date", date?.toDate() ?? null);
-                                }}
+                            value={report.date ? dayjs(report.date) : null}
+                            onChange={(date) => {
+                                handleChange("date", date?.toDate() ?? null);
+                            }}
                             format="DD/MM/YYYY"
                             slotProps={{
                                 textField: {
                                     fullWidth: true,
                                 },
-                            }}                        
+                            }}
                         />
                     </Box>
                     <Box mb={2}>
@@ -166,7 +172,7 @@ export default function ReportGroupDetails() {
                             type="number"
                             label="Valor da Oferta: "
                             value={report.value ?? 0}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("value", (e.target.value))
                             }
                             fullWidth
@@ -176,7 +182,7 @@ export default function ReportGroupDetails() {
                     <Box mb={2}>
                         <Autocomplete
                             multiple
-                            options={members}
+                            options={activeMembers}
                             getOptionLabel={(option) => option.name}
                             value={selectedMembers}
                             onChange={(_, newValue) => setSelectedMembers(newValue)}
@@ -188,7 +194,7 @@ export default function ReportGroupDetails() {
                     <Box mb={2}>
                         <Autocomplete
                             multiple
-                            options={childrens}
+                            options={activeChildrens}
                             getOptionLabel={(option) => option.name}
                             value={selectedChildrens}
                             onChange={(_, newValue) => setSelectedChildrens(newValue)}
@@ -200,7 +206,7 @@ export default function ReportGroupDetails() {
                     <Box mb={2}>
                         <Autocomplete
                             multiple
-                            options={visitors}
+                            options={activeVisitor}
                             getOptionLabel={(option) => option.name}
                             value={selectedVisitors}
                             onChange={(_, newValue) => setSelectedVisitors(newValue)}
@@ -208,13 +214,13 @@ export default function ReportGroupDetails() {
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             fullWidth
                         />
-                    </Box> 
+                    </Box>
                     <Box mb={2}>
                         <TextField
                             type="text"
                             label="Observção: "
                             value={report.observation ?? null}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("observation", e.target.value.toUpperCase())
                             }
                             fullWidth
@@ -226,7 +232,7 @@ export default function ReportGroupDetails() {
                         </Button>
                     </Box>
                 </form>
-            </Container>      
+            </Container>
         </>
     )
 }

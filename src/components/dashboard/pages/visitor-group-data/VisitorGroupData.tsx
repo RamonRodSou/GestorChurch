@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from 'react';
 import Search from '@components/search/Search';
-import { EMPTY, filterAndPaginate, paginatedActive, rowsPerPage, sendWhatsappMessage, whatAppMessageMember } from '@domain/utils';
+import { EMPTY, filterAndPaginate, activeFilter, rowsPerPage, sendWhatsappMessage, whatAppMessageMember } from '@domain/utils';
 import Layout from '@components/layout/Layout';
 import { VisitorGroup } from "@domain/user/visitor/VisitorGroup";
 import { findAllVisitorsGroup } from "@service/VisitorGroupService";
@@ -25,8 +25,8 @@ export default function VisitorGroupData() {
     const [visitorGroupMap, setVisitorGroupMap] = useState<Map<string, GroupSummary>>(new Map());
     const [page, setPage] = useState<number>(0);
 
-    const activeEntities = paginatedActive(filtered)
-    const entities = filterAndPaginate({ data: activeEntities, page })
+    const activeEntities = activeFilter(filtered)
+    const entities = filterAndPaginate({ entity: activeEntities, page })
 
     function organizedGcName(a: VisitorGroup, b: VisitorGroup) {
         const nameA = visitorGroupMap.get(a.groupId || EMPTY)?.name ?? 'Sem Grupo';

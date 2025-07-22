@@ -20,7 +20,7 @@ import VisitorDataModal from './visitor-data-modal/VisitorDataModal';
 import Layout from '@components/layout/Layout';
 import dayjs from "dayjs";
 import { rowsPerPage, sendWhatsappMessage, whatAppMessageVisitor } from "@domain/utils";
-import { filterAndPaginate, paginatedActive } from "@domain/utils/filterEntities";
+import { filterAndPaginate, activeFilter } from "@domain/utils/filterEntities";
 
 export default function VisitorData() {
     const [data, setData] = useState<Visitor[]>([]);
@@ -29,8 +29,8 @@ export default function VisitorData() {
     const [selectedVisitor, setSelectedVisitor] = useState<Visitor | null>(null);
     const [page, setPage] = useState<number>(0);
 
-    const activeEntities = paginatedActive(filtered)
-    const entities = filterAndPaginate({ data: activeEntities, page })
+    const activeEntities = activeFilter(filtered)
+    const entities = filterAndPaginate({ entity: activeEntities, page })
 
     const { isMobile } = useContext(ManagerContext);
 

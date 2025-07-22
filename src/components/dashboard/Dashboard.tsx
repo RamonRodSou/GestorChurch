@@ -21,7 +21,7 @@ import { AuthContext } from "@context/AuthContext";
 import { ManagerContext } from "@context/ManagerContext";
 import { Admin } from "@domain/user";
 import { PermissionContext } from "@context/PermissionContext";
-import logo from "@assets/logo.webp";
+import logo from "@assets/logo-iaf.webp";
 import { signOut } from "firebase/auth";
 import { auth } from "@service/firebase";
 import { sendWhatsappMessage, whatAppMessageSupport } from "@domain/utils";

@@ -23,7 +23,7 @@ import { GroupSummary } from "@domain/group";
 import { rowsPerPage, sendWhatsappMessage, whatAppMessageMember } from "@domain/utils";
 import { Role } from "@domain/enums";
 import Layout from "@components/layout/Layout";
-import { filterAndPaginate, paginatedActive } from "@domain/utils/filterEntities";
+import { filterAndPaginate, activeFilter } from "@domain/utils/filterEntities";
 
 export default function MemberData() {
     const [data, setData] = useState<Member[]>([]);
@@ -39,8 +39,8 @@ export default function MemberData() {
         return item.role === Role[filter.toUpperCase() as keyof typeof Role];
     });
 
-    const activeEntities = paginatedActive(filteredMembers)
-    const entities = filterAndPaginate({ data: activeEntities, page })
+    const activeEntities = activeFilter(filteredMembers)
+    const entities = filterAndPaginate({ entity: activeEntities, page })
 
     const roleEntries = Object.entries(Role)
 
