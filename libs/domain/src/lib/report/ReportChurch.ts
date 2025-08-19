@@ -6,7 +6,7 @@ export class ReportChurch {
         public readonly id: string = uuidv4(),
         public worship: WorshipType = WorshipType.SUNDAY,
         public date: Date = new Date(),
-        public timePeriod: TimePeriod | null = null,
+        public timePeriod: TimePeriod = TimePeriod.EVENING,
         public totalPeople: number = 0,
         public totalChildren: number = 0,
         public totalVolunteers: number = 0,
@@ -18,14 +18,14 @@ export class ReportChurch {
         public peopleBaptizedThisMonth: number = 0,
         public observation: string | null = null,
         public isActive: boolean = true,
-        public createdAt: string = new Date().toISOString() 
+        public createdAt: string = new Date().toISOString()
     ) { }
 
     static fromJson(json: any): ReportChurch {
         return new ReportChurch(
             json.id,
             json.worship,
-            json.date,
+            new Date(json.date),
             json.timePeriod,
             json.totalPeople,
             json.totalChildren,
@@ -48,7 +48,7 @@ export class ReportChurch {
             worship: this.worship,
             date: this.date.toISOString(),
             timePeriod: this.timePeriod,
-            totalPeople: this.timePeriod,
+            totalPeople: this.totalPeople,
             totalChildren: this.totalChildren,
             totalVolunteers: this.totalVolunteers,
             decisionsForJesus: this.decisionsForJesus,

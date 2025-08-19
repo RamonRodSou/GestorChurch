@@ -1,46 +1,81 @@
 import BackButton from "@components/back-button/BackButton";
+import { Audit } from "@domain/audit";
 import { TimePeriod, WorshipType } from "@domain/enums";
 import { ReportChurch } from "@domain/report";
 import { Box, Button, Container, TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
-import { reportChurchAdd } from "@service/ReportChurchService";
+import { auditAdd } from "@service/AuditService";
+import { findReportChurchToById, reportChurchAdd, reportUpdate } from "@service/ReportChurchService";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function ReportChurchDetails() {
     const [report, setReport] = useState<ReportChurch>(new ReportChurch());
-    const [worship, setWorship ] = useState<WorshipType>(WorshipType.SUNDAY);
-    const [timePeriod, setTimePeriod ] = useState<TimePeriod>(TimePeriod.EVENING);
+    const [worship, setWorship] = useState<WorshipType>(WorshipType.SUNDAY);
+    const [timePeriod, setTimePeriod] = useState<TimePeriod>(TimePeriod.EVENING);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
 
+    const isEditOrNew = isEditing ? `Editar Relatório de Culto: ${report.worship}` : 'Novo Relatório de Culto';
+
+    const { reportId } = useParams();
     const { userId } = useParams();
     const navigate = useNavigate();
 
     function handleChange(field: keyof ReportChurch, value: any) {
         setReport(prev => ReportChurch.fromJson({ ...prev, [field]: value }));
     };
-    
+
     function navToReport() {
         navigate(`/dashboard/${userId}/report`, {
             state: { showSnackbar: true }
-        }); 
+        });
     }
-    
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         report.worship = worship;
         report.timePeriod = timePeriod;
-        await reportChurchAdd(report);
-        setReport(new ReportChurch());
+
+        if (isEditing) {
+            const update = ReportChurch.fromJson(report);
+            const audit = Audit.create(isEditOrNew, report.id);
+
+            await reportUpdate(report.id, update.toJSON());
+            await auditAdd(audit);
+        } else {
+            const audit = Audit.create(isEditOrNew, report.id);
+
+            await reportChurchAdd(report);
+            await auditAdd(audit)
+            setReport(new ReportChurch());
+        }
+
         navToReport();
     }
+
+    useEffect(() => {
+        async function load() {
+            if (reportId) {
+                const data = await findReportChurchToById(reportId);
+                const load = ReportChurch.fromJson(data);
+                setIsEditing(true);
+                setReport(load)
+                setWorship(load.worship)
+                setTimePeriod(load.timePeriod)
+            }
+        }
+        load();
+
+    }, [reportId]);
+
 
     return (
         <>
             <BackButton path={'report'} />
             <Container className='details-container'>
                 <form onSubmit={handleSubmit} className="details-form">
-                    <h2>Novo Relatório de Culto</h2>
+                    <h2>{isEditOrNew}</h2>
                     <Box mb={2}>
                         <TextField
                             select
@@ -78,16 +113,16 @@ export default function ReportChurchDetails() {
                     <Box mb={2}>
                         <DatePicker
                             label="Data do GC"
-                                value={report.date ? dayjs(report.date) : null}
-                                onChange={(date) => {
-                                    handleChange("date", date?.toDate() ?? null);
-                                }}
+                            value={report.date ? dayjs(report.date) : null}
+                            onChange={(date) => {
+                                handleChange("date", date?.toDate() ?? null);
+                            }}
                             format="DD/MM/YYYY"
                             slotProps={{
                                 textField: {
                                     fullWidth: true,
                                 },
-                            }}                        
+                            }}
                         />
                     </Box>
                     <Box mb={2}>
@@ -95,7 +130,7 @@ export default function ReportChurchDetails() {
                             type="number"
                             label="Quantidade de pessoas: "
                             value={report.totalPeople ?? 0}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("totalPeople", Number(e.target.value))
                             }
                             fullWidth
@@ -107,7 +142,7 @@ export default function ReportChurchDetails() {
                             type="number"
                             label="Qtd de crianças: "
                             value={report.totalChildren ?? 0}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("totalChildren", Number(e.target.value))
                             }
                             fullWidth
@@ -119,7 +154,7 @@ export default function ReportChurchDetails() {
                             type="number"
                             label="Qtd de voluntários: "
                             value={report.totalVolunteers ?? 0}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("totalVolunteers", Number(e.target.value))
                             }
                             fullWidth
@@ -131,7 +166,7 @@ export default function ReportChurchDetails() {
                             type="number"
                             label="Qtd de pessoas aceitaram Jesus: "
                             value={report.decisionsForJesus ?? 0}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("decisionsForJesus", Number(e.target.value))
                             }
                             fullWidth
@@ -143,7 +178,7 @@ export default function ReportChurchDetails() {
                             type="number"
                             label="Qtd nomes p/ batismo: "
                             value={report.baptismCandidates ?? 0}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("baptismCandidates", Number(e.target.value))
                             }
                             fullWidth
@@ -155,7 +190,7 @@ export default function ReportChurchDetails() {
                             type="number"
                             label="Qtd de pessoas, pela primeira vez: "
                             value={report.firstTimeVisitors ?? 0}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("firstTimeVisitors", Number(e.target.value))
                             }
                             fullWidth
@@ -167,7 +202,7 @@ export default function ReportChurchDetails() {
                             type="number"
                             label="Qtd de pessoas que voltaram: "
                             value={report.returningPeople ?? 0}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("returningPeople", Number(e.target.value))
                             }
                             fullWidth
@@ -179,7 +214,7 @@ export default function ReportChurchDetails() {
                             type="number"
                             label="Qtd de pessoas novos membros: "
                             value={report.newMembers ?? 0}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("newMembers", Number(e.target.value))
                             }
                             fullWidth
@@ -191,7 +226,7 @@ export default function ReportChurchDetails() {
                             type="number"
                             label="Qtd de pessoas que se batizaram no mês: "
                             value={report.peopleBaptizedThisMonth ?? 0}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("peopleBaptizedThisMonth", Number(e.target.value))
                             }
                             fullWidth
@@ -203,7 +238,7 @@ export default function ReportChurchDetails() {
                             type="text"
                             label="Observção: "
                             value={report.observation ?? null}
-                            onChange={(e) => 
+                            onChange={(e) =>
                                 handleChange("observation", e.target.value.toUpperCase())
                             }
                             fullWidth
@@ -215,7 +250,7 @@ export default function ReportChurchDetails() {
                         </Button>
                     </Box>
                 </form>
-            </Container>      
+            </Container>
         </>
     )
 }
