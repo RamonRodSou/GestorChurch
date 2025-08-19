@@ -31,6 +31,6 @@ export function visitorGroupValidate(): ValidationEntity<VisitorGroup> {
 export function visitorChiildValidate(): ValidationEntity<Child> {
     return {
         name: [required("Nome é obrigatório.")],
-        birthdate: [Validate.birthdateValidator(3)],
+        birthdate: [Validate.birthdateValidator(2)],
     };
 }
