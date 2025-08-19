@@ -13,14 +13,18 @@ export class ReportGroup {
         public members: MemberSummary[] = [],
         public childrens: ChildSummary[] = [],
         public visitors: VisitorGroup[] = [],
+        public leadersInTraining: MemberSummary[] = [],
+        public newPeople: number = 0,
+        public activePeople: number = 0,
+        public returningVisitors: number = 0,
+        public totalVisitors: number = 0,
         public value: number = 0,
         public observation: string | null = null,
-        public isActive: boolean = true, 
+        public isActive: boolean = true,
         public createdAt: string = new Date().toISOString()
     ) { }
 
     static fromJson(json: any): ReportGroup {
- 
         return new ReportGroup(
             json.id,
             json.groupId,
@@ -30,6 +34,11 @@ export class ReportGroup {
             json.members || [],
             json.childrens || [],
             json.visitors || [],
+            json.leadersInTraining || [],
+            json.newPeople,
+            json.activePeople,
+            json.returningVisitors,
+            json.totalVisitors,
             json.value,
             json.observation,
             json.isActive,
@@ -44,12 +53,18 @@ export class ReportGroup {
             weekDay: this.weekDay,
             time: this.time,
             date: this.date.toISOString(),
-            members: this.members, 
-            childrens: this.childrens, 
+            members: this.members,
+            childrens: this.childrens,
             visitors: this.visitors,
+            leadersInTraining: this.leadersInTraining,
+            newPeople: this.newPeople,
+            activePeople: this.activePeople,
+            returningVisitors: this.returningVisitors,
+            totalVisitors: this.totalVisitors,
+            value: this.value,
             observation: this.observation,
             isActive: this.isActive,
-            createdAt: this.createdAt,
+            createdAt: this.createdAt
         };
     }
 }
