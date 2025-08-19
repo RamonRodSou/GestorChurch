@@ -8,6 +8,8 @@ import { useState } from 'react';
 import { DateUtil, NOT_REGISTER, sendWhatsappMessage, whatAppMessageChild } from '@domain/utils';
 import { childUpdate } from '@service/ChildrenService';
 import { YesOrNot } from '@domain/enums';
+import { Audit } from '@domain/audit';
+import { auditAdd } from '@service/AuditService';
 
 interface ChildrenDataModalProps {
     open: boolean;
@@ -37,7 +39,9 @@ export default function ChildrenDataModal({ open, onClose, children, groupData }
 
     async function remove(children: Child) {
         children.isActive = false;
+        const audit = Audit.create('Menor de Idade foi Inativado.', children.id);
         await childUpdate(children.id, children);
+        await auditAdd(audit);
         setOpenData(false);
         onClose();
     }

@@ -17,6 +17,8 @@ import { childAdd, childUpdate, findChildToById } from "@service/ChildrenService
 import { AgeGroup } from "@domain/enums/AgeGroup";
 import { ValidationForm, visitorChiildValidate } from "@domain/validate";
 import { activeFilter } from "@domain/utils";
+import { Audit } from "@domain/audit";
+import { auditAdd } from "@service/AuditService";
 
 export default function ChildDetails() {
     const [data, setData] = useState<Child>(new Child());
@@ -30,6 +32,7 @@ export default function ChildDetails() {
     const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const isEditOrNew = isEditing ? `Editar menor de idade: ${data.name}` : 'Novo menor de idade'
+    const { userId } = useParams();
     const { childId } = useParams();
     const navigate = useNavigate();
     const { clearCredentials } = useCredentials();
@@ -39,7 +42,7 @@ export default function ChildDetails() {
     const activeEntities = activeFilter(allParent)
 
     function navToChild() {
-        navigate(`/dashboard/${childId}/children`, {
+        navigate(`/dashboard/${userId}/children`, {
             state: { showSnackbar: true }
         });
     }
@@ -82,8 +85,8 @@ export default function ChildDetails() {
 
     function editOrNewMessage() {
         return isEditing
-            ? 'Criança atualizada com sucesso!'
-            : 'Criança criada com sucesso!'
+            ? 'Menor de idade atualizado com sucesso!'
+            : 'Menor de idade com sucesso!'
     }
 
     async function fetchMembers(): Promise<void> {
@@ -110,11 +113,19 @@ export default function ChildDetails() {
 
         if (isEditing) {
             const update = Child.fromJson(base);
+            const audit = Audit.create(editOrNewMessage(), base.id);
+
             await childUpdate(data.id, update.toJSON());
+            await auditAdd(audit)
+
         } else {
             const newChild = Child.fromJson(base);
             newChild.ageGroup = age;
+            const audit = Audit.create(editOrNewMessage(), base.id);
+
             await childAdd(newChild);
+            await auditAdd(audit)
+
             clearCredentials();
             setOpenSnackbar(true);
             setData(new Child());
@@ -238,7 +249,7 @@ export default function ChildDetails() {
                                     renderInput={(params) => (
                                         <TextField
                                             {...params}
-                                            label="Grupo Familiar"
+                                            label="GC"
                                             fullWidth
                                         />
                                     )}
@@ -344,7 +355,7 @@ export default function ChildDetails() {
                     <Box mb={2}>
                         <TextField
                             label="Usa alguma medicação? Qual?"
-                            value={data.medication}
+                            value={data.medication ?? null}
                             InputLabelProps={{ shrink: true }}
                             onChange={(e) =>
                                 handleChange("medication", e.target.value.toUpperCase())
@@ -356,7 +367,7 @@ export default function ChildDetails() {
                         <TextField
                             label="Alguma necessidade especial? Qual?"
                             InputLabelProps={{ shrink: true }}
-                            value={data.specialNeed}
+                            value={data.specialNeed ?? null}
                             onChange={(e) =>
                                 handleChange("specialNeed", e.target.value.toUpperCase())
                             }
@@ -367,7 +378,7 @@ export default function ChildDetails() {
                         <TextField
                             label="Alguma alergia? Qual?"
                             InputLabelProps={{ shrink: true }}
-                            value={data.allergy}
+                            value={data.allergy ?? null}
                             onChange={(e) =>
                                 handleChange("allergy", e.target.value.toUpperCase())
                             }

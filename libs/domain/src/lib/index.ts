@@ -7,6 +7,8 @@ export * from './interface';
 export * from './utils';
 export * from './GenericCrud';
 export * from './validate';
+export * from './audit';
+
 
 
 

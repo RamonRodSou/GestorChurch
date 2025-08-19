@@ -10,6 +10,8 @@ import { GroupSummary } from '@domain/group';
 import { findAllGroupsSummary } from '@service/GroupService';
 import { ValidationForm, visitorGroupValidate } from '@domain/validate';
 import { activeFilter } from '@domain/utils';
+import { Audit } from '@domain/audit';
+import { auditAdd } from '@service/AuditService';
 
 export default function VisitorGroupDetails() {
     const { visitorId, userId } = useParams();
@@ -41,7 +43,11 @@ export default function VisitorGroupDetails() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         if (!ValidationForm({ data: data, setErrors, entity: visitorGroupValidate() })) return;
+
+        const audit = Audit.create(isEditOrNew, data.id);
+
         await visitorGroupAdd(data);
+        await auditAdd(audit)
 
         setData(new VisitorGroup());
         navigate(`/dashboard/${userId}/visitor-group`);

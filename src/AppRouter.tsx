@@ -79,6 +79,7 @@ function AppRouter() {
                             <Route path="preferences" element={<Preferences />} />
                             <Route path="report" element={<ReportData />} />
                             <Route path="new-report-church" element={<ReportChurchDetails />} />
+                            <Route path="/dashboard/:userId/edit-report/:reportId" element={<ReportChurchDetails />} />
                             <Route path="report-group" element={<ReportGroupData />} />
                             <Route path="new-report-group" element={<ReportGroupDetails />} />
                             <Route path="visitor-group" element={<VisitorGroupData />} />

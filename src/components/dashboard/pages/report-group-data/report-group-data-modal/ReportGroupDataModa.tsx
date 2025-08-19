@@ -6,12 +6,14 @@ import { ReportGroup } from '@domain/report';
 import { reportGroupUpdate } from '@service/ReportGroupService';
 import { GroupSummary } from '@domain/group';
 import { DateUtil } from '@domain/utils';
+import { Audit } from '@domain/audit';
+import { auditAdd } from '@service/AuditService';
 
 interface ReportGroupDataModalProps {
     open: boolean;
     onClose: () => void;
     report: ReportGroup | null;
-    groupData?: GroupSummary | null; 
+    groupData?: GroupSummary | null;
 }
 
 export default function ReportGroupDataModal({ open, onClose, report, groupData }: ReportGroupDataModalProps) {
@@ -22,15 +24,19 @@ export default function ReportGroupDataModal({ open, onClose, report, groupData 
     const visitors = report?.visitors.map(it => it?.name.split(' ')[0]).join(' / ');
     const group: string = groupData ? groupData?.name : 'SEM GC';
 
-    const observation = report?.observation 
+    const observation = report?.observation
         ? report.observation
         : 'NENHUMA OBSERVAÇÃO';
 
-    if (!report) return null;     
+    if (!report) return null;
 
-    async function remove (report: ReportGroup) {
+    async function remove(report: ReportGroup) {
         report.isActive = false;
+        const audit = Audit.create('Relatorio de GC foi Inativado.', report.id);
+
+        await auditAdd(audit);
         await reportGroupUpdate(report.id, report);
+
         setOpenData(false);
         onClose();
     }
@@ -38,16 +44,16 @@ export default function ReportGroupDataModal({ open, onClose, report, groupData 
     return (
         <Dialog open={open} onClose={onClose} fullWidth>
             <DialogContent dividers className='dialog'>
-                    <Typography className='title'> <span className='subTextInfo'></span>{group}</Typography>
-            <Typography className='textInfo'> <span className='subTextInfo'>LIDERES: </span>{leaders}</Typography>
-                    <Typography className='textInfo'> <span className='subTextInfo'>DIA: </span>{report.weekDay}</Typography>
-                    <Typography className='textInfo'> <span className='subTextInfo'>DATA: </span>{DateUtil.dateFormated(report.date)}</Typography>
-                    <Typography className='textInfo'> <span className='subTextInfo'>HORÁRIO: </span>{report.time}</Typography>
-                    <Typography className='textInfo'> <span className='subTextInfo'>OFERTA: </span>R$ {report.value}</Typography>
-                    <Typography className='textInfo'> <span className='subTextInfo'>MEMBROS: </span>{members}</Typography>
-                    <Typography className='textInfo'> <span className='subTextInfo'>VISITANTES: </span>{visitors}</Typography>
-                    <Typography className='textInfo'> <span className='subTextInfo'>CRIANÇAS: </span>{childrens}</Typography>
-                    <Typography className='textInfo'> <span className='subTextInfo'>OBSERVAÇÃO: </span>{observation}</Typography>
+                <Typography className='title'> <span className='subTextInfo'></span>{group}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>LIDERES: </span>{leaders}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>DIA: </span>{report.weekDay}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>DATA: </span>{DateUtil.dateFormated(report.date)}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>HORÁRIO: </span>{report.time}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>OFERTA: </span>R$ {report.value}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>MEMBROS: </span>{members}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>VISITANTES: </span>{visitors}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>CRIANÇAS: </span>{childrens}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>OBSERVAÇÃO: </span>{observation}</Typography>
             </DialogContent>
             <ConfirmModal
                 message={`Tem certeza que deseja remover O relatório`}
@@ -58,4 +64,3 @@ export default function ReportGroupDataModal({ open, onClose, report, groupData 
         </Dialog>
     );
 }
- 

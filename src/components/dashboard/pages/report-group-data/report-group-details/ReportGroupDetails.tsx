@@ -1,4 +1,5 @@
 import BackButton from "@components/back-button/BackButton";
+import { Audit } from "@domain/audit/audit";
 import { WeekDays } from "@domain/enums";
 import { GroupSummary } from "@domain/group";
 import { ReportGroup } from "@domain/report";
@@ -7,6 +8,7 @@ import { VisitorGroup } from "@domain/user/visitor/VisitorGroup";
 import { activeFilter } from "@domain/utils";
 import { Autocomplete, Box, Button, Container, TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import { auditAdd } from "@service/AuditService";
 import { findAllChildrens } from "@service/ChildrenService";
 import { findAllGroups } from "@service/GroupService";
 import { findAllMembers } from "@service/MemberService";
@@ -27,6 +29,7 @@ export default function ReportGroupDetails() {
     const [selectedMembers, setSelectedMembers] = useState<MemberSummary[]>([]);
     const [selectedChildrens, setSelectedChildrens] = useState<ChildSummary[]>([]);
     const [selectedVisitors, setSelectedVisitors] = useState<VisitorGroup[]>([]);
+    const [selectedNewLeaders, setSelectedNewLeaders] = useState<MemberSummary[]>([]);
 
     const activeMembers = activeFilter(members);
     const activeChildrens = activeFilter(childrens);
@@ -72,8 +75,13 @@ export default function ReportGroupDetails() {
         report.childrens = selectedChildrens;
         report.members = selectedMembers;
         report.visitors = selectedVisitors;
+        report.leadersInTraining = selectedNewLeaders;
+
+        const audit = Audit.create('Criando Relatório de GC.', report.id);
 
         await reportGroupAdd(report);
+        await auditAdd(audit);
+
         setReport(new ReportGroup());
         navToReport();
     }
@@ -109,7 +117,7 @@ export default function ReportGroupDetails() {
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    label="GC"
+                                    label="Nome do GC: "
                                     fullWidth
                                     required
                                 />
@@ -127,7 +135,7 @@ export default function ReportGroupDetails() {
                     <Box mb={2}>
                         <TextField
                             select
-                            label="Dia da Semana"
+                            label="Dia da Semana:"
                             value={day}
                             onChange={(e) => setDay(e.target.value as WeekDays)}
                             fullWidth
@@ -154,7 +162,7 @@ export default function ReportGroupDetails() {
                     </Box>
                     <Box mb={2}>
                         <DatePicker
-                            label="Data do GC"
+                            label="Data do GC: "
                             value={report.date ? dayjs(report.date) : null}
                             onChange={(date) => {
                                 handleChange("date", date?.toDate() ?? null);
@@ -186,7 +194,7 @@ export default function ReportGroupDetails() {
                             getOptionLabel={(option) => option.name}
                             value={selectedMembers}
                             onChange={(_, newValue) => setSelectedMembers(newValue)}
-                            renderInput={(params) => <TextField {...params} label="Selecione os Membros" />}
+                            renderInput={(params) => <TextField {...params} label="Selecione os Membros: " />}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             fullWidth
                         />
@@ -198,7 +206,7 @@ export default function ReportGroupDetails() {
                             getOptionLabel={(option) => option.name}
                             value={selectedChildrens}
                             onChange={(_, newValue) => setSelectedChildrens(newValue)}
-                            renderInput={(params) => <TextField {...params} label="Selecione as Crianças" />}
+                            renderInput={(params) => <TextField {...params} label="Selecione as Crianças: " />}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             fullWidth
                         />
@@ -210,9 +218,69 @@ export default function ReportGroupDetails() {
                             getOptionLabel={(option) => option.name}
                             value={selectedVisitors}
                             onChange={(_, newValue) => setSelectedVisitors(newValue)}
-                            renderInput={(params) => <TextField {...params} label="Selecione os Visitantes do GC" />}
+                            renderInput={(params) => <TextField {...params} label="Selecione os Visitantes do GC: " />}
                             isOptionEqualToValue={(option, value) => option.id === value.id}
                             fullWidth
+                        />
+                    </Box>
+                    <Box mb={2}>
+                        <Autocomplete
+                            multiple
+                            options={activeMembers}
+                            getOptionLabel={(option) => option.name}
+                            value={selectedNewLeaders}
+                            onChange={(_, newValue) => setSelectedNewLeaders(newValue)}
+                            renderInput={(params) => <TextField {...params} label="Selecione os Leaderes em Treinamento: " />}
+                            isOptionEqualToValue={(option, value) => option.id === value.id}
+                            fullWidth
+                        />
+                    </Box>
+                    <Box mb={2}>
+                        <TextField
+                            type="number"
+                            label="Qtd novas pessoas: "
+                            value={report.newPeople ?? 0}
+                            onChange={(e) =>
+                                handleChange("newPeople", Number(e.target.value))
+                            }
+                            fullWidth
+                            required
+                        />
+                    </Box>
+                    <Box mb={2}>
+                        <TextField
+                            type="number"
+                            label="Qtd pessoas ativas: "
+                            value={report.activePeople ?? 0}
+                            onChange={(e) =>
+                                handleChange("activePeople", Number(e.target.value))
+                            }
+                            fullWidth
+                            required
+                        />
+                    </Box>
+                    <Box mb={2}>
+                        <TextField
+                            type="number"
+                            label="Qtd de Visitantes: "
+                            value={report.totalVisitors ?? 0}
+                            onChange={(e) =>
+                                handleChange("totalVisitors", Number(e.target.value))
+                            }
+                            fullWidth
+                            required
+                        />
+                    </Box>
+                    <Box mb={2}>
+                        <TextField
+                            type="number"
+                            label="Qts Visitantes retornaram: "
+                            value={report.returningVisitors ?? 0}
+                            onChange={(e) =>
+                                handleChange("returningVisitors", Number(e.target.value))
+                            }
+                            fullWidth
+                            required
                         />
                     </Box>
                     <Box mb={2}>

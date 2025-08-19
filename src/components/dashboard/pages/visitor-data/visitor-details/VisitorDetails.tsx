@@ -8,6 +8,8 @@ import { Visitor } from '@domain/user/visitor/Visitor';
 import { findByVisitorId, updateVisitor, visitorAdd } from '@service/VisitorService';
 import { ValidationForm } from '@domain/validate/validateForm';
 import { visitorValidate } from '@domain/validate/validateEntities';
+import { Audit } from '@domain/audit';
+import { auditAdd } from '@service/AuditService';
 
 export default function VisitorDetails() {
     const { visitorId, userId } = useParams();
@@ -48,7 +50,10 @@ export default function VisitorDetails() {
         if (!ValidationForm({ data: data, setErrors, entity: visitorValidate() })) return;
 
         if (isEditing) {
+            const audit = Audit.create(isEditOrNew, data.id);
+
             await updateVisitor(data.id, data.toJSON());
+            await auditAdd(audit);
         } else {
             const today = new Date();
             const options: Intl.DateTimeFormatOptions = {
@@ -66,7 +71,11 @@ export default function VisitorDetails() {
             newVisitor.phone = data.phone;
             newVisitor.visitHistory = [firstVisit];
 
+            const audit = Audit.create(isEditOrNew, data.id);
+
             await visitorAdd(newVisitor);
+            await auditAdd(audit);
+
             setData(new Visitor());
         }
 

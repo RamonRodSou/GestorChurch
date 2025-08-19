@@ -7,6 +7,8 @@ import { memberUpdate } from '@service/MemberService';
 import ConfirmModal from '@components/confirm-modal/ConfirmModal';
 import { useState } from 'react';
 import { DateUtil, sendWhatsappMessage, whatAppMessageMember } from '@domain/utils';
+import { auditAdd } from '@service/AuditService';
+import { Audit } from '@domain/audit';
 
 interface MemberDataModalProps {
     open: boolean;
@@ -30,7 +32,10 @@ export default function MemberDataModal({ open, onClose, member, groupData }: Me
 
     async function remove(member: Member) {
         member.isActive = false;
+        const audit = Audit.create('Membro foi Inativado.', member.id);
+
         await memberUpdate(member.id, member);
+        await auditAdd(audit);
         setOpenData(false);
         onClose();
     }

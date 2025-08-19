@@ -9,6 +9,8 @@ import { EMPTY } from '@domain/utils';
 import { PermissionLevel } from '@domain/enums';
 import InvalidToken from "@components/invalid-token/InvalidToken";
 import Loading from "@components/loading/Loading";
+import { auditAdd } from "@service/AuditService";
+import { Audit } from "@domain/audit";
 
 export default function UserDetails() {
     const navigate = useNavigate();
@@ -65,7 +67,10 @@ export default function UserDetails() {
 
     async function handleSubmit(e: React.FormEvent): Promise<void> {
         e.preventDefault();
+
+        const audit = Audit.create('Criando Acesso ao Sistema', data.id);
         await adminAdd(data, data.password);
+        await auditAdd(audit)
         setData(new AdminSummary());
         navTodata();
     }

@@ -13,6 +13,8 @@ import { validateGroupForm } from '@domain/utils/validateGroupForm';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Role, WeekDays } from "@domain/enums";
 import { Validate } from "@domain/utils";
+import { Audit } from "@domain/audit";
+import { auditAdd } from "@service/AuditService";
 
 export default function GroupDetails() {
     const [group, setGroup] = useState<Group>(new Group());
@@ -72,7 +74,11 @@ export default function GroupDetails() {
         updatedGroup.weekDay = day;
         updatedGroup.leaders = selectLeader;
 
+        const audit = Audit.create('Visitante de culto foi Inativado.', group.id);
+
         await groupAdd(updatedGroup);
+        await auditAdd(audit);
+
         setGroup(new Group());
         setCepData(null);
         setMembersInputs([]);

@@ -62,12 +62,17 @@ async function saveReportGroupToDatabase(report: ReportGroup, userId: string) {
         })),
         childrens: report.childrens.map((child) => ({
             id: child.id,
-            name: child.name, 
+            name: child.name,
         })),
         visitors: report.visitors.map((visitor) => ({
             id: visitor.id,
             name: visitor.name,
         })),
+        leadersInTraining: report.leadersInTraining,
+        newPeople: report.newPeople,
+        activePeople: report.activePeople,
+        returningVisitors: report.returningVisitors,
+        totalVisitors: report.totalVisitors,
         value: report.value,
         observation: report.observation,
         isActive: report.isActive,

@@ -13,6 +13,8 @@ import FinancialCard from './financial-card/FinancialCard';
 import { MoneyMovement } from '@domain/enums';
 import NewBtn from '@components/newBtn/NewBtn';
 import { fetchFinancial } from '@domain/utils';
+import { Audit } from '@domain/audit';
+import { auditAdd } from '@service/AuditService';
 
 export default function FinancialData() {
     const [balance, setBalance] = useState<number>(0);
@@ -28,7 +30,11 @@ export default function FinancialData() {
     }
 
     async function handleConfirmFinancial(financial: Financial) {
+        const audit = Audit.create('Criando card de Finançãs', financial.id);
+
         await financialAdd(financial);
+        await auditAdd(audit);
+
         loadFinancialData()
         setOpenModal(false);
         setOpenSnackbar(true)

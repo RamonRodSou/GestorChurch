@@ -11,6 +11,8 @@ import { findAllMembers } from "@service/MemberService";
 import { findAllChildrens } from "@service/ChildrenService";
 import { scheduleAdd } from "@service/ScheduleService";
 import { activeFilter } from "@domain/utils";
+import { auditAdd } from "@service/AuditService";
+import { Audit } from "@domain/audit";
 
 export default function ServiceScheduleDetails() {
     const navigate = useNavigate();
@@ -60,9 +62,12 @@ export default function ServiceScheduleDetails() {
         data.childrens = selectedChildrens;
         data.members = selectedMembers;
 
+        const audit = Audit.create('Criando Escala de Serviçõ.', data.id);
+
         if (data.departament === Departament.EMPTY) return
 
         await scheduleAdd(data);
+        await auditAdd(audit);
 
         setData(new ServiceSchedule());
 

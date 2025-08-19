@@ -20,6 +20,8 @@ import InputSelect from "@components/input-select/inputSelect";
 import { activeFilter, Validate } from "@domain/utils";
 import { ValidationForm } from "@domain/validate/validateForm";
 import { memberValidate } from "@domain/validate/validateEntities";
+import { auditAdd } from "@service/AuditService";
+import { Audit } from "@domain/audit";
 
 export default function MemberDetails() {
     const [member, setMember] = useState<Member>(new Member());
@@ -114,7 +116,9 @@ export default function MemberDetails() {
 
         if (isEditing) {
             const updatedMember = Member.fromJson(base);
+            const audit = Audit.create(editOrNewMessage(), base.id);
             await memberUpdate(member.id, updatedMember.toJSON());
+            await auditAdd(audit)
         } else {
             const newMember = Member.fromJson(base);
             await memberAdd(newMember);

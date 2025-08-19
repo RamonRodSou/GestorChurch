@@ -7,6 +7,8 @@ import { useState } from 'react';
 import { updateVisitor } from '@service/VisitorService';
 import ConfirmModal from '@components/confirm-modal/ConfirmModal';
 import { sendWhatsappMessage, whatAppMessageVisitor } from '@domain/utils';
+import { auditAdd } from '@service/AuditService';
+import { Audit } from '@domain/audit';
 
 interface VisitorDataModalProps {
     open: boolean;
@@ -28,7 +30,11 @@ export default function VisitorDataModal({ open, onClose, visitor }: VisitorData
 
     async function remove(visitor: Visitor) {
         visitor.isActive = false;
+        const audit = Audit.create('Visitante de culto foi Inativado.', visitor.id);
+
+        await auditAdd(audit);
         await updateVisitor(visitor.id, visitor);
+
         setOpenData(false);
         onClose();
     }
