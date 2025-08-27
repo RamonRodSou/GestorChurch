@@ -7,12 +7,13 @@ import { ManagerContext } from '@context/ManagerContext';
 import { Visitor } from '@domain/user/visitor/Visitor';
 import { findByVisitorId, updateVisitor, visitorAdd } from '@service/VisitorService';
 import { ValidationForm } from '@domain/validate/validateForm';
-import { formatVisitDate, visitorValidate } from '@domain/validate/validateEntities';
+import { visitorValidate } from '@domain/validate/validateEntities';
 import { Audit } from '@domain/audit';
 import { auditAdd } from '@service/AuditService';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pt-br';
+import { DateUtil } from '@domain/utils';
 dayjs.locale('pt-br');
 
 export default function VisitorDetails() {
@@ -35,7 +36,7 @@ export default function VisitorDetails() {
 
     function handleAddVisit() {
         if (!selectedDate) return;
-        const dateString = formatVisitDate(selectedDate);
+        const dateString = DateUtil.formatVisitDate(selectedDate);
 
         setData(prev => {
             if (prev.visitHistory.includes(dateString)) return prev;
@@ -49,7 +50,7 @@ export default function VisitorDetails() {
         if (!ValidationForm({ data: data, setErrors, entity: visitorValidate() })) return;
 
         if (selectedDate) {
-            const dateString = formatVisitDate(selectedDate);
+            const dateString = DateUtil.formatVisitDate(selectedDate);
             if (!data.visitHistory.includes(dateString)) {
                 handleChange("visitHistory", [...data.visitHistory, dateString]);
             }
@@ -65,7 +66,7 @@ export default function VisitorDetails() {
             newVisitor.phone = data.phone;
             newVisitor.visitHistory = data.visitHistory.length
                 ? data.visitHistory
-                : [formatVisitDate(selectedDate ?? dayjs())];
+                : [DateUtil.formatVisitDate(selectedDate ?? dayjs())];
 
             const audit = Audit.create(isEditOrNew, data.id);
 
