@@ -30,7 +30,7 @@ export default function FinancialData() {
     }
 
     async function handleConfirmFinancial(financial: Financial) {
-        const audit = Audit.create('Criando card de Finançãs', financial.id);
+        const audit = Audit.create('Criando card de Finanças', financial.id);
 
         await financialAdd(financial);
         await auditAdd(audit);

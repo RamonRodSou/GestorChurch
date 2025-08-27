@@ -62,7 +62,7 @@ export default function ServiceScheduleDetails() {
         data.childrens = selectedChildrens;
         data.members = selectedMembers;
 
-        const audit = Audit.create('Criando Escala de Serviçõ.', data.id);
+        const audit = Audit.create('Criando Escala de Serviço.', data.id);
 
         if (data.departament === Departament.EMPTY) return
 
