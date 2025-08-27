@@ -53,7 +53,7 @@ export default function ServiceScheduleData() {
     const groupedData = groupByWeekDayAndPeriod(
         data
             .filter((it) => isFutureDate(it.date))
-            .sort((a, b) => new Date(a.date).getTime() + new Date(b.date).getTime())
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     );
 
     useEffect(() => {
