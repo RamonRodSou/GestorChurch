@@ -35,7 +35,7 @@ export function getMenuItems(permission: number | null): IMenu[] {
         { path: 'group', label: 'GC', icon: <Diversity3Outlined />, visible: level >= PermissionLevel.LIDER },
         { path: 'visitor-group', label: 'Visitantes GC', icon: <Person2Rounded />, visible: level >= PermissionLevel.LIDER },
         { path: 'new-report-group', label: 'Novo Relatório GC', icon: <StickyNote2TwoTone />, visible: level == PermissionLevel.LIDER },
-        { path: 'report-group', label: 'Relatório GC', icon: <StickyNote2TwoTone />, visible: level >= PermissionLevel.LIDER_SUPERVISOR },
+        { path: 'report-group', label: 'Relatório GC', icon: <StickyNote2TwoTone />, visible: level >= PermissionLevel.LIDER },
         { path: 'financial', label: 'Finanças', icon: <Assessment />, visible: level >= PermissionLevel.ADMINISTRACAO },
         { path: 'user', label: 'Usuarios', icon: <AssignmentInd />, visible: level >= PermissionLevel.GESTOR },
         { path: 'preferences', label: 'Configurações', icon: <Settings />, visible: true },
