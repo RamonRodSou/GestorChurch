@@ -21,6 +21,7 @@ export class ReportGroup {
         public value: number = 0,
         public observation: string | null = null,
         public isActive: boolean = true,
+        public userId?: string,
         public createdAt: string = new Date().toISOString()
     ) { }
 
@@ -30,7 +31,7 @@ export class ReportGroup {
             json.groupId,
             json.weekDay,
             json.time,
-            json.date,
+            new Date(json.date),
             json.members || [],
             json.childrens || [],
             json.visitors || [],
@@ -42,6 +43,7 @@ export class ReportGroup {
             json.value,
             json.observation,
             json.isActive,
+            json.userId,
             json.createdAt
         );
     }
