@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography } from "@mui/material";
 import { useContext, useEffect, useState } from 'react';
 import { Info } from '@mui/icons-material';
@@ -10,6 +10,9 @@ import { GroupSummary } from '@domain/group';
 import { findAllGroupsSummary, findGroupSummaryToById } from '@service/GroupService';
 import ReportGroupDataModal from './report-group-data-modal/ReportGroupDataModa';
 import { DateUtil, filterAndPaginate, activeFilter } from '@domain/utils';
+import { findAdminToById } from '@service/AdminService';
+import { AdminSummary } from '@domain/user';
+import { PermissionLevel } from '@domain/enums';
 
 export default function ReportGroupData() {
     const [_, setData] = useState<ReportGroup[]>([]);
@@ -20,11 +23,17 @@ export default function ReportGroupData() {
     const [visitorGroupMap, setVisitorGroupMap] = useState<Map<string, GroupSummary>>(new Map());
     const [groupData, setGroupData] = useState<GroupSummary | null>(null);
     const [page, setPage] = useState<number>(0);
+    const [user, setUser] = useState<AdminSummary | null>();
+
+    const { userId } = useParams();
 
     const rowsPerPage = 30;
 
     const { setOpenSnackbar } = useContext(ManagerContext);
     const location = useLocation();
+
+    const activeEntities = activeFilter(filtered)
+    const entities = filterAndPaginate({ entity: activeEntities, page })
 
     function handleOpenDetails(r: ReportGroup) {
         if (r.groupId) {
@@ -38,6 +47,17 @@ export default function ReportGroupData() {
         }
         setSelectedReport(r);
         setOpenData(true);
+    }
+
+
+    function verifyIsLeader(it: typeof entities[number]) {
+        if (!user) return false;
+
+        const hasPermission = user.permission >= PermissionLevel.LIDER_SUPERVISOR;
+        if (hasPermission) {
+            return true
+        }
+        return it.userId === user.id;
     }
 
     async function loadGroups() {
@@ -55,8 +75,14 @@ export default function ReportGroupData() {
         }
     }
 
-    const activeEntities = activeFilter(filtered)
-    const entities = filterAndPaginate({ entity: activeEntities, page })
+    async function load() {
+        try {
+            const result = await findAdminToById(String(userId))
+            setUser(result);
+        } catch (error) {
+            console.error(error)
+        }
+    }
 
     useEffect(() => {
         if (location.state?.showSnackbar) {
@@ -69,7 +95,12 @@ export default function ReportGroupData() {
                 setFiltered(it);
             })
         loadGroups();
+
     }, [location.state]);
+
+    useEffect(() => {
+        load();
+    }, [userId])
 
     return (
         <Layout total={activeEntities.length} title="Relatórios dos GCs" path="new-report-group" message="Relatório criado com sucesso!">
@@ -87,6 +118,7 @@ export default function ReportGroupData() {
                             </TableHead>
                             <TableBody>
                                 {entities
+                                    .filter(verifyIsLeader)
                                     .sort((a, b) => DateUtil.organizedToLastDate(a, b))
                                     .map((it) => (
                                         <TableRow key={it.id} className='data-table'>
