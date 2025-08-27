@@ -6,10 +6,9 @@ import dayjs from "dayjs";
 import "dayjs/locale/pt-br";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ReportChurch } from "@domain/report";
-import { allMonth } from "../../../../../../libs/domain/src/lib/utils/all-month";
 dayjs.extend(customParseFormat);
 
-type ReportWithMonth = ReportChurch & { month: string };
+type ReportWithMonth = ReportChurch & { month: string, count: number };
 
 export default function ReportGraph() {
     const [data, setData] = useState<ReportWithMonth[]>([]);
@@ -25,7 +24,7 @@ export default function ReportGraph() {
                 const date = dayjs(report.createdAt);
                 if (!date.isValid()) return;
 
-                const month = date.locale('pt-br').format("MMM");
+                const month = date.locale('pt-br').format("DD/MMM/YYYY");
                 const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
 
                 if (!monthGroup[capitalizedMonth]) {
@@ -39,7 +38,8 @@ export default function ReportGraph() {
                         firstTimeVisitors: 0,
                         returningPeople: 0,
                         newMembers: 0,
-                        peopleBaptizedThisMonth: 0
+                        peopleBaptizedThisMonth: 0,
+                        count: 0
                     });
                 }
 
@@ -52,21 +52,24 @@ export default function ReportGraph() {
                 monthGroup[capitalizedMonth].returningPeople += report.returningPeople;
                 monthGroup[capitalizedMonth].newMembers += report.newMembers;
                 monthGroup[capitalizedMonth].peopleBaptizedThisMonth += report.peopleBaptizedThisMonth;
+                monthGroup[capitalizedMonth].count++;
             });
 
-            const finalData = allMonth.map((month) => {
-                return monthGroup[month] || {
-                    month,
-                    totalPeople: 0,
-                    totalChildren: 0,
-                    totalVolunteers: 0,
-                    decisionsForJesus: 0,
-                    baptismCandidates: 0,
-                    firstTimeVisitors: 0,
-                    returningPeople: 0,
-                    newMembers: 0,
-                    peopleBaptizedThisMonth: 0
-                };
+            const finalData: ReportWithMonth[] = Object.values(monthGroup).map(m => {
+                const report = new ReportChurch();
+                Object.assign(report, {
+                    ...m,
+                    totalPeople: Math.round(m.totalPeople / m.count),
+                    totalChildren: Math.round(m.totalChildren / m.count),
+                    totalVolunteers: Math.round(m.totalVolunteers / m.count),
+                    decisionsForJesus: Math.round(m.decisionsForJesus / m.count),
+                    baptismCandidates: Math.round(m.baptismCandidates / m.count),
+                    firstTimeVisitors: Math.round(m.firstTimeVisitors / m.count),
+                    returningPeople: Math.round(m.returningPeople / m.count),
+                    newMembers: Math.round(m.newMembers / m.count),
+                    peopleBaptizedThisMonth: Math.round(m.peopleBaptizedThisMonth / m.count),
+                });
+                return report as ReportWithMonth;
             });
 
             setData(finalData);
