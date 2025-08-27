@@ -98,6 +98,7 @@ export class MemberSummary {
         public name: string = EMPTY,
         public email: string = EMPTY,
         public phone: string = EMPTY,
+        public groupId: string | null = null,
         public isActive: boolean = true,
     ) { }
 
@@ -107,6 +108,7 @@ export class MemberSummary {
             json.name ?? EMPTY,
             json.email ?? null,
             json.phone ?? null,
+            json.groupId,
             json.isActive,
         );
     }
@@ -117,6 +119,7 @@ export class MemberSummary {
             name: this.name,
             email: this.email,
             phone: this.phone,
+            groupId: this.groupId,
             isActive: this.isActive,
 
         };
