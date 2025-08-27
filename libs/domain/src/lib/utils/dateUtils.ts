@@ -1,4 +1,6 @@
 import dayjs from "dayjs";
+import 'dayjs/locale/pt-br';
+dayjs.locale('pt-br');
 
 export class DateUtil {
 
@@ -80,4 +82,9 @@ export class DateUtil {
         return age + 1;
     }
 
+    static formatVisitDate(date: Date | dayjs.Dayjs): string {
+        const d = dayjs(date).locale('pt-br');
+        const formatted = d.format('dddd, DD/MM/YYYY');
+        return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+    }
 }
