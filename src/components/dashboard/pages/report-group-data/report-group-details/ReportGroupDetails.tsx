@@ -10,9 +10,9 @@ import { Autocomplete, Box, Button, Container, TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { auditAdd } from "@service/AuditService";
 import { findAllChildrens } from "@service/ChildrenService";
-import { findAllGroups } from "@service/GroupService";
+import { findAllGroups, findGroupSummaryToById } from "@service/GroupService";
 import { findAllMembers } from "@service/MemberService";
-import { reportGroupAdd } from "@service/ReportGroupService";
+import { findReportGroupToById, reportGroupAdd, reportGroupUpdate } from "@service/ReportGroupService";
 import { findAllVisitorsGroup } from "@service/VisitorGroupService";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -30,21 +30,26 @@ export default function ReportGroupDetails() {
     const [selectedChildrens, setSelectedChildrens] = useState<ChildSummary[]>([]);
     const [selectedVisitors, setSelectedVisitors] = useState<VisitorGroup[]>([]);
     const [selectedNewLeaders, setSelectedNewLeaders] = useState<MemberSummary[]>([]);
+    const [isEditing, setIsEditing] = useState<boolean>(false);
 
     const activeMembers = activeFilter(members);
     const activeChildrens = activeFilter(childrens);
     const activeVisitor = activeFilter(visitors);
     const activeGroups = activeFilter(groups);
 
+    const { reportId } = useParams();
     const { userId } = useParams();
     const navigate = useNavigate();
+
+    const isEditOrNew = isEditing ? `Editar Relatório do GC` : 'Novo Relatório do GC';
+
 
     function handleChange(field: keyof ReportGroup, value: any) {
         setReport(prev => ReportGroup.fromJson({ ...prev, [field]: value }));
     };
 
     function navToReport() {
-        navigate(`/dashboard/${userId}/home`, {
+        navigate(`/dashboard/${userId}/report-group`, {
             state: { showSnackbar: true }
         });
     }
@@ -56,6 +61,7 @@ export default function ReportGroupDetails() {
 
     async function fetchMembers(): Promise<void> {
         const response = await findAllMembers();
+        // const data = response.filter((it) => it.groupId == selectedGroup)
         setMembers(response)
     };
 
@@ -77,12 +83,19 @@ export default function ReportGroupDetails() {
         report.visitors = selectedVisitors;
         report.leadersInTraining = selectedNewLeaders;
 
-        const audit = Audit.create('Criando Relatório de GC.', report.id);
+        if (isEditing) {
+            const update = ReportGroup.fromJson(report);
+            const audit = Audit.create(isEditOrNew, report.id);
+            await reportGroupUpdate(report.id, update.toJSON());
+            await auditAdd(audit);
+        } else {
+            const audit = Audit.create('Criando Relatório de GC.', report.id);
 
-        await reportGroupAdd(report);
-        await auditAdd(audit);
+            await reportGroupAdd(report);
+            await auditAdd(audit);
 
-        setReport(new ReportGroup());
+            setReport(new ReportGroup());
+        }
         navToReport();
     }
 
@@ -92,16 +105,36 @@ export default function ReportGroupDetails() {
             fetchMembers();
             fetchChildrens();
             fetchVisitors();
+
+            if (reportId) {
+                const data = await findReportGroupToById(reportId);
+                const load = ReportGroup.fromJson(data);
+                const group = await findGroupSummaryToById(String(data?.groupId))
+
+                setIsEditing(true);
+                setReport(load);
+                setSelectedGroup(group)
+                setSelectedMembers(load.members ?? [])
+                setSelectedChildrens(load.childrens ?? [])
+                setSelectedVisitors(load.visitors ?? [])
+                setSelectedNewLeaders(load.leadersInTraining ?? [])
+            }
         }
         load();
-    }, []);
+    }, [reportId]);
+
+
+    useEffect(() => {
+        console.log
+
+    }, [selectedGroup])
 
     return (
         <>
             <BackButton path={'report-group'} />
             <Container className='details-container'>
                 <form onSubmit={handleSubmit} className="details-form">
-                    <h2>Novo Relatório do GC</h2>
+                    <h2>{isEditOrNew}</h2>
                     <Box mb={2}>
                         <Autocomplete
                             value={selectedGroup}
@@ -190,7 +223,7 @@ export default function ReportGroupDetails() {
                     <Box mb={2}>
                         <Autocomplete
                             multiple
-                            options={activeMembers}
+                            options={activeMembers.filter((it) => it.groupId == selectedGroup?.id)}
                             getOptionLabel={(option) => option.name}
                             value={selectedMembers}
                             onChange={(_, newValue) => setSelectedMembers(newValue)}

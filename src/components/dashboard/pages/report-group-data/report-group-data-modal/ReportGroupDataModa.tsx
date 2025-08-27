@@ -5,9 +5,11 @@ import { useState } from 'react';
 import { ReportGroup } from '@domain/report';
 import { reportGroupUpdate } from '@service/ReportGroupService';
 import { GroupSummary } from '@domain/group';
-import { DateUtil } from '@domain/utils';
+import { DateUtil, sendWhatsappMessage } from '@domain/utils';
 import { Audit } from '@domain/audit';
 import { auditAdd } from '@service/AuditService';
+import ModalBtns from '@components/modal-btns/ModalBtns';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface ReportGroupDataModalProps {
     open: boolean;
@@ -24,11 +26,18 @@ export default function ReportGroupDataModal({ open, onClose, report, groupData 
     const visitors = report?.visitors.map(it => it?.name.split(' ')[0]).join(' / ');
     const group: string = groupData ? groupData?.name : 'SEM GC';
 
+    const { userId } = useParams();
+    const navigate = useNavigate();
+
     const observation = report?.observation
         ? report.observation
         : 'NENHUMA OBSERVAÇÃO';
 
     if (!report) return null;
+
+    async function edit(reportId: String) {
+        return await navigate(`/dashboard/${userId}/edit-report-group/${reportId}`);
+    }
 
     async function remove(report: ReportGroup) {
         report.isActive = false;
@@ -44,6 +53,11 @@ export default function ReportGroupDataModal({ open, onClose, report, groupData 
     return (
         <Dialog open={open} onClose={onClose} fullWidth>
             <DialogContent dividers className='dialog'>
+                <ModalBtns
+                    edit={() => edit(report.id)}
+                    whatsApp={() => sendWhatsappMessage('Ramon', '21972923210', 'Relatorio')}
+                    remove={() => setOpenData(true)}
+                />
                 <Typography className='title'> <span className='subTextInfo'></span>{group}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>LIDERES: </span>{leaders}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>DIA: </span>{report.weekDay}</Typography>
