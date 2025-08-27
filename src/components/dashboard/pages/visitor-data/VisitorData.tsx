@@ -29,8 +29,9 @@ export default function VisitorData() {
     const [selectedVisitor, setSelectedVisitor] = useState<Visitor | null>(null);
     const [page, setPage] = useState<number>(0);
 
-    const activeEntities = activeFilter(filtered)
-    const entities = filterAndPaginate({ entity: activeEntities, page })
+    const activeEntities = activeFilter(filtered);
+    const sortedEntities = [...activeEntities].sort((a, b) => organizedToLastDate(a, b));
+    const entities = filterAndPaginate({ entity: sortedEntities, page })
 
     const { isMobile } = useContext(ManagerContext);
 
@@ -99,9 +100,9 @@ export default function VisitorData() {
                                                 {it.phone}
                                             </TableCell>
                                             {!isMobile && (
-                                                <>
-                                                    <TableCell className='data-text'>{it.visitHistory.at(0)}</TableCell>
-                                                </>
+                                                <TableCell className='data-text'>
+                                                    {it.visitHistory?.[it.visitHistory.length - 1] || '-'}
+                                                </TableCell>
                                             )}
                                             <TableCell className='data-text'>
                                                 <IconButton onClick={() => handleOpenDetails(it)}>

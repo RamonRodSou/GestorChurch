@@ -7,9 +7,13 @@ import { ManagerContext } from '@context/ManagerContext';
 import { Visitor } from '@domain/user/visitor/Visitor';
 import { findByVisitorId, updateVisitor, visitorAdd } from '@service/VisitorService';
 import { ValidationForm } from '@domain/validate/validateForm';
-import { visitorValidate } from '@domain/validate/validateEntities';
+import { formatVisitDate, visitorValidate } from '@domain/validate/validateEntities';
 import { Audit } from '@domain/audit';
 import { auditAdd } from '@service/AuditService';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
+import 'dayjs/locale/pt-br';
+dayjs.locale('pt-br');
 
 export default function VisitorDetails() {
     const { visitorId, userId } = useParams();
@@ -18,10 +22,11 @@ export default function VisitorDetails() {
     const [data, setData] = useState<Visitor>(new Visitor());
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(dayjs());
 
     const isEditOrNew = isEditing ? `Editar visitante: ${data.name}` : 'Novo Visitante'
 
-    function handleChange(field: keyof Visitor, value: string | number) {
+    function handleChange(field: keyof Visitor, value: string | number | string[]) {
         setData(prev => {
             const updated = { ...prev, [field]: value };
             return Visitor.fromJson(updated);
@@ -29,47 +34,38 @@ export default function VisitorDetails() {
     };
 
     function handleAddVisit() {
-        const today = new Date();
-        const options: Intl.DateTimeFormatOptions = {
-            weekday: 'long',
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-        };
-        const formatted = today.toLocaleDateString('pt-BR', options);
-        const capitalized = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+        if (!selectedDate) return;
+        const dateString = formatVisitDate(selectedDate);
 
         setData(prev => {
-            const updatedHistory = [...prev.visitHistory, capitalized];
+            if (prev.visitHistory.includes(dateString)) return prev;
+            const updatedHistory = [...prev.visitHistory, dateString];
             return Visitor.fromJson({ ...prev, visitHistory: updatedHistory });
         });
-    };
+    }
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         if (!ValidationForm({ data: data, setErrors, entity: visitorValidate() })) return;
 
+        if (selectedDate) {
+            const dateString = formatVisitDate(selectedDate);
+            if (!data.visitHistory.includes(dateString)) {
+                handleChange("visitHistory", [...data.visitHistory, dateString]);
+            }
+        }
+
         if (isEditing) {
             const audit = Audit.create(isEditOrNew, data.id);
-
             await updateVisitor(data.id, data.toJSON());
             await auditAdd(audit);
         } else {
-            const today = new Date();
-            const options: Intl.DateTimeFormatOptions = {
-                weekday: 'long',
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            };
-            const formatted = today.toLocaleDateString('pt-BR', options);
-
-            const firstVisit = formatted.charAt(0).toUpperCase() + formatted.slice(1);
-
             const newVisitor = new Visitor();
             newVisitor.name = data.name;
             newVisitor.phone = data.phone;
-            newVisitor.visitHistory = [firstVisit];
+            newVisitor.visitHistory = data.visitHistory.length
+                ? data.visitHistory
+                : [formatVisitDate(selectedDate ?? dayjs())];
 
             const audit = Audit.create(isEditOrNew, data.id);
 
@@ -81,17 +77,23 @@ export default function VisitorDetails() {
 
         navigate(`/dashboard/${userId}/visitor`);
         setOpenSnackbar(true);
-    };
+    }
 
     useEffect(() => {
-        async function load() {
-            if (visitorId) {
-                const data = await findByVisitorId(visitorId);
-                setData(Visitor.fromJson(data));
+        if (visitorId) {
+            async function load() {
+                const visitorData = await findByVisitorId(String(visitorId));
+                const visitor = Visitor.fromJson(visitorData);
+                setData(visitor);
+                const lastVisit = visitor.visitHistory.length
+                    ? dayjs(visitor.visitHistory[visitor.visitHistory.length - 1], 'DD/MM/YYYY').locale('pt-br')
+                    : dayjs().locale('pt-br');
+                setSelectedDate(lastVisit);
+
                 setIsEditing(true);
             }
+            load();
         }
-        load();
     }, [visitorId]);
 
     return (
@@ -121,6 +123,14 @@ export default function VisitorDetails() {
                             helperText={errors.phone}
                             fullWidth
                             required
+                        />
+                    </Box>
+                    <Box mb={2}>
+                        <DatePicker
+                            label="Data de visita"
+                            value={selectedDate}
+                            onChange={(date) => setSelectedDate(date)}
+                            format="DD/MM/YYYY"
                         />
                     </Box>
                     {data.visitHistory.length > 0 && (
