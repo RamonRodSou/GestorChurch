@@ -1,0 +1,104 @@
+:root {
+    .ticketForm {
+        background-color: #fff;
+        padding: 2rem;
+
+        .dateNQuantity {
+            display: flex;
+            gap: 1rem;
+
+            .date {
+                width: 400px;
+            }
+        }
+
+        @media (max-width: 750px) {
+            .dateNQuantity {
+                flex-direction: column;
+
+                .date {
+                    width: auto;
+                }
+            }
+        }
+    }
+
+    .card {
+        width: 100%;
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        flex-direction: row;
+        gap: 1rem;
+
+        .ticket-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 500px;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+            border: 2px dashed #ec407a;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(236, 64, 122, 0.3);
+            font-family: 'Poppins', sans-serif;
+            color: #880e4f;
+
+            &::before,
+            &::after {
+                content: "";
+                position: absolute;
+                width: 32px;
+                height: 32px;
+                background: #fff;
+                border: 2px solid #ec407a;
+                border-radius: 50%;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 2;
+            }
+
+            &::before {
+                left: -18px;
+            }
+
+            &::after {
+                right: -18px;
+            }
+
+            h2 {
+                font-size: 1.6rem;
+                font-weight: bold;
+                color: #ad1457;
+                text-align: center;
+            }
+
+            p {
+                text-align: center;
+            }
+
+            .qr-code {
+                margin-top: 1rem;
+                display: flex;
+                justify-content: center;
+            }
+        }
+    }
+
+
+    @media (min-width: 600px) {
+        .card {
+            justify-content: space-between;
+
+            .ticket-card {
+                width: 300px;
+            }
+        }
+    }
+
+}

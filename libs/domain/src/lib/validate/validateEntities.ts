@@ -2,6 +2,7 @@ import { Child, Member, Visitor } from "@domain/user";
 import { required, ValidationEntity } from "@domain/validate/validateForm";
 import { Validate } from "@domain/validate/Validate";
 import { VisitorGroup } from "@domain/user/visitor/VisitorGroup";
+import { Guest } from "@domain/guest";
 
 export function memberValidate(): ValidationEntity<Member> {
     return {
@@ -32,5 +33,12 @@ export function visitorChiildValidate(): ValidationEntity<Child> {
     return {
         name: [required("Nome é obrigatório.")],
         birthdate: [Validate.birthdateValidator(2)],
+    };
+}
+
+export function ticketValidate(): ValidationEntity<Guest> {
+    return {
+        name: [required("Nome é obrigatório.")],
+        phone: Validate.phoneValidator(),
     };
 }

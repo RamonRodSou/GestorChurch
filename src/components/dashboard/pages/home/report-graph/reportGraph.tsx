@@ -72,6 +72,11 @@ export default function ReportGraph() {
                 return report as ReportWithMonth;
             });
 
+            finalData.sort((a, b) =>
+                dayjs(a.month, "DD/MMM/YYYY", "pt-br").toDate().getTime() -
+                dayjs(b.month, "DD/MMM/YYYY", "pt-br").toDate().getTime()
+            );
+
             setData(finalData);
         });
     }, []);

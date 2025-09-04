@@ -53,8 +53,8 @@ export default function ReportChurchDataModal({ open, onClose, report }: ReportC
                 />
                 <Typography className='textInfo'> <span className='subTextInfo'>DATA: </span>{DateUtil.dateFormated(report.date)}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>TOTAL DE PESSOA: </span>{report.totalPeople}</Typography>
-                <Typography className='textInfo'> <span className='subTextInfo'>TOAL DE CRIANÇÃS: </span>{report.totalChildren}</Typography>
-                <Typography className='textInfo'> <span className='subTextInfo'>TOAL DE VOLUNTÁRIOS: </span>{report.totalVolunteers}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>TOTAL DE CRIANÇÃS: </span>{report.totalChildren}</Typography>
+                <Typography className='textInfo'> <span className='subTextInfo'>TOTAL DE VOLUNTÁRIOS: </span>{report.totalVolunteers}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>ACEITARAM JESUS: </span>{report.decisionsForJesus}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>DERAM NOME PRO BATISMO: </span>{report.baptismCandidates}</Typography>
                 <Typography className='textInfo'> <span className='subTextInfo'>TOTAL DE PRIMEIRA VISITA: </span>{report.firstTimeVisitors}</Typography>

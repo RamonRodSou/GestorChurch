@@ -13,8 +13,10 @@ import {
     Home,
     AssignmentInd,
     CalendarMonthRounded,
-} from '@mui/icons-material';
+    QrCode2Outlined,
+    ConfirmationNumberOutlined,
 
+} from '@mui/icons-material';
 export interface IMenu {
     path: string;
     label: string;
@@ -38,6 +40,9 @@ export function getMenuItems(permission: number | null): IMenu[] {
         { path: 'report-group', label: 'Relatório GC', icon: <StickyNote2TwoTone />, visible: level >= PermissionLevel.LIDER },
         { path: 'financial', label: 'Finanças', icon: <Assessment />, visible: level >= PermissionLevel.ADMINISTRACAO },
         { path: 'user', label: 'Usuarios', icon: <AssignmentInd />, visible: level >= PermissionLevel.GESTOR },
+        { path: 'ticket', label: 'Ingresso', icon: <ConfirmationNumberOutlined />, visible: level >= PermissionLevel.VOLUNTARIO },
+        { path: 'leitor', label: 'Leitor', icon: <QrCode2Outlined />, visible: level >= PermissionLevel.VOLUNTARIO },
+
         { path: 'preferences', label: 'Configurações', icon: <Settings />, visible: true },
     ];
 

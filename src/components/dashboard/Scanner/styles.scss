@@ -1,0 +1,42 @@
+:root {
+    .box-scanner {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 0.5rem 1rem;
+        box-sizing: border-box;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+
+        video {
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        &--valid {
+            background-color: #84e087;
+            color: var(--primary-color);
+
+            .subTitle {
+                color: rgb(255, 255, 255);
+            }
+        }
+
+        &--invalid {
+            background-color: var(--inactive-color);
+
+            .subTitle {
+                color: rgb(255, 255, 255);
+            }
+        }
+    }
+
+    @media (min-width: 768px) {
+        .box-scanner {
+            max-width: 800px;
+        }
+    }
+}

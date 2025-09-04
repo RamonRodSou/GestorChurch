@@ -94,6 +94,10 @@
         min-height: 300px;
     }
 
+    .bold {
+        font-weight: bold;
+    }
+
     .modalBtns {
         display: flex;
         justify-content: space-between;

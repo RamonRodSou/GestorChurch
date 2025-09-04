@@ -30,6 +30,9 @@ import UserInvited from '@components/dashboard/pages/user-data/user-invited/User
 import ServiceScheduleData from '@components/dashboard/pages/service-schedule/ServiceScheduleData';
 import ServiceScheduleDetails from '@components/dashboard/pages/service-schedule/service-schedule-details/ServiceScheduleDetails';
 import Loading from '@components/loading/Loading';
+import Ticket from '@components/dashboard/pages/ticket/Ticket';
+import QRScanner from '@components/dashboard/Scanner/QRScanner';
+import TicketDetails from '@components/dashboard/pages/ticket/ticketDetails/TicketDetails';
 
 function AppRouter() {
     const [loading, setLoading] = useState(true);
@@ -86,6 +89,9 @@ function AppRouter() {
                             <Route path="visitor-group" element={<VisitorGroupData />} />
                             <Route path="new-visitor-group" element={<VisitorGroupDetails />} />
                             <Route path="/dashboard/:userId/edit-visitor-group/:visitorGroupId" element={<VisitorGroupDetails />} />
+                            <Route path="ticket" element={<Ticket />} />
+                            <Route path="new-ticket" element={<TicketDetails />} />
+                            <Route path="leitor" element={<QRScanner />} />
                         </Route>
                         <Route path="*" element={<Navigate to={`/dashboard/${user?.uid}/home`} replace />} />
                     </>
