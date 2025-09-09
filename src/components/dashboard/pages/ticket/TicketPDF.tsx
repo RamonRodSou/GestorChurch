@@ -3,7 +3,7 @@ import { Guest } from "@domain/guest";
 import { ticketPdfStyles as styles } from "./stylesPDF";
 import { EVENT_DAY } from "@domain/utils";
 import { useEffect, useState } from "react";
-import { findByLottId } from "@service/LotService";
+import { findByLotId } from "@service/LotService";
 
 export interface GuestWithQR extends Guest {
     qrCodeUrl?: string;
@@ -23,7 +23,7 @@ export function TicketPDF({ tickets }: TicketPDFProps) {
 
             for (const ticket of tickets) {
                 if (ticket.lotId) {
-                    const lot = await findByLottId(ticket.lotId);
+                    const lot = await findByLotId(ticket.lotId);
                     updatedTickets.push({
                         ...ticket, lotName: lot?.name,
                         toJSON: function (): object {
@@ -48,7 +48,7 @@ export function TicketPDF({ tickets }: TicketPDFProps) {
                 {ticketsWithLot.map((ticket, index) => (
                     <View key={index} style={styles.ticket} wrap={false}>
                         <View style={styles.ticketInfo}>
-                            <Text style={styles.lotText}>{`Convite ${index + 1}`}</Text>
+                            <Text style={styles.lotText}>{`Convite ${ticket.ticketNumber}`}</Text>
                         </View>
 
                         <View style={styles.lotInfo}>

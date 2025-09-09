@@ -2,7 +2,6 @@ import { EMPTY } from '@domain/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 export class Lot {
-    date: any;
     constructor(
         public readonly id: string = uuidv4(),
         public name: string = EMPTY,

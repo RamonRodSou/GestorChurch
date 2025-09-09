@@ -1,11 +1,11 @@
-import firebase from "firebase/compat/app"
-import { collection, doc, getDoc, getDocs, runTransaction, updateDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, runTransaction, updateDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import { Guest } from "@domain/guest";
 
 export async function ticketAdd(it: Guest, lotId: string) {
     const user = auth.currentUser;
     if (!user) throw new Error("Usuário não autenticado.");
+
     const lotRef = doc(db, "lots", lotId);
     const ticketsRef = collection(db, "tickets");
 
@@ -16,10 +16,11 @@ export async function ticketAdd(it: Guest, lotId: string) {
 
             const lotData = loteDoc.data();
             const quantity = Number(lotData.quantity);
-
             if (quantity <= 0) throw new Error("Lote esgotado");
 
             transaction.update(lotRef, { quantity: quantity - 1 });
+
+            const ticketNumber = await getNextTicketNumber();
 
             transaction.set(doc(ticketsRef), {
                 userId: user.uid,
@@ -29,6 +30,7 @@ export async function ticketAdd(it: Guest, lotId: string) {
                 isActive: it.isActive,
                 createdAt: it.createdAt,
                 lotId: lotId,
+                ticketNumber,
             });
         });
 
@@ -38,7 +40,6 @@ export async function ticketAdd(it: Guest, lotId: string) {
         throw error;
     }
 }
-
 
 export async function findAllTickets(): Promise<Guest[]> {
     try {
@@ -79,8 +80,28 @@ export async function updateTicket(id: string, data: Partial<Guest>): Promise<vo
 
 export async function ticketDelete(id: string) {
     try {
-        await firebase.firestore().collection('tickets').doc(id).delete()
+        const docRef = doc(db, "tickets", id)
+        await deleteDoc(docRef)
     } catch (error) {
-        alert('Erro ao deletar: ' + error)
+        alert("Erro ao deletar: " + error)
     }
-} 
+}
+
+async function getNextTicketNumber(): Promise<number> {
+    const counterRef = doc(db, "counters", "ticketsCounter");
+
+    return await runTransaction(db, async (transaction) => {
+        const counterDoc = await transaction.get(counterRef);
+
+        if (!counterDoc.exists()) {
+            transaction.set(counterRef, { current: 1 });
+            return 1;
+        }
+
+        const current = counterDoc.data()?.current ?? 0;
+        const next = current + 1;
+        transaction.update(counterRef, { current: next });
+
+        return next;
+    });
+}

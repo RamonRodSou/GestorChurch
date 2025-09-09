@@ -5,7 +5,7 @@ import { ChildSummary, MemberSummary } from "@domain/user";
 import { findAllChildrensSummary } from "@service/ChildrenService";
 import { findAllFinancials } from "@service/FinancialService";
 import { findAllGroupsSummary } from "@service/GroupService";
-import { findAllTickets } from "@service/GuestService";
+import { findAllTickets } from "@service/ticketService";
 import { findAllMembersSummary } from "@service/MemberService";
 import React from "react";
 

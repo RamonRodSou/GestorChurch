@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 type ConfirmModal = {
     open: boolean;
     onClose: () => void;
-    onConfirm: () => void; 
+    onConfirm: () => void;
     message: string;
 }
 

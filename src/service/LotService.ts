@@ -1,6 +1,8 @@
-import { addDoc, collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import { Lot } from "@domain/lot";
+import firebase from "firebase/compat/app"
+
 
 export async function lotAdd(it: Lot) {
     try {
@@ -32,7 +34,7 @@ export async function findAllLots(): Promise<Lot[]> {
     }
 }
 
-export async function findByLottId(id: string): Promise<Lot | null> {
+export async function findByLotId(id: string): Promise<Lot | null> {
     try {
         const ref = doc(db, 'lots', id);
         const snapshot = await getDoc(ref);
@@ -60,5 +62,23 @@ export async function uploadInitialLots() {
         console.log("Todos os lotes foram adicionados com sucesso!");
     } catch (error) {
         console.error("Erro ao adicionar os lotes:", error);
+    }
+}
+
+export async function lotDelete(id: string) {
+    try {
+        await firebase.firestore().collection('visitors').doc(id).delete()
+    } catch (error) {
+        alert('Erro ao deletar visitante: ' + error)
+    }
+}
+
+export async function lotUpdate(id: string, data: Partial<any>): Promise<void> {
+    try {
+        const ref = doc(db, 'lots', id);
+        await updateDoc(ref, data);
+    } catch (error) {
+        alert('Erro ao atualizar lot: ' + error);
+        throw error;
     }
 }

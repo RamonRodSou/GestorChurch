@@ -4,15 +4,15 @@ import { ticketValidate, ValidationForm } from "@domain/validate";
 import { Box, Button, CircularProgress, TextField } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { ticketAdd } from "@service/GuestService";
 import { findAllLots } from "@service/LotService";
+import { ticketAdd } from "@service/ticketService";
 import dayjs from "dayjs";
 import { FormEvent, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function TicketDetails() {
-    const [form, setForm] = useState<Guest>(new Guest);
-    const [quantity, setQuantity] = useState<number>();
+    const [form, setForm] = useState<Guest>(new Guest());
+    const [quantity, setQuantity] = useState<number>(1);
     const [lots, setLots] = useState<Lot[]>([]);
     const [selectedLotId, setSelectedLotId] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
@@ -33,8 +33,11 @@ export default function TicketDetails() {
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
+        console.log("1 aqui")
 
         if (!ValidationForm({ data: form, setErrors, entity: ticketValidate() })) return;
+        console.log("2 aqui")
+
 
         if (!quantity || quantity < 1) return;
         if (!selectedLotId) {
@@ -43,6 +46,8 @@ export default function TicketDetails() {
         }
 
         try {
+            console.log("3 aqui")
+
             setLoading(true);
             for (let i = 0; i < quantity; i++) {
                 await ticketAdd(form, selectedLotId);

@@ -3,15 +3,17 @@ import { Box, Card, Typography, Button } from '@mui/material';
 import { useEffect, useState, useRef } from 'react';
 import 'dayjs/locale/pt-br';
 import { Guest } from '@domain/guest';
-import { findAllTickets } from '@service/GuestService';
+import { findAllTickets, ticketDelete } from '@service/ticketService';
 import { activeFilter, EVENT_DAY } from '@domain/utils';
 import QRCode from "react-qr-code";
 import Layout from '@components/layout/Layout';
 import Search from '@components/search/Search';
-
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { TicketPDF, GuestWithQR } from './TicketPDF';
 import html2canvas from 'html2canvas';
+import { findByLotId, lotUpdate } from '@service/LotService';
+import { DeleteOutline } from '@mui/icons-material';
+import ConfirmModal from '@components/confirm-modal/ConfirmModal';
 
 export default function Ticket() {
     const [data, setData] = useState<Guest[]>([]);
@@ -19,22 +21,15 @@ export default function Ticket() {
     const [pdfData, setPdfData] = useState<GuestWithQR[] | null>(null);
     const [isPreparingPdf, setIsPreparingPdf] = useState(false);
 
+    const [openConfirm, setOpenConfirm] = useState(false);
+    const [selectedTicket, setSelectedTicket] = useState<{ ticketId: string; lotId: string; name: string } | null>(null);
+
     const qrCodeRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
     const activeEntities = activeFilter(filtered);
 
-    useEffect(() => {
-        findAllTickets()
-            .then((it) => {
-                setData(it);
-                setFiltered(it);
-            })
-            .catch(console.error);
-    }, []);
-
     const handlePreparePdf = async () => {
         if (filtered.length === 0) return;
-
         setIsPreparingPdf(true);
         setPdfData(null);
 
@@ -46,7 +41,8 @@ export default function Ticket() {
                 const canvas = await html2canvas(element);
                 const qrCodeUrl = canvas.toDataURL('image/png');
                 ticketsWithQr.push({
-                    ...ticket, qrCodeUrl,
+                    ...ticket,
+                    qrCodeUrl,
                     toJSON: function (): object {
                         throw new Error('Function not implemented.');
                     }
@@ -57,6 +53,44 @@ export default function Ticket() {
         setPdfData(ticketsWithQr);
         setIsPreparingPdf(false);
     };
+
+    async function handleDelete(ticketId: string, lotId: string) {
+        try {
+            const lot = await findByLotId(lotId);
+            if (!lot) return;
+
+            await ticketDelete(ticketId);
+            await lotUpdate(lotId, { quantity: lot.quantity + 1 });
+            setData(prev => prev.filter(it => it.id !== ticketId));
+            setFiltered(prev => prev.filter(it => it.id !== ticketId));
+
+        } catch (error) {
+            console.error("Error to delete ticket:", error);
+        }
+    }
+
+    function handleOpenConfirm(ticketId: string, lotId: string, name: string) {
+        setSelectedTicket({ ticketId, lotId, name });
+        setOpenConfirm(true);
+    }
+
+    function handleConfirmDelete() {
+        if (selectedTicket) {
+            handleDelete(selectedTicket.ticketId, selectedTicket.lotId);
+        }
+        setOpenConfirm(false);
+        setSelectedTicket(null);
+    }
+
+    useEffect(() => {
+        findAllTickets()
+            .then(it => {
+                setData(it);
+                setFiltered(it);
+                console.log(it)
+            })
+            .catch(console.error);
+    }, []);
 
     return (
         <Layout total={activeEntities.length} title="Ingressos" path="new-ticket" message="Ingresso criado com sucesso!">
@@ -98,10 +132,19 @@ export default function Ticket() {
                 )}
             </Box>
 
-            <Box className="card">
-                {activeEntities.map((it) => (
-                    <Card key={it.id} className="ticket-card">
+            <Box className="cardTicketBox">
+                {activeEntities.map(it => (
+                    <Card key={it.id} className="ticketCard">
+                        <Typography variant="h2" className="numberTicket">{it.ticketNumber}</Typography>
+
                         <Box>
+                            <span
+                                className="deleteBtn"
+                                onClick={() => handleOpenConfirm(it.id, it.lotId, it.name)}
+                            >
+                                <DeleteOutline />
+                            </span>
+
                             <Typography variant="h2">{it.name}</Typography>
                             <Typography>{it.phone}</Typography>
                             <Typography>{EVENT_DAY}</Typography>
@@ -117,6 +160,16 @@ export default function Ticket() {
                     </Card>
                 ))}
             </Box>
+
+            {selectedTicket && (
+                <ConfirmModal
+                    open={openConfirm}
+                    onClose={() => setOpenConfirm(false)}
+                    onConfirm={handleConfirmDelete}
+                    message={`Tem certeza que deseja remover o ingresso de ${selectedTicket.name}?`}
+                />
+            )}
         </Layout>
-    )
+    );
+
 }
