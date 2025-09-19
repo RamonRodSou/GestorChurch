@@ -33,28 +33,23 @@ export default function TicketDetails() {
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        console.log("1 aqui")
 
         if (!ValidationForm({ data: form, setErrors, entity: ticketValidate() })) return;
-        console.log("2 aqui")
 
-
-        if (!quantity || quantity < 1) return;
-        if (!selectedLotId) {
-            alert("Selecione um lote!");
-            return;
-        }
+        if (!quantity || quantity < 1 && !selectedLotId) return;
 
         try {
-            console.log("3 aqui")
-
             setLoading(true);
+
             for (let i = 0; i < quantity; i++) {
-                await ticketAdd(form, selectedLotId);
+                form.lotId = selectedLotId;
+                await ticketAdd(form);
             }
+
             setForm(new Guest());
             setQuantity(1);
             navToReport();
+
         } catch (error) {
             console.error("Erro ao comprar ingressos:", error);
         } finally {
@@ -67,11 +62,11 @@ export default function TicketDetails() {
             const availableLots = await findAllLots();
             setLots(availableLots);
 
-            if (availableLots.length === 0) {
-                console.log("Nenhum lote disponível ainda.");
-            } else {
-                setSelectedLotId(availableLots[0].id);
-            }
+            const lot = availableLots
+                .sort((a, b) => a.price - b.price)
+                .filter((it) => it.isActive)[0].id;
+
+            setSelectedLotId(lot);
         }
         initLots();
     }, []);

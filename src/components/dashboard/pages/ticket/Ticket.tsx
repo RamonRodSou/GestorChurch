@@ -87,7 +87,6 @@ export default function Ticket() {
             .then(it => {
                 setData(it);
                 setFiltered(it);
-                console.log(it)
             })
             .catch(console.error);
     }, []);

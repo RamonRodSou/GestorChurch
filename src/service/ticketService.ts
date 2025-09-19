@@ -2,11 +2,11 @@ import { collection, deleteDoc, doc, getDoc, getDocs, runTransaction, updateDoc 
 import { auth, db } from "./firebase";
 import { Guest } from "@domain/guest";
 
-export async function ticketAdd(it: Guest, lotId: string) {
+export async function ticketAdd(it: Guest) {
     const user = auth.currentUser;
     if (!user) throw new Error("Usuário não autenticado.");
 
-    const lotRef = doc(db, "lots", lotId);
+    const lotRef = doc(db, "lots", it.lotId);
     const ticketsRef = collection(db, "tickets");
 
     try {
@@ -16,6 +16,7 @@ export async function ticketAdd(it: Guest, lotId: string) {
 
             const lotData = loteDoc.data();
             const quantity = Number(lotData.quantity);
+
             if (quantity <= 0) throw new Error("Lote esgotado");
 
             transaction.update(lotRef, { quantity: quantity - 1 });
@@ -29,7 +30,7 @@ export async function ticketAdd(it: Guest, lotId: string) {
                 birthdate: it.birthdate,
                 isActive: it.isActive,
                 createdAt: it.createdAt,
-                lotId: lotId,
+                lotId: it.lotId,
                 ticketNumber,
             });
         });
