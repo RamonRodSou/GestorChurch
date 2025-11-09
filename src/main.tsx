@@ -14,17 +14,17 @@ import { PermissionProvider } from '@context/PermissionContext';
 dayjs.locale('pt-br');
 
 createRoot(document.getElementById('root')!).render(
-    
+
     <React.StrictMode>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
             <AuthProvider>
                 <PermissionProvider>
                     <CredentialsProvider>
-                            <ManagerProvider>
-                                <StrictMode>
-                                    <AppRouter/>
-                                </StrictMode>
-                            </ManagerProvider>
+                        <ManagerProvider>
+                            <StrictMode>
+                                <AppRouter />
+                            </StrictMode>
+                        </ManagerProvider>
                     </CredentialsProvider>
                 </PermissionProvider>
             </AuthProvider>
